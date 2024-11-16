@@ -105,6 +105,9 @@ importers:
       vite:
         specifier: ^5.4.11
         version: 5.4.11(sass@1.81.0)
+      vite-plugin-remove-console:
+        specifier: ^2.2.0
+        version: 2.2.0
       vite-plugin-vue-devtools:
         specifier: ^7.6.4
         version: 7.6.4(@nuxt/kit@3.14.159(rollup@4.27.2))(rollup@4.27.2)(vite@5.4.11(sass@1.81.0))(vue@3.5.13(typescript@5.6.3))
@@ -1882,6 +1885,9 @@ packages:
     peerDependenciesMeta:
       '@nuxt/kit':
         optional: true
+
+  vite-plugin-remove-console@2.2.0:
+    resolution: {integrity: sha512-qgjh5pz75MdE9Kzs8J0kBwaCfifHV0ezRbB9rpGsIOxam+ilcGV7WOk91vFJXquzRmiKrFh3Hxlh0JJWAmXTbQ==}
 
   vite-plugin-vue-devtools@7.6.4:
     resolution: {integrity: sha512-jxSsLyuETfmZ1OSrmnDp28BG6rmURrP7lkeyHW2gBFDyo+4dUcqVeQNMhbV7uKZn80mDdv06Mysw/5AdGxDvJQ==}
@@ -3797,6 +3803,8 @@ snapshots:
     transitivePeerDependencies:
       - rollup
       - supports-color
+
+  vite-plugin-remove-console@2.2.0: {}
 
   vite-plugin-vue-devtools@7.6.4(@nuxt/kit@3.14.159(rollup@4.27.2))(rollup@4.27.2)(vite@5.4.11(sass@1.81.0))(vue@3.5.13(typescript@5.6.3)):
     dependencies:

@@ -5,6 +5,7 @@ import Components from 'unplugin-vue-components/vite';
 import { VueRouterAutoImports } from 'unplugin-vue-router';
 import VueRouter from 'unplugin-vue-router/vite';
 import { defineConfig } from 'vite';
+import RemoveConsole from "vite-plugin-remove-console";
 import VueDevTools from 'vite-plugin-vue-devtools';
 import Layouts from 'vite-plugin-vue-layouts';
 
@@ -14,6 +15,7 @@ export default defineConfig({
             dts: 'dts/typed-router.d.ts',
         }),
         Vue(),
+        RemoveConsole(),
         VueDevTools(),
         Layouts(),
         AutoImport({

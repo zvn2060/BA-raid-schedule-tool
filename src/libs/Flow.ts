@@ -57,7 +57,8 @@ export class Flow {
     parse() {
         const matches = this.text.matchAll(Pattern.Flow)
         if (!matches) throw Error("no flow detect");
-        const stages = Array.from(matches).flatMap(flow => flow.groups?.["flow"].trim().split(" → ")).filter(it => !isUndefined(it))
+        const stages = Array.from(matches).flatMap(flow => flow.groups?.["flow"].trim().replaceAll(/\n+/g, " → ").split(" → ")).filter(it => !isUndefined(it))
+        console.log(stages)
         const memberInverseMap = new Map(
             Array
                 .from(this._members.entries())
