@@ -11,6 +11,7 @@ const showStages = computed(() =>
 
 const { pixelRatio } = useDevicePixelRatio();
 const container = ref();
+const totalPage = computed(() => Math.ceil(flow.value.stages.length / 8));
 const scaleFactor = computed(() => {
   const factor = pixelRatio.value < 0.01 ? 0 : 1 / pixelRatio.value;
   return { "--tw-scale-x": factor, "--tw-scale-y": factor };
@@ -26,7 +27,9 @@ function onDownloadClick() {
 
 <template>
   <div class="flex items-center justify-center relative">
-    <div class="absolute top-4 right-4">
+    <div class="absolute top-4 right-4 flex items-center gap-2">
+      <Button icon="pi pi-arrow-left" rounded :disabled="page === 0" @click="page--"/>
+      <Button icon="pi pi-arrow-right" rounded :disabled="page === totalPage - 1" @click="page++"/>
       <Button @click="onDownloadClick" rounded icon="pi pi-save" />
     </div>
     <div
