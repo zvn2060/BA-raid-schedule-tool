@@ -11,7 +11,7 @@ import App from './App.vue';
 import "./assets/index.scss";
 
 const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHistory(import.meta.env.BASE_URL),
     routes: setupLayouts(routes),
 });
 
