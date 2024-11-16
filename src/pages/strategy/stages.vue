@@ -3,9 +3,6 @@ import { debounceFilter, pausableFilter } from "@vueuse/core";
 
 const flowStore = useFlowStore();
 const { flow } = storeToRefs(flowStore);
-const input = ref(
-  "●一階： 憂EX(3費, 給甜點貓) → 露營玉EX(6費) → 甜點貓EX(2費) → 亞子EX+憂EX(9.9費，給露營玉) → 露營玉EX+甜點貓EX → 水憂EX(技一後) ●二階： 憂EX+露營玉EX(給甜點貓) → 甜點貓EX+輪椅EX+亞子EX(8費) → 憂EX(不要放甜點貓，送人可跳過) → 甜點貓EX(2費)"
-);
 const auto = ref(false);
 
 const pausableDebounceFilter = pausableFilter(debounceFilter(1000));
@@ -20,7 +17,7 @@ watch(
 );
 
 watchWithFilter(
-  input,
+  () => flow.value.text,
   () => {
     triggerParse();
   },
@@ -28,8 +25,7 @@ watchWithFilter(
 );
 
 function triggerParse() {
-  console.log(input.value);
-  flow.value.parse(input.value);
+  flow.value.parse();
 }
 </script>
 
@@ -37,7 +33,7 @@ function triggerParse() {
   <Splitter>
     <SplitterPanel class="relative">
       <Textarea
-        v-model="input"
+        v-model="flow.text"
         class="min-h-full !rounded-none w-full !bg-slate-900 !text-white !pt-24"
         auto-resize
       />
@@ -58,7 +54,11 @@ function triggerParse() {
     <SplitterPanel>
       <div class="overflow-y-auto p-2 h-full">
         <div class="flex flex-col gap-2">
-            <Stage v-for="(stage, index) in flow.stages" :stage="stage" :stage-id="index"/>
+          <Stage
+            v-for="(stage, index) in flow.stages"
+            :stage="stage"
+            :stage-id="index"
+          />
         </div>
       </div>
     </SplitterPanel>

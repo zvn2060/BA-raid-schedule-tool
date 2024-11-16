@@ -43,6 +43,12 @@ function onStepChange(value: "1" | "2" | "3") {
 function onExportClick() {
   download(flow.value.serialize(), `${flow.value.name}.json`);
 }
+
+async function onLoadSampleClick() {
+  const data = await import("../assets/sample.json");
+  flow.value = new Flow(data.default);
+}
+
 </script>
 
 <template>
@@ -62,6 +68,12 @@ function onExportClick() {
       </template>
       <template #end>
         <Button
+          label="Demo"
+          severity="secondary"
+          class="mr-2"
+          @click="onLoadSampleClick"
+        />
+        <Button
           label="匯入"
           icon="pi pi-file-import"
           severity="secondary"
@@ -73,9 +85,7 @@ function onExportClick() {
     </Toolbar>
     <div class="min-h-0">
       <RouterView v-slot="{ Component }">
-        <TransitionFade
-          group
-        >
+        <TransitionFade group>
           <Component :is="Component" class="h-full" />
         </TransitionFade>
       </RouterView>

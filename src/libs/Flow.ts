@@ -15,11 +15,9 @@ const Pattern = {
 
 export class Flow {
     private _stages: Stage[] = []
-    private _members: Map<StudentId, string> =
-        import.meta.env.DEV
-            ? new Map(Object.entries({ "10035": "憂", "10049": "甜點貓", "10073": "水憂", "10084": "露營玉", "20008": "亞子", "20020": "輪椅" }))
-            : new Map()
+    private _members: Map<StudentId, string> = new Map()
     name: string = "總力軸";
+    text: string = ""
 
     get stages(): Readonly<Stage[]> {
         return this._stages;
@@ -34,6 +32,7 @@ export class Flow {
             if ("name" in data) this.name = data.name as string;
             if ("members" in data) this._members = new Map((data.members as Array<{ id: number, name: string }>).map(({ id, name }) => [id, name]));
             if ("stages" in data) this._stages = data.stages as Stage[];
+            if ("text" in data) this.text = data.text as string;
         }
     }
 
@@ -55,8 +54,8 @@ export class Flow {
     }
 
 
-    parse(text: string) {
-        const matches = text.matchAll(Pattern.Flow)
+    parse() {
+        const matches = this.text.matchAll(Pattern.Flow)
         if (!matches) throw Error("no flow detect");
         const stages = Array.from(matches).flatMap(flow => flow.groups?.["flow"].trim().split(" → ")).filter(it => !isUndefined(it))
         const memberInverseMap = new Map(
@@ -99,6 +98,7 @@ export class Flow {
     serialize() {
         const data = {
             name: this.name,
+            text: this.text,
             stages: this.stages,
             members: Array.from(this.members.entries()).map(([id, name]) => ({ id, name }))
         }
