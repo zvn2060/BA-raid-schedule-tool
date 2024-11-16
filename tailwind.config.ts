@@ -1,3 +1,4 @@
+import ContainerQueryPlugin from '@tailwindcss/container-queries'
 import type { Config } from 'tailwindcss'
 import PrimeVuePlugin from 'tailwindcss-primeui'
 export default {
@@ -8,6 +9,6 @@ export default {
   theme: {
     extend: {},
   },
-  plugins: [PrimeVuePlugin],
+  plugins: [PrimeVuePlugin, ContainerQueryPlugin],
 } satisfies Config
 

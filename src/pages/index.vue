@@ -1,5 +1,7 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+definePage({ redirect: "/strategy/pick" });
+</script>
 
 <template>
-  <div></div>
+  <div />
 </template>

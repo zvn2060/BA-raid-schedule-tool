@@ -15,11 +15,15 @@
     "@tanstack/vue-query": "^5.60.5",
     "@vueuse/core": "^11.2.0",
     "axios": "^1.7.7",
+    "downloadjs": "^1.4.7",
+    "html-to-image": "^1.11.11",
     "lodash-es": "^4.17.21",
     "pinia": "^2.2.6",
     "primeicons": "^7.0.0",
     "primevue": "^4.2.2",
     "tailwindcss-primeui": "^0.3.4",
+    "ts-results-es": "^4.2.0",
+    "type-fest": "^4.27.0",
     "uniqolor": "^1.1.1",
     "vue": "^3.5.13",
     "vue-router": "^4.4.5",
@@ -27,6 +31,8 @@
   },
   "devDependencies": {
     "@primevue/auto-import-resolver": "^4.2.2",
+    "@tailwindcss/container-queries": "^0.1.1",
+    "@types/downloadjs": "^1.4.6",
     "@types/lodash-es": "^4.17.12",
     "@vitejs/plugin-vue": "^5.2.0",
     "autoprefixer": "^10.4.20",
@@ -38,6 +44,7 @@
     "unplugin-vue-components": "^0.27.4",
     "unplugin-vue-router": "^0.10.8",
     "vite": "^5.4.11",
+    "vite-plugin-vue-devtools": "^7.6.4",
     "vite-plugin-vue-layouts": "^0.11.0",
     "vue-tsc": "^2.1.10"
   }

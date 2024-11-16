@@ -5,6 +5,7 @@ import Components from 'unplugin-vue-components/vite';
 import { VueRouterAutoImports } from 'unplugin-vue-router';
 import VueRouter from 'unplugin-vue-router/vite';
 import { defineConfig } from 'vite';
+import VueDevTools from 'vite-plugin-vue-devtools';
 import Layouts from 'vite-plugin-vue-layouts';
 
 export default defineConfig({
@@ -13,11 +14,12 @@ export default defineConfig({
             dts: 'dts/typed-router.d.ts',
         }),
         Vue(),
+        VueDevTools(),
         Layouts(),
         AutoImport({
             dts: "dts/auto-imports.d.ts",
             imports: ["vue", "@vueuse/core", "pinia", VueRouterAutoImports],
-            dirs: ["src/api"]
+            dirs: ["src/api", "src/libs"]
         }),
         Components({
             dts: "dts/components.d.ts",
