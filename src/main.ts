@@ -5,13 +5,13 @@ import PrimeVue from 'primevue/config';
 import ToastService from 'primevue/toastservice';
 import { setupLayouts } from 'virtual:generated-layouts';
 import { createApp } from 'vue';
-import { createRouter, createWebHashHistory } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import { routes } from 'vue-router/auto-routes';
 import App from './App.vue';
 import "./assets/index.scss";
 
 const router = createRouter({
-    history: createWebHashHistory(import.meta.env.BASE_URL),
+    history: createWebHistory(import.meta.env.BASE_URL),
     routes: setupLayouts(routes),
 });
 
