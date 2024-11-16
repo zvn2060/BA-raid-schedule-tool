@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { debounceFilter, pausableFilter } from "@vueuse/core";
 
-const flowStore = useFlowStore();
-const { flow } = storeToRefs(flowStore);
+const battleStore = useBattleStore();
+const { battle } = storeToRefs(battleStore);
 const auto = ref(false);
 
 const pausableDebounceFilter = pausableFilter(debounceFilter(1000));
@@ -17,7 +17,7 @@ watch(
 );
 
 watchWithFilter(
-  () => flow.value.text,
+  () => battle.value.text,
   () => {
     triggerParse();
   },
@@ -25,7 +25,7 @@ watchWithFilter(
 );
 
 function triggerParse() {
-  flow.value.parse();
+  battle.value.parse();
 }
 </script>
 
@@ -33,7 +33,7 @@ function triggerParse() {
   <Splitter>
     <SplitterPanel class="relative">
       <Textarea
-        v-model="flow.text"
+        v-model="battle.text"
         class="min-h-full !rounded-none w-full !bg-slate-900 !text-white !pt-24"
         auto-resize
       />
@@ -55,7 +55,7 @@ function triggerParse() {
       <div class="overflow-y-auto p-2 h-full">
         <div class="flex flex-col gap-2">
           <Stage
-            v-for="(stage, index) in flow.stages"
+            v-for="(stage, index) in battle.stages"
             :stage="stage"
             :stage-id="index"
           />

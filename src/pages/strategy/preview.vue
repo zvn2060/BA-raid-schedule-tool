@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import download from "downloadjs";
 import { toPng } from "html-to-image";
-const { flow } = storeToRefs(useFlowStore());
+const { battle } = storeToRefs(useBattleStore());
 
 const page = ref(0);
 
 const showStages = computed(() =>
-  flow.value.stages.slice(page.value * 8, (page.value + 1) * 8)
+  battle.value.stages.slice(page.value * 8, (page.value + 1) * 8)
 );
 
 const { pixelRatio } = useDevicePixelRatio();
 const container = ref();
-const totalPage = computed(() => Math.ceil(flow.value.stages.length / 8));
+const totalPage = computed(() => Math.ceil(battle.value.stages.length / 8));
 const scaleFactor = computed(() => {
   const factor = pixelRatio.value < 0.01 ? 0 : 1 / pixelRatio.value;
   return { "--tw-scale-x": factor, "--tw-scale-y": factor };
@@ -20,7 +20,7 @@ const scaleFactor = computed(() => {
 function onDownloadClick() {
   if (!container.value) return;
   toPng(container.value).then((dataUrl) => {
-    download(dataUrl, `${flow.value.name}-${page.value + 1}.png`);
+    download(dataUrl, `${battle.value.name}-${page.value + 1}.png`);
   });
 }
 </script>

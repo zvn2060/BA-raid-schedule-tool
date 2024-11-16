@@ -3,8 +3,8 @@ import { groupBy, mapValues } from "lodash-es";
 import uniqolor from "uniqolor";
 
 const { students } = useStudents();
-const flowStore = useFlowStore();
-const { flow } = storeToRefs(flowStore);
+const battleStore = useBattleStore();
+const { battle } = storeToRefs(battleStore);
 const items = computed(() => groupBy(students.value, (it) => it.School));
 const schoolStyles = computed(() => {
   return mapValues(items.value, (_, school) => {
@@ -18,7 +18,7 @@ const schoolStyles = computed(() => {
   <Splitter>
     <SplitterPanel class="flex flex-col">
       <div class="text-2xl font-bold p-2 text-end">
-        {{ flow.members.size }} 人
+        {{ battle.members.size }} 人
       </div>
       <div
         class="overflow-y-auto flex-1 min-h-0 pb-2 px-2"
@@ -26,7 +26,7 @@ const schoolStyles = computed(() => {
       >
         <div class="flex flex-col gap-2" style="direction: ltr">
           <div
-            v-for="[studentId, name] in flow.members.entries()"
+            v-for="[studentId, name] in battle.members.entries()"
             class="bg-surface-100 flex items-center gap-3 rounded pr-2 overflow-hidden h-fit"
           >
             <StudentAvatar
@@ -36,13 +36,13 @@ const schoolStyles = computed(() => {
             <InputText
               class="flex-1"
               :model-value="name"
-              @update:model-value="flow.renameMember(studentId, $event)"
+              @update:model-value="battle.renameMember(studentId, $event)"
             />
             <Button
               icon="pi pi-trash"
               text
               severity="danger"
-              @click="flow.removeMember(studentId)"
+              @click="battle.removeMember(studentId)"
             />
           </div>
         </div>
@@ -56,9 +56,9 @@ const schoolStyles = computed(() => {
           </div>
           <div
             v-for="student in students"
-            @click="flow.toogleMember(student)"
+            @click="battle.toogleMember(student)"
             class="student-container"
-            :class="{ selected: flow.members.has(student.id) }"
+            :class="{ selected: battle.members.has(student.id) }"
           >
             <StudentAvatar :student="student" class="icon" />
             <span class="text-center font-bold py-1">{{ student.name }}</span>

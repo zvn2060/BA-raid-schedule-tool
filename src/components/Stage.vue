@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const props = defineProps<{ stage: Stage; stageId: number }>();
-const flowStore = useFlowStore();
-const { flow } = storeToRefs(flowStore);
+const battleStore = useBattleStore();
+const { battle } = storeToRefs(battleStore);
 const isHoldAlt = useKeyModifier("Alt");
 const description = computed(() =>
   props.stage
@@ -11,7 +11,7 @@ const description = computed(() =>
 );
 
 function onClick(actionId: number) {
-  flow.value.move(
+  battle.value.move(
     { stage: props.stageId, action: actionId },
     isHoldAlt.value ? "next" : "previous"
   );

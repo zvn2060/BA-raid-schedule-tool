@@ -11,7 +11,7 @@ const step = computed(() => {
   else return "1";
 });
 
-const { flow } = storeToRefs(useFlowStore());
+const { battle } = storeToRefs(useBattleStore());
 const { open, onChange, reset } = useFileDialog({
   accept: "application/json",
   multiple: false,
@@ -22,7 +22,7 @@ onChange(async (filelist) => {
   if (!file) return;
   try {
     const json = JSON.parse(await file.text());
-    flow.value = new Flow(json);
+    battle.value = new Battle(json);
   } catch (e) {
     console.error(e);
   } finally {
@@ -41,21 +41,20 @@ function onStepChange(value: "1" | "2" | "3") {
 }
 
 function onExportClick() {
-  download(flow.value.serialize(), `${flow.value.name}.json`);
+  download(battle.value.serialize(), `${battle.value.name}.json`);
 }
 
 async function onLoadSampleClick() {
   const data = await import("../assets/sample.json");
-  flow.value = new Flow(data.default);
+  battle.value = new Battle(data.default);
 }
-
 </script>
 
 <template>
   <div class="h-full grid grid-rows-[min-content_1fr]">
     <Toolbar>
       <template #start>
-        <InputText v-model="flow.name" />
+        <InputText v-model="battle.name" />
       </template>
       <template #center>
         <Stepper :value="step" class="w-[400px]" @update:value="onStepChange">

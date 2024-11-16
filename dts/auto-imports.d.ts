@@ -7,10 +7,10 @@
 export {}
 declare global {
   const AxiosClient: typeof import('../src/libs/AxiosClient')['AxiosClient']
+  const Battle: typeof import('../src/libs/Battle')['Battle']
   const BlueArchiveApiClient: typeof import('../src/api/clients')['BlueArchiveApiClient']
   const EffectScope: typeof import('vue')['EffectScope']
   const FieldContextKey: typeof import('vee-validate')['FieldContextKey']
-  const Flow: typeof import('../src/libs/Flow')['Flow']
   const FormContextKey: typeof import('vee-validate')['FormContextKey']
   const HttpClient: typeof import('../src/libs/AxiosClient')['HttpClient']
   const SchaleDbClient: typeof import('../src/api/clients')['SchaleDbClient']
@@ -150,6 +150,7 @@ declare global {
   const useAttrs: typeof import('vue')['useAttrs']
   const useBase64: typeof import('@vueuse/core')['useBase64']
   const useBattery: typeof import('@vueuse/core')['useBattery']
+  const useBattleStore: typeof import('../src/api/useFlowStore')['useBattleStore']
   const useBluetooth: typeof import('@vueuse/core')['useBluetooth']
   const useBreakpoints: typeof import('@vueuse/core')['useBreakpoints']
   const useBroadcastChannel: typeof import('@vueuse/core')['useBroadcastChannel']
@@ -196,7 +197,6 @@ declare global {
   const useFieldValue: typeof import('vee-validate')['useFieldValue']
   const useFileDialog: typeof import('@vueuse/core')['useFileDialog']
   const useFileSystemAccess: typeof import('@vueuse/core')['useFileSystemAccess']
-  const useFlowStore: typeof import('../src/api/useFlowStore')['useFlowStore']
   const useFocus: typeof import('@vueuse/core')['useFocus']
   const useFocusWithin: typeof import('@vueuse/core')['useFocusWithin']
   const useForm: typeof import('vee-validate')['useForm']

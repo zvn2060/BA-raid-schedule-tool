@@ -1,4 +1,4 @@
-export const useFlowStore = defineStore("軸", () => {
-    const flow = ref(new Flow())
-    return { flow }
+export const useBattleStore = defineStore("軸", () => {
+    const battle = ref(new Battle())
+    return { battle }
 })

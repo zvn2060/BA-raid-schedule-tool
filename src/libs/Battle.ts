@@ -14,7 +14,7 @@ const Pattern = {
 }
 
 
-export class Flow {
+export class Battle {
     private _stages: Stage[] = []
     private _members: Map<StudentId, string> = new Map()
     name: string = "總力軸";
