@@ -26,15 +26,16 @@ const hoverActionId = ref<number>();
       {{ description || "&nbsp;" }}
     </div>
     <template v-for="(action, index) in stage">
-      <StudentAvatar
-        v-for="studentId in action.ids"
-        @mouseenter="hoverActionId = index"
-        @mouseleave="hoverActionId = undefined"
-        :student-id="studentId"
-        @click="onClick(index)"
-        class="border border-black cursor-pointer"
-        :class="{ 'bg-yellow-200': hoverActionId === index }"
-      />
+      <template v-for="student in action.students">
+        <StudentAvatar
+          @mouseenter="hoverActionId = index"
+          @mouseleave="hoverActionId = undefined"
+          :student="student"
+          @click="onClick(index)"
+          class="border border-black cursor-pointer"
+          :class="{ 'bg-yellow-200': hoverActionId === index }"
+        />
+      </template>
     </template>
   </div>
 </template>

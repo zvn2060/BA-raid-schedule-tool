@@ -17,15 +17,20 @@ const schoolStyles = computed(() => {
 <template>
   <Splitter>
     <SplitterPanel class="flex flex-col">
-      <div class="text-2xl font-bold p-2 text-end">{{ flow.members.size }} 人</div>
-      <div class="overflow-y-auto flex-1 min-h-0 pb-2 px-2" style="direction: rtl">
+      <div class="text-2xl font-bold p-2 text-end">
+        {{ flow.members.size }} 人
+      </div>
+      <div
+        class="overflow-y-auto flex-1 min-h-0 pb-2 px-2"
+        style="direction: rtl"
+      >
         <div class="flex flex-col gap-2" style="direction: ltr">
           <div
             v-for="[studentId, name] in flow.members.entries()"
             class="bg-surface-100 flex items-center gap-3 rounded pr-2 overflow-hidden h-fit"
           >
             <StudentAvatar
-              :student-id="studentId"
+              :student="{ id: studentId, name }"
               class="w-24 bg-surface-300"
             />
             <InputText
@@ -53,10 +58,10 @@ const schoolStyles = computed(() => {
             v-for="student in students"
             @click="flow.toogleMember(student)"
             class="student-container"
-            :class="{ selected: flow.members.has(student.Id) }"
+            :class="{ selected: flow.members.has(student.id) }"
           >
-            <StudentAvatar :student-id="student.Id" class="icon" />
-            <span class="text-center font-bold py-1">{{ student.Name }}</span>
+            <StudentAvatar :student="student" class="icon" />
+            <span class="text-center font-bold py-1">{{ student.name }}</span>
           </div>
         </div>
       </div>

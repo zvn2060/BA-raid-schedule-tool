@@ -1,9 +1,10 @@
 import { isUndefined } from "lodash-es";
 
 declare global {
-    export type Action = { ids: StudentId[], comment: string }
+    export type Action = { students: Student[], comment: string }
     export type Stage = Action[]
     export type StudentId = number;
+    export type Student = { id: StudentId, name: string };
 }
 
 
@@ -36,12 +37,12 @@ export class Flow {
         }
     }
 
-    addMember(student: StudentDTO) {
-        this._members.set(student.Id, student.Name);
+    addMember(student: Student) {
+        this._members.set(student.id, student.name);
     }
 
-    toogleMember(student: StudentDTO) {
-        if (this._members.has(student.Id)) this.removeMember(student.Id)
+    toogleMember(student: Student) {
+        if (this._members.has(student.id)) this.removeMember(student.id)
         else this.addMember(student);
     }
 
@@ -73,10 +74,14 @@ export class Flow {
             const comment: string | undefined = stageMatches.groups["comment"];
             if (actions.includes("EX"))
                 return [{
-                    ids: actions.split("+").map(it => memberInverseMap.get(it.replace("EX", "")) ?? -1), comment
+                    students: actions.split("+").map(it => {
+                        const name = it.replace("EX", "");
+                        const id = memberInverseMap.get(name) ?? -1
+                        return { id, name }
+                    }), comment
                 }]
             else
-                return [{ ids: [], comment: actions }]
+                return [{ students: [], comment: actions }]
         })
     }
 

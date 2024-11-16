@@ -6,7 +6,7 @@ export function useStudents() {
         queryFn: () => SchaleDbClient
             .get<StudentDTO[]>("students.json")
             .then(data => data.map(({ Id, Name, PathName, School }) => ({
-                Id, Name, PathName, School: mapSchool(School)
+                id: Id, name: Name, PathName, School: mapSchool(School)
             })))
     })
 
