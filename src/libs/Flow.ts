@@ -64,15 +64,19 @@ export class Flow {
                 .from(this._members.entries())
                 .map(([key, value]) => [value, parseInt(`${key}`)])
         )
+
         this._stages = stages.map(stage => {
             const stageMatches = stage.match(Pattern.Stage)
             if (!stageMatches) throw Error(`Cannot parse stage: ${stage}`)
             if (!stageMatches.groups) throw Error(`stage invalid: ${stageMatches}`)
             const actions = stageMatches.groups["actions"];
             const comment: string | undefined = stageMatches.groups["comment"];
-            return [{
-                ids: actions.split("+").map(it => memberInverseMap.get(it.replace("EX", "")) ?? -1), comment
-            }]
+            if (actions.includes("EX"))
+                return [{
+                    ids: actions.split("+").map(it => memberInverseMap.get(it.replace("EX", "")) ?? -1), comment
+                }]
+            else
+                return [{ ids: [], comment: actions }]
         })
     }
 
