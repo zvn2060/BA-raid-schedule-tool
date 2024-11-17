@@ -7,23 +7,24 @@ declare global {
     export type Student = {
         readonly id: StudentId;
         readonly name: string;
-        alias: string;
+        aliases: string[];
         squad: "striker" | "special";
         school: string,
-        "star": number,
-        "level": number,
-        "weapon_level": number | null,
-        "gear_1": number,
-        "gear_2": number,
-        "gear_3": number,
-        "gear_unique": number | null,
-        "skill_ex": number,
-        "skill_n": number,
-        "skill_p": number,
-        "skill_sub": number,
-        "release_hp": number | null,
-        "release_atk": number | null,
-        "release_heal": number | null
+        star: number,
+        level: number,
+        kizuna: number
+        weapon_level: number | null,
+        gear_1: number,
+        gear_2: number,
+        gear_3: number,
+        gear_unique: number | null,
+        skill_ex: number,
+        skill_n: number,
+        skill_p: number,
+        skill_sub: number,
+        release_hp: number | null,
+        release_atk: number | null,
+        release_heal: number | null
     }
 
     export type Member = Student | undefined;

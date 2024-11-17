@@ -1,13 +1,58 @@
 <script setup lang="ts">
 import { TransitionFade } from "@morev/vue-transitions";
+import type { MenuItem } from "primevue/menuitem";
+
+const router = useRouter();
+const topNavigations: MenuItem[] = [
+  {
+    label: "編排攻略",
+    icon: "pi pi-map",
+    command: () => {
+      router.push("/strategy/pick");
+    },
+  },
+  {
+    label: "資料設定",
+    icon: "pi pi-users",
+    command: () => {
+      router.push("/students");
+    },
+  },
+];
 </script>
 
 <template>
   <div class="grid grid-rows-[min-content_1fr] h-full">
-    <div class="bg-primary text-surface-0 p-2 flex items-center gap-2">
-      <img src="/favicon.svg" class="w-8" />
-      <span class="text-lg font-bold">檔案軸工具</span>
-    </div>
+    <Menubar :model="topNavigations">
+      <template #start>
+        <img src="/favicon.svg" class="w-8 mr-2" />
+        <span class="text-lg font-bold">檔案軸工具</span>
+      </template>
+      <template #item="{ item, props, hasSubmenu }">
+        <router-link
+          v-if="item.route"
+          v-slot="{ href, navigate }"
+          :to="item.route"
+          custom
+        >
+          <a v-ripple :href="href" v-bind="props.action" @click="navigate">
+            <span :class="item.icon" />
+            <span>{{ item.label }}</span>
+          </a>
+        </router-link>
+        <a
+          v-else
+          v-ripple
+          :href="item.url"
+          :target="item.target"
+          v-bind="props.action"
+        >
+          <span :class="item.icon" />
+          <span>{{ item.label }}</span>
+          <span v-if="hasSubmenu" class="pi pi-fw pi-angle-down" />
+        </a>
+      </template>
+    </Menubar>
     <div class="overflow-y-auto">
       <RouterView v-slot="{ Component }">
         <TransitionFade>

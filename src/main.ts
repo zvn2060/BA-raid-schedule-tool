@@ -1,7 +1,10 @@
 import { definePreset } from '@primevue/themes';
 import Aura from '@primevue/themes/aura';
+import { BlockUIDesignTokens } from '@primevue/themes/aura/blockui';
+import { MenubarDesignTokens } from '@primevue/themes/aura/menubar';
 import { VueQueryPlugin } from '@tanstack/vue-query';
 import "primeicons/primeicons.css";
+import { Tooltip } from 'primevue';
 import PrimeVue from 'primevue/config';
 import ToastService from 'primevue/toastservice';
 import { setupLayouts } from 'virtual:generated-layouts';
@@ -19,8 +22,12 @@ const router = createRouter({
 const MyPreset = definePreset(Aura, {
     components: {
         blockui: {
-            border: { radius: "0" }
-        }
+            root: { borderRadius: "0" }
+        } satisfies BlockUIDesignTokens,
+        menubar: {
+            root: { background: "{primary.color}", color: "{surface.0}", borderRadius: "0", borderColor: "none" },
+        } satisfies MenubarDesignTokens,
+
     }
 })
 
@@ -32,6 +39,7 @@ createApp(App)
     .use(pinia)
     .use(ToastService)
     .use(PrimeVue, { theme: { preset: MyPreset, options: { darkModeSelector: '' } } })
+    .directive("tooltip", Tooltip)
     .mount('#app');
 
 

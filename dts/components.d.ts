@@ -7,21 +7,32 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    Badge: typeof import('primevue/badge')['default']
     BlockUI: typeof import('primevue/blockui')['default']
     Breadcrumb: typeof import('primevue/breadcrumb')['default']
     Button: typeof import('primevue/button')['default']
+    Column: typeof import('primevue/column')['default']
+    copy: typeof import('./../src/components/Stars copy.vue')['default']
     DataList: typeof import('./../src/components/DataList.vue')['default']
+    DataTable: typeof import('primevue/datatable')['default']
     DeferredContent: typeof import('primevue/deferredcontent')['default']
     Divider: typeof import('primevue/divider')['default']
     InputText: typeof import('primevue/inputtext')['default']
+    Level: typeof import('./../src/components/Level.vue')['default']
+    LevelColumn: typeof import('./../src/components/LevelColumn.vue')['default']
     MemberItem: typeof import('./../src/components/team/MemberItem.vue')['default']
     MemberList: typeof import('./../src/components/team/MemberList.vue')['default']
+    Menubar: typeof import('primevue/menubar')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ScrollPanel: typeof import('primevue/scrollpanel')['default']
+    Skill: typeof import('./../src/components/Skill.vue')['default']
+    SkillColumn: typeof import('./../src/components/SkillColumn.vue')['default']
     Splitter: typeof import('primevue/splitter')['default']
     SplitterPanel: typeof import('primevue/splitterpanel')['default']
     Stage: typeof import('./../src/components/Stage.vue')['default']
+    Star: typeof import('../src/components/Stars.vue')['default']
+    Stars: typeof import('./../src/components/Stars.vue')['default']
     Step: typeof import('primevue/step')['default']
     StepList: typeof import('primevue/steplist')['default']
     Stepper: typeof import('primevue/stepper')['default']
@@ -31,5 +42,9 @@ declare module 'vue' {
     Textarea: typeof import('primevue/textarea')['default']
     ToggleSwitch: typeof import('primevue/toggleswitch')['default']
     Toolbar: typeof import('primevue/toolbar')['default']
+  }
+  export interface ComponentCustomProperties {
+    Ripple: typeof import('primevue/ripple')['default']
+    Tooltip: typeof import('primevue/tooltip')['default']
   }
 }

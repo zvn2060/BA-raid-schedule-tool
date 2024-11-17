@@ -1,19 +1,54 @@
 import { useQuery } from "@tanstack/vue-query";
+import { Collection, InsertType } from "dexie";
 import type { Ref } from "vue";
-export function useStudents(nameFilter: Ref<string>) {
+
+
+type StudentsQueryParams = {
+    name: string,
+}
+
+type Pagination = {
+    first: number,
+    itemPerPage: number
+}
+
+function hasQuery(param: StudentsQueryParams) {
+    return param.name;
+}
+
+
+
+export function useStudents(params: Ref<StudentsQueryParams>, pagination?: Ref<Pagination>) {
     const { data: students } = useQuery({
-        queryKey: ["students", { filter: nameFilter }],
+        queryKey: ["students", params, pagination],
         queryFn: () => {
-            if (nameFilter.value)
-                return IndexDBClient.students
-                    .filter(students => students.alias.includes(nameFilter.value) || students.name.includes(nameFilter.value))
-                    .toArray()
+            let query = IndexDBClient.students;
+            let collection: Collection<Student, number, InsertType<Student, "id">>
+            if (hasQuery(params.value))
+                collection = query
+                    .filter(students => [students.name, ...students.aliases].join(",").includes(params.value.name))
             else
-                return IndexDBClient.students.toArray()
+                collection = query.toCollection()
+            if (pagination)
+                collection = collection
+                    .offset(pagination.value.first)
+                    .limit(pagination.value.itemPerPage)
+
+            return collection.toArray()
         }
     })
 
-    return { students }
+    const { data: total } = useQuery({
+        queryKey: ["students-total", params],
+        queryFn: () => hasQuery(params.value)
+            ? IndexDBClient.students
+                .filter(students => [students.name, ...students.aliases].join(",").includes(params.value.name))
+                .count()
+            : IndexDBClient.students
+                .count()
+    })
+
+    return { students, total }
 }
 
 function DTOtoStudent({ Id, Name, SquadType, School, StarGrade }: StudentDTO): Student {
@@ -22,8 +57,9 @@ function DTOtoStudent({ Id, Name, SquadType, School, StarGrade }: StudentDTO): S
         name: Name,
         squad: SquadType === "Main" ? "striker" : "special",
         school: mapSchool(School),
-        alias: Name,
+        aliases: [],
         star: StarGrade,
+        kizuna: 1,
         level: 1,
         weapon_level: null,
         gear_1: 0, gear_2: 0, gear_3: 0, gear_unique: null,

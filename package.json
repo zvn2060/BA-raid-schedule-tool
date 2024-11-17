@@ -25,6 +25,7 @@
     "tailwindcss-primeui": "^0.3.4",
     "ts-results-es": "^4.2.0",
     "type-fest": "^4.27.0",
+    "udsv": "^0.6.0",
     "uniqolor": "^1.1.1",
     "vue": "^3.5.13",
     "vue-router": "^4.4.5",

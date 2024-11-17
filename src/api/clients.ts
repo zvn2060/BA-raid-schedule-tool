@@ -13,6 +13,6 @@ IndexDBClient.version(1).stores({
     students: [
         "&id",
         "name",
-        "alias",
+        "aliases",
     ].join(",")
 })
