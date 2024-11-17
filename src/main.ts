@@ -25,7 +25,10 @@ const MyPreset = definePreset(Aura, {
             root: { borderRadius: "0" }
         } satisfies BlockUIDesignTokens,
         menubar: {
-            root: { background: "{primary.color}", color: "{surface.0}", borderRadius: "0", borderColor: "none" },
+            root: { background: "{primary.600}", color: "{surface.0}", borderRadius: "0", borderColor: "none" },
+            item: { focusBackground: '{primary.700}', color: "{surface.0}", focusColor: "{surface.0}" },
+            mobileButton: { hoverBackground: '{primary.700}', color: "{surface.0}", hoverColor: "{surface.0}" },
+            submenu: { background: "{primary.800}", borderRadius: "0", borderColor: "none" }
         } satisfies MenubarDesignTokens,
 
     }
