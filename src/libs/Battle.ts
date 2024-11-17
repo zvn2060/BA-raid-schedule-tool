@@ -1,7 +1,8 @@
-import { isNil, isUndefined, keyBy } from "lodash-es";
-
+import { JsonObject, } from "type-fest";
+import { z } from "zod";
+import { Team } from "./Team";
 declare global {
-    export type Action = { students: Student[], comment: string }
+    export type Action = { students: Student[], comment?: string }
     export type Stage = Action[]
     export type StudentId = number;
     export type Student = {
@@ -31,130 +32,51 @@ declare global {
 }
 
 
-const Pattern = {
-    Flow: /●[^●：]*：(?<flow>[^●]*)/gm,
-    Stage: /(?<actions>.*?)(\((?<comment>.*?)\))?$/
-}
+export const BattleEvent = {
+    Raid: "總力戰",
+    Elimination: "大決戰",
+    Test: "綜合戰術考試",
+    Unrestrict: "制約解除"
+} as const;
 
+export const BattleEventOptions = Object.values(BattleEvent);
 
-export class Team {
-    private _stages: Stage[] = []
-    private _members: Member[] = new Array(6)
-    private membersMap: Map<StudentId, number> = new Map()
-    text: string = ""
-
-    constructor(data?: object) {
-        if (data) {
-            // if ("members" in data) this.membersMap = new Map((data.members as Array<{ id: number, name: string }>).map(({ id, name }) => [id, name]));
-            if ("stages" in data) this._stages = data.stages as Stage[];
-            if ("text" in data) this.text = data.text as string;
-        }
-    }
-
-    get stages(): Readonly<Stage[]> {
-        return this._stages;
-    }
-
-    get members(): Readonly<Member[]> {
-        return this._members;
-    }
-
-
-    addMember(student: Student) {
-        const nextIndex = this._members.findIndex(it => it === undefined)
-        if (nextIndex === -1) return;
-        this.membersMap.set(student.id, nextIndex);
-        this._members[nextIndex] = student;
-    }
-
-    toogleMember(student: Student) {
-        if (this.hasMember(student.id)) this.removeMember(student.id)
-        else this.addMember(student);
-    }
-
-    removeMember(studentId: StudentId) {
-        const index = this.membersMap.get(studentId)
-        if (index === undefined) return;
-        delete this._members[index];
-        this.membersMap.delete(studentId)
-    }
-
-    hasMember(studentId: StudentId) {
-        return this.membersMap.has(studentId)
-    }
-
-
-    parse() {
-        const matches = this.text.matchAll(Pattern.Flow)
-        if (!matches) throw Error("no flow detect");
-        const stages = Array.from(matches).flatMap(flow => flow.groups?.["flow"].trim().replaceAll(/\n+/g, " → ").split(" → ")).filter(it => !isUndefined(it))
-        const memberInverseMap = keyBy(this._members.filter(member => !isNil(member)), it => it.name)
-        this._stages = stages.map(stage => {
-            const stageMatches = stage.match(Pattern.Stage)
-            if (!stageMatches) throw Error(`Cannot parse stage: ${stage}`)
-            if (!stageMatches.groups) throw Error(`stage invalid: ${stageMatches}`)
-            const actions = stageMatches.groups["actions"];
-            const comment: string | undefined = stageMatches.groups["comment"];
-            if (actions.includes("EX"))
-                return [{
-                    students: actions.split("+").map(it => {
-                        const name = it.replace("EX", "");
-                        const student = memberInverseMap[name] ?? null
-                        return student
-                    }), comment
-                }]
-            else
-                return [{ students: [], comment: actions }]
-        })
-    }
-
-    move(index: { stage: number, action: number }, direction: "previous" | "next") {
-        if (index.stage === 0 && this._stages[index.stage].length === 1 && direction === "previous") return;
-        if (index.stage === this._stages.length - 1 && this._stages[index.stage].length === 1 && direction === 'next') return;
-
-        const action = this._stages.at(index.stage)?.at(index.action);
-        if (!action) return;
-        this._stages[index.stage].splice(index.action, 1)
-        const empted = this._stages[index.stage].length === 0;
-        if (direction === "previous") {
-            if (index.stage === 0) this._stages.unshift([action])
-            else if (empted) this._stages[index.stage - 1].push(action)
-            else this._stages.splice(index.stage, 0, [action])
-        } else {
-            if (index.stage === this._stages.length - 1) this._stages.push([action])
-            else if (empted) this._stages[index.stage + 1].unshift(action)
-            else this._stages.splice(index.stage + 1, 0, [action])
-        }
-        if (empted) this._stages.splice(index.stage, 1)
-    }
-
-    toObject() {
-        return {
-            text: this.text,
-            stages: this.stages,
-            members: Array.from(this.members.entries()).map(([id, name]) => ({ id, name }))
-        }
-    }
-}
-
+type BattleEvent = (typeof BattleEvent)[(keyof typeof BattleEvent)];
 
 export class Battle {
     name: string = "總力軸";
     private _teams: Team[] = []
-
+    mode: BattleEvent = BattleEvent.Raid;
+    static schema = z.object({
+        name: z.string().nullish(),
+        mode: z.nativeEnum(BattleEvent).nullish(),
+        teams: z.unknown().array().nullish()
+    })
     get teams(): Readonly<Team[]> {
         return this._teams;
     }
 
-    constructor(data?: any) {
-        if (data) {
-            if ("name" in data) this.name = data.name as string;
-            if ("teams" in data) this._teams = (data.teams as Team[]).map(team => new Team(team))
-        }
+    constructor() { }
+
+    static fromJson(json: JsonObject) {
+        const parseResult = this.schema.safeParse(json)
+        const battle = new Battle();
+        if (!parseResult.success) return battle;
+        const { mode, name, teams } = parseResult.data;
+        if (name) battle.name = name;
+        if (mode) battle.mode = mode;
+        const struture = battle.teamStruture;
+        if (teams) battle._teams = teams.map(team => Team.fromJson(struture, team));
+
+        return battle;
+    }
+
+    private get teamStruture() {
+        return this.mode === BattleEvent.Unrestrict ? "unrestrict" : "normal"
     }
 
     addTeam() {
-        this._teams.push(new Team())
+        this._teams.push(new Team(this.teamStruture))
     }
 
     deleteTeam(index: number) {
@@ -165,6 +87,7 @@ export class Battle {
         return {
             name: this.name,
             teams: this.teams.map(it => it.toObject()),
+            mode: this.mode
         }
     }
 }

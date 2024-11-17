@@ -22,7 +22,7 @@ onChange(async (filelist) => {
   if (!file) return;
   try {
     const json = JSON.parse(await file.text());
-    battle.value = new Battle(json);
+    battle.value = Battle.fromJson(json);
   } catch (e) {
     console.error(e);
   } finally {
@@ -41,12 +41,15 @@ function onStepChange(value: "1" | "2" | "3") {
 }
 
 function onExportClick() {
-  download(JSON.stringify(battle.value.toObject(), null, 2), `${battle.value.name}.json`);
+  download(
+    JSON.stringify(battle.value.toObject(), null, 2),
+    `${battle.value.name}.json`
+  );
 }
 
 async function onLoadSampleClick() {
   const data = await import("../assets/sample.json");
-  battle.value = new Battle(data.default);
+  battle.value = Battle.fromJson(data.default);
 }
 </script>
 
@@ -55,6 +58,7 @@ async function onLoadSampleClick() {
     <Toolbar>
       <template #start>
         <InputText v-model="battle.name" />
+        <BattleEventDropdown v-model="battle.mode" class="ml-2" />
       </template>
       <template #center>
         <Stepper :value="step" class="w-[400px]" @update:value="onStepChange">

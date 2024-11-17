@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     Badge: typeof import('primevue/badge')['default']
+    BattleEventDropdown: typeof import('./../src/components/BattleEventDropdown.vue')['default']
     BlockUI: typeof import('primevue/blockui')['default']
     Breadcrumb: typeof import('primevue/breadcrumb')['default']
     Button: typeof import('primevue/button')['default']
@@ -17,6 +18,7 @@ declare module 'vue' {
     DataTable: typeof import('primevue/datatable')['default']
     DeferredContent: typeof import('primevue/deferredcontent')['default']
     Divider: typeof import('primevue/divider')['default']
+    Dropdown: typeof import('primevue/dropdown')['default']
     InputText: typeof import('primevue/inputtext')['default']
     Level: typeof import('./../src/components/Level.vue')['default']
     LevelColumn: typeof import('./../src/components/LevelColumn.vue')['default']
@@ -26,6 +28,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ScrollPanel: typeof import('primevue/scrollpanel')['default']
+    Select: typeof import('primevue/select')['default']
     Skill: typeof import('./../src/components/Skill.vue')['default']
     SkillColumn: typeof import('./../src/components/SkillColumn.vue')['default']
     Splitter: typeof import('primevue/splitter')['default']

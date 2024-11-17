@@ -11,7 +11,7 @@ defineProps<{ barYMirror?: boolean }>();
       <slot name="header" />
     </div>
     <ScrollPanel
-      class="overflow-y-auto flex-1 min-h-0"
+      class="overflow-y-auto flex-1 min-h-0 mb-2"
       :pt="{ barY: { class: [barYMirror ? 'left-0' : 'right-0'] } }"
     >
       <div class="flex flex-col gap-2 mx-1" :class="barYMirror ? 'ml-3' : 'mr-3'">

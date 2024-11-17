@@ -21,7 +21,8 @@ export default defineConfig({
         AutoImport({
             dts: "dts/auto-imports.d.ts",
             imports: ["vue", "@vueuse/core", "pinia", VueRouterAutoImports],
-            dirs: ["src/api", "src/libs"]
+            dirs: ["src/api", "src/libs"],
+            vueTemplate: true,
         }),
         Components({
             dts: "dts/components.d.ts",

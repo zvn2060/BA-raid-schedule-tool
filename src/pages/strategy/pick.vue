@@ -3,9 +3,18 @@ import { groupBy, mapValues } from "lodash-es";
 import { MenuItem } from "primevue/menuitem";
 import uniqolor from "uniqolor";
 
-const nameFilter = ref("");
-const debouncedNameFilter = useDebounce(nameFilter, 500);
-const { students } = useStudents(debouncedNameFilter);
+const filter = ref({ name: "" });
+
+const nameInput = ref("");
+
+watchDebounced(
+  nameInput,
+  (value) => {
+    filter.value.name = value;
+  },
+  { debounce: 600 }
+);
+const { students } = useStudents(filter);
 const battleStore = useBattleStore();
 const { battle } = storeToRefs(battleStore);
 const studentsBySchool = computed(() =>
@@ -31,7 +40,6 @@ const homeItem: MenuItem = {
     currentTeamIndex.value = -1;
   },
 };
-
 </script>
 
 <template>
@@ -64,10 +72,10 @@ const homeItem: MenuItem = {
         </template>
       </DataList>
     </SplitterPanel>
-    <SplitterPanel>
+    <SplitterPanel :minSize="15">
       <DataList class="h-full">
         <template #header>
-          <InputText v-model="nameFilter" size="small" class="ml-auto"/>
+          <InputText v-model="nameInput" size="small" class="ml-auto" />
         </template>
         <template #content>
           <BlockUI :blocked="!currentTeam">

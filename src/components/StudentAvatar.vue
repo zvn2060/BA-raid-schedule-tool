@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Student } from "../libs/Battle";
 
 defineProps<{ student: Student | undefined }>();
 </script>

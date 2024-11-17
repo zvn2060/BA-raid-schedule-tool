@@ -1,112 +1,301 @@
 {
-    "name": "總力軸",
-    "text": "●一階： 憂EX(3費, 給甜點貓) → 露營玉EX(6費) → 甜點貓EX(2費) → 亞子EX+憂EX(9.9費，給露營玉) → 露營玉EX+甜點貓EX → 水憂EX(技一後) ●二階： 憂EX+露營玉EX(給甜點貓) → 甜點貓EX+輪椅EX+亞子EX(8費) → 憂EX(不要放甜點貓，送人可跳過) → 甜點貓EX(2費)",
-    "stages": [
-        [
-            {
-                "ids": [
-                    10035
-                ],
-                "comment": "3費, 給甜點貓"
-            }
-        ],
-        [
-            {
-                "ids": [
-                    10084
-                ],
-                "comment": "6費"
-            },
-            {
-                "ids": [
-                    10049
-                ],
-                "comment": "2費"
-            }
-        ],
-        [
-            {
-                "ids": [
-                    20008,
-                    10035
-                ],
-                "comment": "9.9費，給露營玉"
-            },
-            {
-                "ids": [
-                    10084,
-                    10049
-                ]
-            }
-        ],
-        [
-            {
-                "ids": [
-                    10073
-                ],
-                "comment": "技一後"
-            }
-        ],
-        [
-            {
-                "ids": [
-                    10035,
-                    10084
-                ],
-                "comment": "給甜點貓"
-            }
-        ],
-        [
-            {
-                "ids": [
-                    10049,
-                    20020,
-                    20008
-                ],
-                "comment": "8費"
-            }
-        ],
-        [
-            {
-                "ids": [
-                    10035
-                ],
-                "comment": "不要放甜點貓，送人可跳過"
-            }
-        ],
-        [
-            {
-                "ids": [
-                    10049
-                ],
-                "comment": "2費"
-            }
+    "name": "雙若藻小春刀",
+    "teams": [
+      {
+        "text": "",
+        "stages": [],
+        "members": [
+          {
+            "id": 10064,
+            "name": "佳世子(正月)",
+            "squad": "striker",
+            "school": "格黑娜",
+            "aliases": [
+              "春佳"
+            ],
+            "star": 7,
+            "kizuna": 1,
+            "level": 90,
+            "weapon_level": 40,
+            "gear_1": 9,
+            "gear_2": 9,
+            "gear_3": 8,
+            "gear_unique": null,
+            "skill_ex": 5,
+            "skill_n": 10,
+            "skill_p": 10,
+            "skill_sub": 10,
+            "release_atk": null,
+            "release_heal": null,
+            "release_hp": null
+          },
+          {
+            "id": 10045,
+            "name": "星野(泳裝)",
+            "squad": "striker",
+            "school": "阿拜多斯",
+            "aliases": [
+              "水大叔"
+            ],
+            "star": 7,
+            "kizuna": 1,
+            "level": 90,
+            "weapon_level": 40,
+            "gear_1": 9,
+            "gear_2": 9,
+            "gear_3": 8,
+            "gear_unique": null,
+            "skill_ex": 5,
+            "skill_n": 10,
+            "skill_p": 10,
+            "skill_sub": 10,
+            "release_atk": 0,
+            "release_heal": 0,
+            "release_hp": 25
+          },
+          {
+            "id": 10033,
+            "name": "若藻",
+            "squad": "striker",
+            "school": "百鬼夜行",
+            "aliases": [],
+            "star": 8,
+            "kizuna": 1,
+            "level": 90,
+            "weapon_level": 50,
+            "gear_1": 9,
+            "gear_2": 9,
+            "gear_3": 8,
+            "gear_unique": 2,
+            "skill_ex": 5,
+            "skill_n": 10,
+            "skill_p": 10,
+            "skill_sub": 10,
+            "release_atk": 4,
+            "release_heal": 0,
+            "release_hp": 25
+          },
+          {
+            "id": 10050,
+            "name": "心菜",
+            "squad": "striker",
+            "school": "山海經",
+            "aliases": [
+              "11歲"
+            ],
+            "star": 6,
+            "kizuna": 1,
+            "level": 90,
+            "weapon_level": 30,
+            "gear_1": 9,
+            "gear_2": 9,
+            "gear_3": 8,
+            "gear_unique": null,
+            "skill_ex": 5,
+            "skill_n": 10,
+            "skill_p": 10,
+            "skill_sub": 10,
+            "release_atk": 0,
+            "release_heal": 25,
+            "release_hp": 0
+          },
+          {
+            "id": 20020,
+            "name": "陽葵",
+            "squad": "special",
+            "school": "千年",
+            "aliases": [
+              "輪椅"
+            ],
+            "star": 7,
+            "kizuna": 1,
+            "level": 90,
+            "weapon_level": 40,
+            "gear_1": 9,
+            "gear_2": 9,
+            "gear_3": 8,
+            "gear_unique": null,
+            "skill_ex": 5,
+            "skill_n": 10,
+            "skill_p": 10,
+            "skill_sub": 10,
+            "release_atk": null,
+            "release_heal": null,
+            "release_hp": null
+          },
+          {
+            "id": 26008,
+            "name": "靜子(泳裝)",
+            "squad": "special",
+            "school": "百鬼夜行",
+            "aliases": [
+              "水靜",
+              "水靜子"
+            ],
+            "star": 6,
+            "kizuna": 1,
+            "level": 90,
+            "weapon_level": 30,
+            "gear_1": 9,
+            "gear_2": 8,
+            "gear_3": 8,
+            "gear_unique": null,
+            "skill_ex": 5,
+            "skill_n": 10,
+            "skill_p": 7,
+            "skill_sub": 10,
+            "release_atk": null,
+            "release_heal": null,
+            "release_hp": null
+          }
         ]
+      },
+      {
+        "text": "",
+        "stages": [],
+        "members": [
+          {
+            "id": 10053,
+            "name": "優香(體育服)",
+            "squad": "striker",
+            "school": "千年",
+            "aliases": [
+              "體香"
+            ],
+            "star": 6,
+            "kizuna": 1,
+            "level": 90,
+            "weapon_level": 30,
+            "gear_1": 9,
+            "gear_2": 9,
+            "gear_3": 8,
+            "gear_unique": null,
+            "skill_ex": 5,
+            "skill_n": 7,
+            "skill_p": 7,
+            "skill_sub": 7,
+            "release_atk": null,
+            "release_heal": null,
+            "release_hp": null
+          },
+          {
+            "id": 10046,
+            "name": "伊樹菜(泳裝)",
+            "squad": "striker",
+            "school": "百鬼夜行",
+            "aliases": [
+              "水忍",
+              "水忍忍"
+            ],
+            "star": 7,
+            "kizuna": 1,
+            "level": 90,
+            "weapon_level": 40,
+            "gear_1": 9,
+            "gear_2": 9,
+            "gear_3": 8,
+            "gear_unique": null,
+            "skill_ex": 5,
+            "skill_n": 10,
+            "skill_p": 10,
+            "skill_sub": 10,
+            "release_atk": null,
+            "release_heal": null,
+            "release_hp": null
+          },
+          {
+            "id": 10033,
+            "name": "若藻",
+            "squad": "striker",
+            "school": "百鬼夜行",
+            "aliases": [],
+            "star": 8,
+            "kizuna": 1,
+            "level": 90,
+            "weapon_level": 50,
+            "gear_1": 9,
+            "gear_2": 9,
+            "gear_3": 8,
+            "gear_unique": 2,
+            "skill_ex": 5,
+            "skill_n": 10,
+            "skill_p": 10,
+            "skill_sub": 10,
+            "release_atk": 4,
+            "release_heal": 0,
+            "release_hp": 25
+          },
+          {
+            "id": 10020,
+            "name": "小春",
+            "squad": "striker",
+            "school": "三一",
+            "aliases": [],
+            "star": 8,
+            "kizuna": 1,
+            "level": 90,
+            "weapon_level": 50,
+            "gear_1": 9,
+            "gear_2": 9,
+            "gear_3": 8,
+            "gear_unique": null,
+            "skill_ex": 5,
+            "skill_n": 10,
+            "skill_p": 10,
+            "skill_sub": 10,
+            "release_atk": null,
+            "release_heal": null,
+            "release_hp": null
+          },
+          {
+            "id": 23001,
+            "name": "風華",
+            "squad": "special",
+            "school": "格黑娜",
+            "aliases": [],
+            "star": 2,
+            "kizuna": 1,
+            "level": 1,
+            "weapon_level": null,
+            "gear_1": 0,
+            "gear_2": 0,
+            "gear_3": 0,
+            "gear_unique": null,
+            "skill_ex": 1,
+            "skill_n": 1,
+            "skill_p": 1,
+            "skill_sub": 1,
+            "release_atk": null,
+            "release_heal": null,
+            "release_hp": null
+          },
+          {
+            "id": 20027,
+            "name": "白子(泳裝)",
+            "squad": "special",
+            "school": "阿拜多斯",
+            "aliases": [
+              "水白",
+              "水白子"
+            ],
+            "star": 7,
+            "kizuna": 1,
+            "level": 90,
+            "weapon_level": 40,
+            "gear_1": 9,
+            "gear_2": 9,
+            "gear_3": 8,
+            "gear_unique": null,
+            "skill_ex": 5,
+            "skill_n": 7,
+            "skill_p": 10,
+            "skill_sub": 10,
+            "release_atk": null,
+            "release_heal": null,
+            "release_hp": null
+          }
+        ]
+      }
     ],
-    "members": [
-        {
-            "id": "10035",
-            "name": "憂"
-        },
-        {
-            "id": "10049",
-            "name": "甜點貓"
-        },
-        {
-            "id": "10073",
-            "name": "水憂"
-        },
-        {
-            "id": "10084",
-            "name": "露營玉"
-        },
-        {
-            "id": "20008",
-            "name": "亞子"
-        },
-        {
-            "id": "20020",
-            "name": "輪椅"
-        }
-    ]
-}
+    "mode": "總力戰"
+  }
