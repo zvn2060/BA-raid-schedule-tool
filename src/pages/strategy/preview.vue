@@ -1,17 +1,20 @@
 <script setup lang="ts">
 import download from "downloadjs";
 import { toPng } from "html-to-image";
+
 const { battle } = storeToRefs(useBattleStore());
+const router = useRouter();
+if (battle.value.teams.length === 0) router.replace("/strategy/pick");
 
 const page = ref(0);
 
-const showStages = computed(() =>
-  battle.value.stages.slice(page.value * 8, (page.value + 1) * 8)
+const showStages = computed(() => []
+  // battle.value.teams[0].slice(page.value * 8, (page.value + 1) * 8)
 );
 
 const { pixelRatio } = useDevicePixelRatio();
 const container = ref();
-const totalPage = computed(() => Math.ceil(battle.value.stages.length / 8));
+const totalPage = computed(() => Math.ceil(0 / 8));
 const scaleFactor = computed(() => {
   const factor = pixelRatio.value < 0.01 ? 0 : 1 / pixelRatio.value;
   return { "--tw-scale-x": factor, "--tw-scale-y": factor };

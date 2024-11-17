@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { TransitionFade } from "@morev/vue-transitions";
 import download from "downloadjs";
+import { useToast } from "primevue";
 
 const router = useRouter();
 const route = useRoute();
-
+const toast = useToast();
 const step = computed(() => {
   if (route.name === "/strategy/preview") return "3";
   else if (route.name === "/strategy/stages") return "2";
@@ -64,8 +65,8 @@ async function onLoadSampleClick() {
         <Stepper :value="step" class="w-[400px]" @update:value="onStepChange">
           <StepList>
             <Step value="1">編隊</Step>
-            <Step value="2">寫軸</Step>
-            <Step value="3">輸出</Step>
+            <Step value="2" :disabled="battle.teams.length === 0">寫軸</Step>
+            <Step value="3" :disabled="battle.teams.length === 0">輸出</Step>
           </StepList>
         </Stepper>
       </template>

@@ -3,6 +3,13 @@ import { debounceFilter, pausableFilter } from "@vueuse/core";
 
 const battleStore = useBattleStore();
 const { battle } = storeToRefs(battleStore);
+const router = useRouter();
+const currentTeamIndex = ref(0);
+const currentTeam = computed(() =>
+  battle.value.teams.at(currentTeamIndex.value)
+);
+if (!currentTeam.value) router.replace("/strategy/pick");
+
 const auto = ref(false);
 
 const pausableDebounceFilter = pausableFilter(debounceFilter(1000));
@@ -17,7 +24,7 @@ watch(
 );
 
 watchWithFilter(
-  () => battle.value.text,
+  () => currentTeam.value?.text,
   () => {
     triggerParse();
   },
@@ -25,21 +32,29 @@ watchWithFilter(
 );
 
 function triggerParse() {
-  battle.value.parse();
+  currentTeam.value?.parse();
 }
 </script>
 
 <template>
-  <Splitter>
+  <Splitter v-if="currentTeam">
     <SplitterPanel class="relative">
       <Textarea
-        v-model="battle.text"
+        v-model="currentTeam.text"
         class="min-h-full !rounded-none w-full !bg-slate-900 !text-white !pt-24"
         auto-resize
       />
       <div
-        class="absolute top-3 h-16 right-3 flex items-center gap-2 bg-[#FFFFFF60] p-2 rounded-lg"
+        class="absolute top-3 left-3 right-3 flex items-center gap-2 bg-[#FFFFFF60] p-2 rounded-lg"
       >
+        <Button
+          v-for="(_, index) in battle.teams"
+          @click="currentTeamIndex = index"
+          :label="`${index + 1}`"
+          class="w-10"
+          :severity="currentTeamIndex === index ? undefined : 'secondary'"
+        />
+        <div class="flex-1" />
         <Button
           v-if="!auto"
           label="產生"
@@ -55,7 +70,7 @@ function triggerParse() {
       <div class="overflow-y-auto p-2 h-full">
         <div class="flex flex-col gap-2">
           <Stage
-            v-for="(stage, index) in battle.stages"
+            v-for="(stage, index) in currentTeam.stages"
             :stage="stage"
             :stage-id="index"
           />
