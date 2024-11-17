@@ -1,3 +1,4 @@
+import { definePreset } from '@primevue/themes';
 import Aura from '@primevue/themes/aura';
 import { VueQueryPlugin } from '@tanstack/vue-query';
 import "primeicons/primeicons.css";
@@ -15,6 +16,14 @@ const router = createRouter({
     routes: setupLayouts(routes),
 });
 
+const MyPreset = definePreset(Aura, {
+    components: {
+        blockui: {
+            border: { radius: "0" }
+        }
+    }
+})
+
 const pinia = createPinia();
 
 createApp(App)
@@ -22,5 +31,7 @@ createApp(App)
     .use(router)
     .use(pinia)
     .use(ToastService)
-    .use(PrimeVue, { theme: { preset: Aura, options: { darkModeSelector: '' } } })
+    .use(PrimeVue, { theme: { preset: MyPreset, options: { darkModeSelector: '' } } })
     .mount('#app');
+
+

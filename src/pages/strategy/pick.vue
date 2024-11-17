@@ -1,70 +1,97 @@
 <script setup lang="ts">
 import { groupBy, mapValues } from "lodash-es";
+import { MenuItem } from "primevue/menuitem";
 import uniqolor from "uniqolor";
 
-const { students } = useStudents();
+const nameFilter = ref("");
+const debouncedNameFilter = useDebounce(nameFilter, 500);
+const { students } = useStudents(debouncedNameFilter);
 const battleStore = useBattleStore();
 const { battle } = storeToRefs(battleStore);
-const items = computed(() => groupBy(students.value, (it) => it.School));
+const studentsBySchool = computed(() =>
+  groupBy(students.value, (it) => it.school)
+);
 const schoolStyles = computed(() => {
-  return mapValues(items.value, (_, school) => {
+  return mapValues(studentsBySchool.value, (_, school) => {
     const { color, isLight } = uniqolor(school, { lightness: [90] });
     return { backgroundColor: color, color: isLight ? "black" : "white" };
   });
 });
+const currentTeamIndex = ref(-1);
+const currentTeam = computed(() => battle.value.teams[currentTeamIndex.value]);
+const breakcrumbItems = computed(() =>
+  currentTeamIndex.value === -1
+    ? []
+    : [{ label: `第 ${currentTeamIndex.value + 1} 隊`, class: ["text-sm"] }]
+);
+
+const homeItem: MenuItem = {
+  icon: "pi pi-users",
+  command: () => {
+    currentTeamIndex.value = -1;
+  },
+};
+
 </script>
 
 <template>
   <Splitter>
-    <SplitterPanel class="flex flex-col">
-      <div class="text-2xl font-bold p-2 text-end">
-        {{ battle.members.size }} 人
-      </div>
-      <div
-        class="overflow-y-auto flex-1 min-h-0 pb-2 px-2"
-        style="direction: rtl"
-      >
-        <div class="flex flex-col gap-2" style="direction: ltr">
-          <div
-            v-for="[studentId, name] in battle.members.entries()"
-            class="bg-surface-100 flex items-center gap-3 rounded pr-2 overflow-hidden h-fit"
-          >
-            <StudentAvatar
-              :student="{ id: studentId, name }"
-              class="w-24 bg-surface-300"
+    <SplitterPanel>
+      <DataList class="h-full" bar-y-mirror>
+        <template #header>
+          <Breadcrumb :home="homeItem" :model="breakcrumbItems" />
+          <Button
+            v-if="!currentTeam"
+            icon="pi pi-plus"
+            class="ml-auto"
+            text
+            rounded
+            @click="battle.addTeam()"
+          />
+        </template>
+        <template #content>
+          <template v-if="currentTeam">
+            <MemberList :team="currentTeam" />
+          </template>
+          <template v-else>
+            <TeamListItem
+              v-for="(team, index) in battle.teams"
+              :team="team"
+              @delete="battle.deleteTeam(index)"
+              @edit="currentTeamIndex = index"
             />
-            <InputText
-              class="flex-1"
-              :model-value="name"
-              @update:model-value="battle.renameMember(studentId, $event)"
-            />
-            <Button
-              icon="pi pi-trash"
-              text
-              severity="danger"
-              @click="battle.removeMember(studentId)"
-            />
-          </div>
-        </div>
-      </div>
+          </template>
+        </template>
+      </DataList>
     </SplitterPanel>
-    <SplitterPanel class="!overflow-y-auto">
-      <div v-for="(students, school) in items">
-        <div :style="schoolStyles[school]" class="school-container">
-          <div class="col-span-full font-bold text-2xl">
-            {{ school }}
-          </div>
-          <div
-            v-for="student in students"
-            @click="battle.toogleMember(student)"
-            class="student-container"
-            :class="{ selected: battle.members.has(student.id) }"
-          >
-            <StudentAvatar :student="student" class="icon" />
-            <span class="text-center font-bold py-1">{{ student.name }}</span>
-          </div>
-        </div>
-      </div>
+    <SplitterPanel>
+      <DataList class="h-full">
+        <template #header>
+          <InputText v-model="nameFilter" size="small" class="ml-auto"/>
+        </template>
+        <template #content>
+          <BlockUI :blocked="!currentTeam">
+            <div v-for="(students, school) in studentsBySchool">
+              <div :style="schoolStyles[school]" class="school-container">
+                <div class="col-span-full font-bold text-2xl">
+                  {{ school }}
+                </div>
+                <div
+                  v-for="student in students"
+                  @click="currentTeam?.toogleMember(student)"
+                  class="student-container"
+                  :class="{ selected: currentTeam?.hasMember(student.id) }"
+                >
+                  <StudentAvatar :student="student" class="icon" />
+                  <span class="text-center font-bold py-1 select-none">{{
+                    student.name
+                  }}</span>
+                </div>
+              </div>
+            </div>
+          </BlockUI>
+        </template>
+      </DataList>
     </SplitterPanel>
   </Splitter>
 </template>

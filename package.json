@@ -15,6 +15,7 @@
     "@tanstack/vue-query": "^5.60.5",
     "@vueuse/core": "^11.2.0",
     "axios": "^1.7.7",
+    "dexie": "^4.0.10",
     "downloadjs": "^1.4.7",
     "html-to-image": "^1.11.11",
     "lodash-es": "^4.17.21",

@@ -6,3 +6,7 @@
 .text-stroke {
     -webkit-text-stroke: 1px #000000CC;
 }
+
+.rounded-list-item {
+    @apply bg-gray-100 rounded overflow-hidden;
+}

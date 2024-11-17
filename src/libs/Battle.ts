@@ -1,10 +1,32 @@
-import { isUndefined } from "lodash-es";
+import { isNil, isUndefined, keyBy } from "lodash-es";
 
 declare global {
     export type Action = { students: Student[], comment: string }
     export type Stage = Action[]
     export type StudentId = number;
-    export type Student = { id: StudentId, name: string };
+    export type Student = {
+        readonly id: StudentId;
+        readonly name: string;
+        alias: string;
+        squad: "striker" | "special";
+        school: string,
+        "star": number,
+        "level": number,
+        "weapon_level": number | null,
+        "gear_1": number,
+        "gear_2": number,
+        "gear_3": number,
+        "gear_unique": number | null,
+        "skill_ex": number,
+        "skill_n": number,
+        "skill_p": number,
+        "skill_sub": number,
+        "release_hp": number | null,
+        "release_atk": number | null,
+        "release_heal": number | null
+    }
+
+    export type Member = Student | undefined;
 }
 
 
@@ -14,44 +36,50 @@ const Pattern = {
 }
 
 
-export class Battle {
+export class Team {
     private _stages: Stage[] = []
-    private _members: Map<StudentId, string> = new Map()
-    name: string = "總力軸";
+    private _members: Member[] = new Array(6)
+    private membersMap: Map<StudentId, number> = new Map()
     text: string = ""
-
-    get stages(): Readonly<Stage[]> {
-        return this._stages;
-    }
-
-    get members(): Readonly<Map<StudentId, string>> {
-        return this._members;
-    }
 
     constructor(data?: object) {
         if (data) {
-            if ("name" in data) this.name = data.name as string;
-            if ("members" in data) this._members = new Map((data.members as Array<{ id: number, name: string }>).map(({ id, name }) => [id, name]));
+            // if ("members" in data) this.membersMap = new Map((data.members as Array<{ id: number, name: string }>).map(({ id, name }) => [id, name]));
             if ("stages" in data) this._stages = data.stages as Stage[];
             if ("text" in data) this.text = data.text as string;
         }
     }
 
+    get stages(): Readonly<Stage[]> {
+        return this._stages;
+    }
+
+    get members(): Readonly<Member[]> {
+        return this._members;
+    }
+
+
     addMember(student: Student) {
-        this._members.set(student.id, student.name);
+        const nextIndex = this._members.findIndex(it => it === undefined)
+        if (nextIndex === -1) return;
+        this.membersMap.set(student.id, nextIndex);
+        this._members[nextIndex] = student;
     }
 
     toogleMember(student: Student) {
-        if (this._members.has(student.id)) this.removeMember(student.id)
+        if (this.hasMember(student.id)) this.removeMember(student.id)
         else this.addMember(student);
     }
 
     removeMember(studentId: StudentId) {
-        this._members.delete(studentId);
+        const index = this.membersMap.get(studentId)
+        if (index === undefined) return;
+        delete this._members[index];
+        this.membersMap.delete(studentId)
     }
 
-    renameMember(studentId: StudentId, newName: string | undefined) {
-        if (newName?.trim()) this._members.set(studentId, newName);
+    hasMember(studentId: StudentId) {
+        return this.membersMap.has(studentId)
     }
 
 
@@ -59,13 +87,7 @@ export class Battle {
         const matches = this.text.matchAll(Pattern.Flow)
         if (!matches) throw Error("no flow detect");
         const stages = Array.from(matches).flatMap(flow => flow.groups?.["flow"].trim().replaceAll(/\n+/g, " → ").split(" → ")).filter(it => !isUndefined(it))
-        console.log(stages)
-        const memberInverseMap = new Map(
-            Array
-                .from(this._members.entries())
-                .map(([key, value]) => [value, parseInt(`${key}`)])
-        )
-
+        const memberInverseMap = keyBy(this._members.filter(member => !isNil(member)), it => it.name)
         this._stages = stages.map(stage => {
             const stageMatches = stage.match(Pattern.Stage)
             if (!stageMatches) throw Error(`Cannot parse stage: ${stage}`)
@@ -76,8 +98,8 @@ export class Battle {
                 return [{
                     students: actions.split("+").map(it => {
                         const name = it.replace("EX", "");
-                        const id = memberInverseMap.get(name) ?? -1
-                        return { id, name }
+                        const student = memberInverseMap[name] ?? null
+                        return student
                     }), comment
                 }]
             else
@@ -105,13 +127,43 @@ export class Battle {
         if (empted) this._stages.splice(index.stage, 1)
     }
 
-    serialize() {
-        const data = {
-            name: this.name,
+    toObject() {
+        return {
             text: this.text,
             stages: this.stages,
             members: Array.from(this.members.entries()).map(([id, name]) => ({ id, name }))
         }
-        return JSON.stringify(data, null, 4); // spacing level = 2
+    }
+}
+
+
+export class Battle {
+    name: string = "總力軸";
+    private _teams: Team[] = []
+
+    get teams(): Readonly<Team[]> {
+        return this._teams;
+    }
+
+    constructor(data?: any) {
+        if (data) {
+            if ("name" in data) this.name = data.name as string;
+            if ("teams" in data) this._teams = (data.teams as Team[]).map(team => new Team(team))
+        }
+    }
+
+    addTeam() {
+        this._teams.push(new Team())
+    }
+
+    deleteTeam(index: number) {
+        this._teams.splice(index, 1)
+    }
+
+    toObject() {
+        return {
+            name: this.name,
+            teams: this.teams.map(it => it.toObject()),
+        }
     }
 }

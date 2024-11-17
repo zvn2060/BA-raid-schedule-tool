@@ -12,6 +12,10 @@ onErrorCaptured((error) => {
     life: 5000,
   });
 });
+
+onMounted(() => {
+  fetchStudents();
+});
 </script>
 
 <template>

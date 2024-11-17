@@ -41,7 +41,7 @@ function onStepChange(value: "1" | "2" | "3") {
 }
 
 function onExportClick() {
-  download(battle.value.serialize(), `${battle.value.name}.json`);
+  download(JSON.stringify(battle.value.toObject(), null, 2), `${battle.value.name}.json`);
 }
 
 async function onLoadSampleClick() {
@@ -59,7 +59,7 @@ async function onLoadSampleClick() {
       <template #center>
         <Stepper :value="step" class="w-[400px]" @update:value="onStepChange">
           <StepList>
-            <Step value="1">選人</Step>
+            <Step value="1">編隊</Step>
             <Step value="2">寫軸</Step>
             <Step value="3">輸出</Step>
           </StepList>

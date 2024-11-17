@@ -7,11 +7,18 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    BlockUI: typeof import('primevue/blockui')['default']
+    Breadcrumb: typeof import('primevue/breadcrumb')['default']
     Button: typeof import('primevue/button')['default']
+    DataList: typeof import('./../src/components/DataList.vue')['default']
     DeferredContent: typeof import('primevue/deferredcontent')['default']
+    Divider: typeof import('primevue/divider')['default']
     InputText: typeof import('primevue/inputtext')['default']
+    MemberItem: typeof import('./../src/components/team/MemberItem.vue')['default']
+    MemberList: typeof import('./../src/components/team/MemberList.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ScrollPanel: typeof import('primevue/scrollpanel')['default']
     Splitter: typeof import('primevue/splitter')['default']
     SplitterPanel: typeof import('primevue/splitterpanel')['default']
     Stage: typeof import('./../src/components/Stage.vue')['default']
@@ -19,6 +26,8 @@ declare module 'vue' {
     StepList: typeof import('primevue/steplist')['default']
     Stepper: typeof import('primevue/stepper')['default']
     StudentAvatar: typeof import('./../src/components/StudentAvatar.vue')['default']
+    TeamList: typeof import('../src/components/team/TeamListItem.vue')['default']
+    TeamListItem: typeof import('./../src/components/team/TeamListItem.vue')['default']
     Textarea: typeof import('primevue/textarea')['default']
     ToggleSwitch: typeof import('primevue/toggleswitch')['default']
     Toolbar: typeof import('primevue/toolbar')['default']

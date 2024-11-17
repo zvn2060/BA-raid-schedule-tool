@@ -1,8 +1,9 @@
-declare global   {
+declare global {
     type StudentDTO = {
-        "Id": number
-        "School": string
-        "PathName": string,
-        "Name": string,
+        Id: number
+        School: string,
+        StarGrade: number,
+        Name: string,
+        SquadType: "Main" | "Support"
     }
 }
