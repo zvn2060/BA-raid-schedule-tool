@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { TransitionFade } from "@morev/vue-transitions";
 import download from "downloadjs";
-import { useToast } from "primevue";
 
 const router = useRouter();
 const route = useRoute();
-const toast = useToast();
 const step = computed(() => {
   if (route.name === "/strategy/preview") return "3";
   else if (route.name === "/strategy/stages") return "2";

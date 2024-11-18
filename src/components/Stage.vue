@@ -1,19 +1,20 @@
 <script setup lang="ts">
-const props = defineProps<{ stage: Stage; stageId: number }>();
-const battleStore = useBattleStore();
-const { battle } = storeToRefs(battleStore);
+import type {Team} from "../libs";
+
+const props = defineProps<{ team: Omit<Team, "">, stageId: number }>();
+const stage = computed(() => props.team.stages[props.stageId]);
 const isHoldAlt = useKeyModifier("Alt");
 const description = computed(() =>
-  props.stage
-    .map((it) => it.comment)
-    .filter((it) => Boolean(it))
-    .join(", ")
+    stage.value
+        .map((it) => it.comment)
+        .filter((it) => Boolean(it))
+        .join(", ")
 );
 
 function onClick(actionId: number) {
-  battle.value.move(
-    { stage: props.stageId, action: actionId },
-    isHoldAlt.value ? "next" : "previous"
+  props.team.move(
+      { stage: props.stageId, action: actionId },
+      isHoldAlt.value ? "next" : "previous"
   );
 }
 
@@ -28,12 +29,12 @@ const hoverActionId = ref<number>();
     <template v-for="(action, index) in stage">
       <template v-for="student in action.students">
         <StudentAvatar
-          @mouseenter="hoverActionId = index"
-          @mouseleave="hoverActionId = undefined"
-          :student="student"
-          @click="onClick(index)"
-          class="border border-black cursor-pointer"
-          :class="{ 'bg-yellow-200': hoverActionId === index }"
+            @mouseenter="hoverActionId = index"
+            @mouseleave="hoverActionId = undefined"
+            :student="student"
+            @click="onClick(index)"
+            class="border border-black cursor-pointer"
+            :class="{ 'bg-yellow-200': hoverActionId === index }"
         />
       </template>
     </template>

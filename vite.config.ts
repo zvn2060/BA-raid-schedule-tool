@@ -1,10 +1,10 @@
-import { PrimeVueResolver } from '@primevue/auto-import-resolver';
+import {PrimeVueResolver} from '@primevue/auto-import-resolver';
 import Vue from '@vitejs/plugin-vue';
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
-import { VueRouterAutoImports } from 'unplugin-vue-router';
+import {VueRouterAutoImports} from 'unplugin-vue-router';
 import VueRouter from 'unplugin-vue-router/vite';
-import { defineConfig } from 'vite';
+import {defineConfig} from 'vite';
 import RemoveConsole from "vite-plugin-remove-console";
 import VueDevTools from 'vite-plugin-vue-devtools';
 import Layouts from 'vite-plugin-vue-layouts';
@@ -29,4 +29,11 @@ export default defineConfig({
             resolvers: [PrimeVueResolver()],
         })
     ],
+    css: {
+        preprocessorOptions: {
+            scss: {
+                api: 'modern'
+            },
+        }
+    }
 })

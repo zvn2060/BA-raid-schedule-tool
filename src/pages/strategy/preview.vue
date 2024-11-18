@@ -1,15 +1,19 @@
 <script setup lang="ts">
 import download from "downloadjs";
-import { toPng } from "html-to-image";
+import {toPng} from "html-to-image";
 
 const { battle } = storeToRefs(useBattleStore());
 const router = useRouter();
-if (battle.value.teams.length === 0) router.replace("/strategy/pick");
+const currentTeamIndex = ref(0);
+const currentTeam = computed(() =>
+    battle.value.teams.at(currentTeamIndex.value)
+);
+if (!currentTeam.value) router.replace("/strategy/pick");
 
 const page = ref(0);
 
 const showStages = computed(() => []
-  // battle.value.teams[0].slice(page.value * 8, (page.value + 1) * 8)
+    // battle.value.teams[0].slice(page.value * 8, (page.value + 1) * 8)
 );
 
 const { pixelRatio } = useDevicePixelRatio();
@@ -33,18 +37,18 @@ function onDownloadClick() {
     <div class="absolute top-4 right-4 flex items-center gap-2">
       <Button icon="pi pi-arrow-left" rounded :disabled="page === 0" @click="page--"/>
       <Button icon="pi pi-arrow-right" rounded :disabled="page === totalPage - 1" @click="page++"/>
-      <Button @click="onDownloadClick" rounded icon="pi pi-save" />
+      <Button @click="onDownloadClick" rounded icon="pi pi-save"/>
     </div>
-    <div
-      ref="container"
-      class="preview-container transform"
-      :style="scaleFactor"
+    <div v-if="currentTeam"
+         ref="container"
+         class="preview-container transform"
+         :style="scaleFactor"
     >
       <Stage
-        v-for="(stage, index) in showStages"
-        :stage="stage"
-        :stage-id="index"
-        :class="{ 'ml-auto': index < 4 }"
+          v-for="(index) in showStages"
+          :team="currentTeam"
+          :stage-id="index"
+          :class="{ 'ml-auto': index < 4 }"
       />
     </div>
   </div>

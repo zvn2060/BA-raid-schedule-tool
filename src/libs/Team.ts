@@ -1,10 +1,10 @@
-import { isNil, isUndefined, keyBy } from "lodash-es"
-import { z } from "zod"
+import {isNil, isUndefined, keyBy} from "lodash-es"
+import {z} from "zod"
 
 const Pattern = {
     Flow: /●[^●：]*：(?<flow>[^●]*)/gm,
     Stage: /(?<actions>.*?)(\((?<comment>.*?)\))?$/
-}
+};
 
 const studentSchema = z.object({
     id: z.number(),
@@ -27,15 +27,15 @@ const studentSchema = z.object({
     release_hp: z.number().nullable(),
     release_atk: z.number().nullable(),
     release_heal: z.number().nullable()
-})
+});
 
 const actionSchema = z.object({
     students: z.array(studentSchema),
     comment: z.string().optional()
-})
+});
 
-const stageSchema = z.array(actionSchema)
-const memberSchema = studentSchema.nullable()
+const stageSchema = z.array(actionSchema);
+const memberSchema = studentSchema.nullable();
 
 /*
      normal       : 一般
@@ -44,17 +44,17 @@ const memberSchema = studentSchema.nullable()
 type TeamStructure = "normal" | "unrestrict"
 
 export class Team {
-    private _stages: Stage[] = []
-    private _members: Member[]
-    private membersMap: Map<StudentId, number> = new Map()
-    private _structure: TeamStructure
+    private _stages: Stage[] = [];
+    private _members: Member[];
+    private membersMap: Map<StudentId, number> = new Map();
+    private _structure: TeamStructure;
 
     static schema = z.object({
         text: z.string().nullish(),
         stages: z.array(stageSchema).nullish(),
         members: z.array(memberSchema).nullish()
-    })
-    text: string = ""
+    });
+    text: string = "";
 
     constructor(structure: TeamStructure) {
         this._structure = structure;
@@ -62,13 +62,13 @@ export class Team {
     }
 
     static fromJson(structure: TeamStructure, json: unknown) {
-        const parseResult = this.schema.safeParse(json)
+        const parseResult = this.schema.safeParse(json);
         const team = new Team(structure);
         if (!parseResult.success) return team;
         const { stages, text, members } = parseResult.data;
         if (stages) team._stages = stages;
         if (members) {
-            team._members = members.map(member => member ?? undefined)
+            team._members = members.map(member => member ?? undefined);
             members.forEach((member, index) => {
                 if (member) team.membersMap.set(member.id, index)
             })
@@ -85,14 +85,14 @@ export class Team {
     get members(): Readonly<Member[]> {
         return this._members;
     }
-    
-    get struture(){
+
+    get struture() {
         return this._structure;
     }
 
 
     private checkStruture(student: Student) {
-        const stats = { empty: 0, striker: 0, special: 0 }
+        const stats = { empty: 0, striker: 0, special: 0 };
         for (const member of this._members) {
             if (member) stats[member.squad]++;
             else stats.empty++;
@@ -115,19 +115,19 @@ export class Team {
             offset = this._structure === "normal" ? 4 : 6
         }
 
-        const nextIndex = this._members.slice(offset).findIndex(it => it === undefined)
+        const nextIndex = this._members.slice(offset).findIndex(it => it === undefined);
         const realIndex = offset + nextIndex;
         this.membersMap.set(student.id, realIndex);
         this._members[realIndex] = student;
     }
 
     toogleMember(student: Student) {
-        if (this.hasMember(student.id)) this.removeMember(student.id)
+        if (this.hasMember(student.id)) this.removeMember(student.id);
         else this.addMember(student);
     }
 
     removeMember(studentId: StudentId) {
-        const index = this.membersMap.get(studentId)
+        const index = this.membersMap.get(studentId);
         if (index === undefined) return;
         delete this._members[index];
         this.membersMap.delete(studentId)
@@ -139,24 +139,24 @@ export class Team {
 
 
     parse() {
-        const matches = this.text.matchAll(Pattern.Flow)
+        const matches = this.text.matchAll(Pattern.Flow);
         if (!matches) throw Error("no flow detect");
-        const stages = Array.from(matches).flatMap(flow => flow.groups?.["flow"].trim().replaceAll(/\n+/g, " → ").split(" → ")).filter(it => !isUndefined(it))
-        const memberInverseMap = keyBy(this._members.filter(member => !isNil(member)), it => it.name)
+        const stages = Array.from(matches).flatMap(flow => flow.groups?.["flow"].trim().replaceAll(/\n+/g, " → ").split(" → ")).filter(it => !isUndefined(it));
+        const memberInverseMap = keyBy(this._members.filter(member => !isNil(member)), it => it.name);
         this._stages = stages.map(stage => {
-            const stageMatches = stage.match(Pattern.Stage)
-            if (!stageMatches) throw Error(`Cannot parse stage: ${stage}`)
-            if (!stageMatches.groups) throw Error(`stage invalid: ${stageMatches}`)
+            const stageMatches = stage.match(Pattern.Stage);
+            if (!stageMatches) throw Error(`Cannot parse stage: ${stage}`);
+            if (!stageMatches.groups) throw Error(`stage invalid: ${stageMatches}`);
             const actions = stageMatches.groups["actions"];
             const comment: string | undefined = stageMatches.groups["comment"];
             if (actions.includes("EX"))
                 return [{
                     students: actions.split("+").map(it => {
                         const name = it.replace("EX", "");
-                        const student = memberInverseMap[name] ?? null
+                        const student = memberInverseMap[name] ?? null;
                         return student
                     }), comment
-                }]
+                }];
             else
                 return [{ students: [], comment: actions }]
         })
@@ -168,15 +168,15 @@ export class Team {
 
         const action = this._stages.at(index.stage)?.at(index.action);
         if (!action) return;
-        this._stages[index.stage].splice(index.action, 1)
+        this._stages[index.stage].splice(index.action, 1);
         const empted = this._stages[index.stage].length === 0;
         if (direction === "previous") {
-            if (index.stage === 0) this._stages.unshift([action])
-            else if (empted) this._stages[index.stage - 1].push(action)
+            if (index.stage === 0) this._stages.unshift([action]);
+            else if (empted) this._stages[index.stage - 1].push(action);
             else this._stages.splice(index.stage, 0, [action])
         } else {
-            if (index.stage === this._stages.length - 1) this._stages.push([action])
-            else if (empted) this._stages[index.stage + 1].unshift(action)
+            if (index.stage === this._stages.length - 1) this._stages.push([action]);
+            else if (empted) this._stages[index.stage + 1].unshift(action);
             else this._stages.splice(index.stage + 1, 0, [action])
         }
         if (empted) this._stages.splice(index.stage, 1)
