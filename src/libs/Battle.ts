@@ -2,7 +2,7 @@ import { JsonObject, } from "type-fest";
 import { z } from "zod";
 import { Team } from "./Team";
 declare global {
-    export type Action = { students: Student[], comment?: string }
+    export type Action = { members: Member[], comment?: string }
     export type Stage = Action[]
     export type StudentId = number;
     export type Student = {
@@ -28,7 +28,7 @@ declare global {
         release_heal: number | null
     }
 
-    export type Member = Student | undefined;
+    export type Member = Student | null;
 }
 
 

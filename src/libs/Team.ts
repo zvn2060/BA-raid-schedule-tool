@@ -1,9 +1,8 @@
-import {isNil, isUndefined, keyBy} from "lodash-es"
-import {z} from "zod"
+import { isNil } from "lodash-es";
+import { z } from "zod";
 
 const Pattern = {
-    Flow: /●[^●：]*：(?<flow>[^●]*)/gm,
-    Stage: /(?<actions>.*?)(\((?<comment>.*?)\))?$/
+    Action: /(?<student1>[^()EX]+?)EX(?<student2>[^()EX]+)?(\((?<comment>[^()]+)\))?/
 };
 
 const studentSchema = z.object({
@@ -29,13 +28,14 @@ const studentSchema = z.object({
     release_heal: z.number().nullable()
 });
 
+const memberSchema = studentSchema.nullable();
+
 const actionSchema = z.object({
-    students: z.array(studentSchema),
+    members: z.array(memberSchema),
     comment: z.string().optional()
 });
 
 const stageSchema = z.array(actionSchema);
-const memberSchema = studentSchema.nullable();
 
 /*
      normal       : 一般
@@ -68,7 +68,7 @@ export class Team {
         const { stages, text, members } = parseResult.data;
         if (stages) team._stages = stages;
         if (members) {
-            team._members = members.map(member => member ?? undefined);
+            team._members = members.map(member => member ?? null);
             members.forEach((member, index) => {
                 if (member) team.membersMap.set(member.id, index)
             })
@@ -137,29 +137,39 @@ export class Team {
         return this.membersMap.has(studentId)
     }
 
-
+    // FLOW     := STAGE [ → FLOW]
+    // STAGE    := ACTION [+STAGE] | COMMENT
+    // ACTION   := STUDENTEX[STUDENT][(COMMENT)]
+    // STUDENT  := [^EX\s]
+    // COMMENT  := [^()]
     parse() {
-        const matches = this.text.matchAll(Pattern.Flow);
-        if (!matches) throw Error("no flow detect");
-        const stages = Array.from(matches).flatMap(flow => flow.groups?.["flow"].trim().replaceAll(/\n+/g, " → ").split(" → ")).filter(it => !isUndefined(it));
-        const memberInverseMap = keyBy(this._members.filter(member => !isNil(member)), it => it.name);
-        this._stages = stages.map(stage => {
-            const stageMatches = stage.match(Pattern.Stage);
-            if (!stageMatches) throw Error(`Cannot parse stage: ${stage}`);
-            if (!stageMatches.groups) throw Error(`stage invalid: ${stageMatches}`);
-            const actions = stageMatches.groups["actions"];
-            const comment: string | undefined = stageMatches.groups["comment"];
-            if (actions.includes("EX"))
-                return [{
-                    students: actions.split("+").map(it => {
-                        const name = it.replace("EX", "");
-                        const student = memberInverseMap[name] ?? null;
-                        return student
-                    }), comment
-                }];
-            else
-                return [{ students: [], comment: actions }]
+        if (!this.text) return;
+        const stages = this.text.split(/\n+/).flatMap(line => line.split(" → "));
+        const searchStudentByNameMap = new Map(
+            this._members
+                .filter(member => !isNil(member))
+                .flatMap(student => [...student.aliases, student.name].map(key => [key, student]))
+        );
+        const aggregateStage = new Array<Stage>()
+        stages.forEach(stage => {
+            const actions = stage.split("+").map(action => {
+                const match = action.match(Pattern.Action)
+                if (match?.groups) {
+                    const { student1, student2, comment } = match.groups;
+                    const members = [searchStudentByNameMap.get(student1) ?? null]
+                    if (student2) members.push(searchStudentByNameMap.get(student2) ?? null)
+                    return comment ? { members, comment } : { members }
+                } else {
+                    return { members: [], comment: action }
+                }
+            })
+            if (actions.some(action => action.comment) || aggregateStage.length === 0) {
+                const previousAction = aggregateStage.at(-1)?.at(-1);
+                if (previousAction) previousAction.comment = "順著費用放"
+                aggregateStage.push(actions)
+            } else aggregateStage.at(-1)?.push(...actions)
         })
+        this._stages = aggregateStage;
     }
 
     move(index: { stage: number, action: number }, direction: "previous" | "next") {

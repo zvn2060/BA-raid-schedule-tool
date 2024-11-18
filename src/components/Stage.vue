@@ -1,21 +1,34 @@
 <script setup lang="ts">
-import type {Team} from "../libs";
+import type { Team } from "../libs";
 
-const props = defineProps<{ team: Omit<Team, "">, stageId: number }>();
+const props = defineProps<{ team: Omit<Team, "">; stageId: number }>();
 const stage = computed(() => props.team.stages[props.stageId]);
 const isHoldAlt = useKeyModifier("Alt");
 const description = computed(() =>
-    stage.value
-        .map((it) => it.comment)
-        .filter((it) => Boolean(it))
-        .join(", ")
+  stage.value
+    .map((it) => it.comment)
+    .filter((it) => Boolean(it))
+    .join(", ")
 );
 
 function onClick(actionId: number) {
   props.team.move(
-      { stage: props.stageId, action: actionId },
-      isHoldAlt.value ? "next" : "previous"
+    { stage: props.stageId, action: actionId },
+    isHoldAlt.value ? "next" : "previous"
   );
+}
+
+const { getColor } = useBorderColor();
+
+function getBorderColor(members: Member[]) {
+  if (members.length === 1) return "#000000";
+  else
+    return getColor(
+      members
+        .slice(1)
+        .map((it) => `${it?.id ?? 0}`)
+        .join(",")
+    );
 }
 
 const hoverActionId = ref<number>();
@@ -27,16 +40,15 @@ const hoverActionId = ref<number>();
       {{ description || "&nbsp;" }}
     </div>
     <template v-for="(action, index) in stage">
-      <template v-for="student in action.students">
-        <StudentAvatar
-            @mouseenter="hoverActionId = index"
-            @mouseleave="hoverActionId = undefined"
-            :student="student"
-            @click="onClick(index)"
-            class="border border-black cursor-pointer"
-            :class="{ 'bg-yellow-200': hoverActionId === index }"
-        />
-      </template>
+      <StudentAvatar
+        @mouseenter="hoverActionId = index"
+        @mouseleave="hoverActionId = undefined"
+        :student="action.members[0]"
+        @click="onClick(index)"
+        class="border-2 cursor-pointer"
+        :class="{ 'bg-yellow-200': hoverActionId === index }"
+        :style="{ 'border-color': getBorderColor(action.members) }"
+      />
     </template>
   </div>
 </template>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-defineProps<{ student: Student | undefined }>();
+defineProps<{ student: Student | null }>();
 </script>
 
 <template>
