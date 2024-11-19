@@ -1,41 +1,41 @@
 import { isNil } from "lodash-es";
 import { z } from "zod";
 
+declare global {
+    export type Action = { members: Member[], comment?: string }
+    export type Stage = Action[]
+    export type StudentId = number;
+    export type Student = {
+        readonly id: StudentId;
+        readonly name: string;
+        aliases: string[];
+        squad: "striker" | "special";
+        school: string,
+        star: number,
+        level: number,
+        kizuna: number
+        weapon_level: number | null,
+        gear_1: number,
+        gear_2: number,
+        gear_3: number,
+        gear_unique: number | null,
+        skill_ex: number,
+        skill_n: number,
+        skill_p: number,
+        skill_sub: number,
+        release_hp: number | null,
+        release_atk: number | null,
+        release_heal: number | null
+    }
+
+    export type Member = Student | null;
+}
+
+
 const Pattern = {
     Action: /(?<student1>[^()EX]+?)EX(?<student2>[^()EX]+)?(\((?<comment>[^()]+)\))?/
 };
 
-const studentSchema = z.object({
-    id: z.number(),
-    name: z.string(),
-    aliases: z.array(z.string()),
-    squad: z.union([z.literal("striker"), z.literal("special")]),
-    school: z.string(),
-    star: z.number(),
-    level: z.number(),
-    kizuna: z.number(),
-    weapon_level: z.number().nullable(),
-    gear_1: z.number(),
-    gear_2: z.number(),
-    gear_3: z.number(),
-    gear_unique: z.number().nullable(),
-    skill_ex: z.number(),
-    skill_n: z.number(),
-    skill_p: z.number(),
-    skill_sub: z.number(),
-    release_hp: z.number().nullable(),
-    release_atk: z.number().nullable(),
-    release_heal: z.number().nullable()
-});
-
-const memberSchema = studentSchema.nullable();
-
-const actionSchema = z.object({
-    members: z.array(memberSchema),
-    comment: z.string().optional()
-});
-
-const stageSchema = z.array(actionSchema);
 
 /*
      normal       : 一般
@@ -43,7 +43,7 @@ const stageSchema = z.array(actionSchema);
   */
 type TeamStructure = "normal" | "unrestrict"
 
-export class Team {
+export class Team implements Serializable<z.infer<typeof Team.schema>> {
     private _stages: Stage[] = [];
     private _members: Member[];
     private membersMap: Map<StudentId, number> = new Map();
@@ -51,32 +51,27 @@ export class Team {
 
     static schema = z.object({
         text: z.string().nullish(),
-        stages: z.array(stageSchema).nullish(),
-        members: z.array(memberSchema).nullish()
+        members: z.array(z.number().nullable()).nullish(),
+        stages: z.object({ members: z.number().nullable().array(), comment: z.string().optional() }).array().array().nullish()
     });
+
     text: string = "";
 
-    constructor(structure: TeamStructure) {
+    constructor(structure: TeamStructure, teamProps?: PartialField<Team>) {
         this._structure = structure;
-        this._members = new Array(structure === "normal" ? 6 : 10)
+        this._members = teamProps?.members
+            ? teamProps.members.map(member => member ?? null)
+            : new Array(structure === "normal" ? 6 : 10).fill(null)
+
+        this._members.forEach((member, index) => {
+            if (member) this.membersMap.set(member.id, index)
+        })
+
+        if (teamProps?.text) this.text = teamProps.text;
+        if (teamProps?.stages) this._stages = teamProps.stages as Stage[];
+        else this.parse()
     }
 
-    static fromJson(structure: TeamStructure, json: unknown) {
-        const parseResult = this.schema.safeParse(json);
-        const team = new Team(structure);
-        if (!parseResult.success) return team;
-        const { stages, text, members } = parseResult.data;
-        if (stages) team._stages = stages;
-        if (members) {
-            team._members = members.map(member => member ?? null);
-            members.forEach((member, index) => {
-                if (member) team.membersMap.set(member.id, index)
-            })
-        }
-        if (text) team.text = text;
-
-        return team;
-    }
 
     get stages(): Readonly<Stage[]> {
         return this._stages;
@@ -109,13 +104,12 @@ export class Team {
 
     addMember(student: Student) {
         if (!this.checkStruture(student)) return;
-
         let offset: number = 0;
         if (student.squad === "special") {
             offset = this._structure === "normal" ? 4 : 6
         }
 
-        const nextIndex = this._members.slice(offset).findIndex(it => it === undefined);
+        const nextIndex = this._members.slice(offset).findIndex(it => it === null);
         const realIndex = offset + nextIndex;
         this.membersMap.set(student.id, realIndex);
         this._members[realIndex] = student;
@@ -129,7 +123,7 @@ export class Team {
     removeMember(studentId: StudentId) {
         const index = this.membersMap.get(studentId);
         if (index === undefined) return;
-        delete this._members[index];
+        this._members[index] = null;
         this.membersMap.delete(studentId)
     }
 
@@ -152,22 +146,26 @@ export class Team {
         );
         const aggregateStage = new Array<Stage>()
         stages.forEach(stage => {
-            const actions = stage.split("+").map(action => {
+            const members = new Array<Member>()
+            const comments = new Array<string>()
+            stage.split("+").forEach(action => {
                 const match = action.match(Pattern.Action)
                 if (match?.groups) {
                     const { student1, student2, comment } = match.groups;
-                    const members = [searchStudentByNameMap.get(student1) ?? null]
+                    members.push(searchStudentByNameMap.get(student1) ?? null)
                     if (student2) members.push(searchStudentByNameMap.get(student2) ?? null)
-                    return comment ? { members, comment } : { members }
+                    if (comment) comments.push(comment);
                 } else {
-                    return { members: [], comment: action }
+                    comments.push(action)
                 }
             })
-            if (actions.some(action => action.comment) || aggregateStage.length === 0) {
+
+            const action = { members, comment: comments.join(", ") };
+            if (action.comment || aggregateStage.length === 0) {
                 const previousAction = aggregateStage.at(-1)?.at(-1);
-                if (previousAction) previousAction.comment = "順著費用放"
-                aggregateStage.push(actions)
-            } else aggregateStage.at(-1)?.push(...actions)
+                if (previousAction) previousAction.comment = previousAction.comment || "順著費用放"
+                aggregateStage.push([action])
+            } else aggregateStage.at(-1)?.push(action)
         })
         this._stages = aggregateStage;
     }
@@ -195,8 +193,12 @@ export class Team {
     toObject() {
         return {
             text: this.text,
-            stages: this.stages,
-            members: this.members
+            members: this.members.map(it => it?.id ?? null),
+            stages: this.stages.map(stage =>
+                stage.map(({ members, ...otherActionData }) =>
+                    ({ ...otherActionData, members: members.map(member => member?.id ?? null) })
+                )
+            )
         }
     }
 }

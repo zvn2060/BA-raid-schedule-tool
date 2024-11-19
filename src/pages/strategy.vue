@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { TransitionFade } from "@morev/vue-transitions";
 import download from "downloadjs";
+import { useToast } from "primevue";
 
 const router = useRouter();
 const route = useRoute();
@@ -10,23 +11,35 @@ const step = computed(() => {
   else return "1";
 });
 
-const { battle } = storeToRefs(useBattleStore());
+const battleStore = useBattleStore();
+
+const { battle } = storeToRefs(battleStore);
 const { open, onChange, reset } = useFileDialog({
   accept: "application/json",
   multiple: false,
 });
+const toast = useToast();
+
+function handleLoadFile(content: string) {
+  battleStore
+    .loadFromJsonFile(content)
+    .catch((e) =>
+      toast.add({
+        summary: "錯誤",
+        detail: (e as Error).message,
+        severity: "error",
+        life: 5000,
+      })
+    )
+    .finally(() => {
+      reset();
+    });
+}
 
 onChange(async (filelist) => {
   const file = filelist?.item(0);
   if (!file) return;
-  try {
-    const json = JSON.parse(await file.text());
-    battle.value = Battle.fromJson(json);
-  } catch (e) {
-    console.error(e);
-  } finally {
-    reset();
-  }
+  handleLoadFile(await file.text())
 });
 function onStepChange(value: "1" | "2" | "3") {
   switch (value) {
@@ -48,7 +61,7 @@ function onExportClick() {
 
 async function onLoadSampleClick() {
   const data = await import("../assets/sample.json");
-  battle.value = Battle.fromJson(data.default);
+  handleLoadFile(JSON.stringify(data.default));
 }
 </script>
 

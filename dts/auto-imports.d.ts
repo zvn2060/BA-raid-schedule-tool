@@ -151,7 +151,7 @@ declare global {
   const useAttrs: typeof import('vue')['useAttrs']
   const useBase64: typeof import('@vueuse/core')['useBase64']
   const useBattery: typeof import('@vueuse/core')['useBattery']
-  const useBattleStore: typeof import('../src/api/useFlowStore')['useBattleStore']
+  const useBattleStore: typeof import('../src/api/useBattleStore')['useBattleStore']
   const useBluetooth: typeof import('@vueuse/core')['useBluetooth']
   const useBorderColor: typeof import('../src/api/borderColor')['useBorderColor']
   const useBreakpoints: typeof import('@vueuse/core')['useBreakpoints']
@@ -471,7 +471,7 @@ declare module 'vue' {
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
     readonly useBase64: UnwrapRef<typeof import('@vueuse/core')['useBase64']>
     readonly useBattery: UnwrapRef<typeof import('@vueuse/core')['useBattery']>
-    readonly useBattleStore: UnwrapRef<typeof import('../src/api/useFlowStore')['useBattleStore']>
+    readonly useBattleStore: UnwrapRef<typeof import('../src/api/useBattleStore')['useBattleStore']>
     readonly useBluetooth: UnwrapRef<typeof import('@vueuse/core')['useBluetooth']>
     readonly useBorderColor: UnwrapRef<typeof import('../src/api/borderColor')['useBorderColor']>
     readonly useBreakpoints: UnwrapRef<typeof import('@vueuse/core')['useBreakpoints']>

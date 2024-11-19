@@ -6,7 +6,11 @@ const stage = computed(() => props.team.stages[props.stageId]);
 const isHoldAlt = useKeyModifier("Alt");
 const description = computed(() =>
   stage.value
-    .map((it) => it.comment)
+    .map((it, index) => {
+      if (index > 0 && it.comment)
+        return `${it.members[0]?.aliases[0] ?? it.members[0]?.name}${it.comment}`;
+      else return it.comment;
+    })
     .filter((it) => Boolean(it))
     .join(", ")
 );
@@ -21,7 +25,7 @@ function onClick(actionId: number) {
 const { getColor } = useBorderColor();
 
 function getBorderColor(members: Member[]) {
-  if (members.length === 1) return "#000000";
+  if (members.length < 2) return "#000000";
   else
     return getColor(
       members
@@ -41,13 +45,13 @@ const hoverActionId = ref<number>();
     </div>
     <template v-for="(action, index) in stage">
       <StudentAvatar
+        v-for="member in action.members"
         @mouseenter="hoverActionId = index"
         @mouseleave="hoverActionId = undefined"
-        :student="action.members[0]"
+        :student="member"
         @click="onClick(index)"
         class="border-2 cursor-pointer"
         :class="{ 'bg-yellow-200': hoverActionId === index }"
-        :style="{ 'border-color': getBorderColor(action.members) }"
       />
     </template>
   </div>
