@@ -22,7 +22,7 @@ const topNavigations: MenuItem[] = [
 </script>
 
 <template>
-  <div class="grid grid-rows-[min-content_1fr] h-full">
+  <div class="h-dvh flex flex-col">
     <Menubar :model="topNavigations">
       <template #start>
         <img src="/favicon.svg" class="w-8 mr-2" />
@@ -53,7 +53,7 @@ const topNavigations: MenuItem[] = [
         </a>
       </template>
     </Menubar>
-    <div class="overflow-y-auto">
+    <div class="flex-1 min-h-0">
       <RouterView v-slot="{ Component }">
         <TransitionFade>
           <KeepAlive>

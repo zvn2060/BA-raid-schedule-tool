@@ -45,7 +45,7 @@ const homeItem: MenuItem = {
 <template>
   <Splitter>
     <SplitterPanel>
-      <DataList class="h-full" bar-y-mirror>
+      <DataList class="h-full" mirror-y>
         <template #header>
           <Breadcrumb :home="homeItem" :model="breakcrumbItems" />
           <Button
@@ -73,31 +73,29 @@ const homeItem: MenuItem = {
       </DataList>
     </SplitterPanel>
     <SplitterPanel :minSize="15">
-      <DataList class="h-full">
+      <DataList class="h-full" :blocked="!currentTeam">
         <template #header>
           <InputText v-model="nameInput" size="small" class="ml-auto" />
         </template>
         <template #content>
-          <BlockUI :blocked="!currentTeam">
-            <div v-for="(students, school) in studentsBySchool">
-              <div :style="schoolStyles[school]" class="school-container">
-                <div class="col-span-full font-bold text-2xl">
-                  {{ school }}
-                </div>
-                <div
-                  v-for="student in students"
-                  @click="currentTeam?.toogleMember(student)"
-                  class="student-container"
-                  :class="{ selected: currentTeam?.hasMember(student.id) }"
-                >
-                  <StudentAvatar :student="student" class="icon" />
-                  <span class="text-center font-bold py-1 select-none">{{
-                    student.name
-                  }}</span>
-                </div>
+          <div v-for="(students, school) in studentsBySchool">
+            <div :style="schoolStyles[school]" class="school-container">
+              <div class="col-span-full font-bold text-2xl">
+                {{ school }}
+              </div>
+              <div
+                v-for="student in students"
+                @click="currentTeam?.toogleMember(student)"
+                class="student-container"
+                :class="{ selected: currentTeam?.hasMember(student.id) }"
+              >
+                <StudentAvatar :student="student" class="icon" />
+                <span class="text-center font-bold py-1 select-none">{{
+                  student.name
+                }}</span>
               </div>
             </div>
-          </BlockUI>
+          </div>
         </template>
       </DataList>
     </SplitterPanel>
