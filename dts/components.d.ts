@@ -7,14 +7,11 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    Badge: typeof import('primevue/badge')['default']
     BattleEventDropdown: typeof import('./../src/components/BattleEventDropdown.vue')['default']
     BlockUI: typeof import('primevue/blockui')['default']
     Breadcrumb: typeof import('primevue/breadcrumb')['default']
     Button: typeof import('primevue/button')['default']
-    Column: typeof import('primevue/column')['default']
     DataList: typeof import('./../src/components/DataList.vue')['default']
-    DataTable: typeof import('primevue/datatable')['default']
     Inplace: typeof import('primevue/inplace')['default']
     InputText: typeof import('primevue/inputtext')['default']
     Level: typeof import('./../src/components/Level.vue')['default']
@@ -45,6 +42,5 @@ declare module 'vue' {
   }
   export interface ComponentCustomProperties {
     Ripple: typeof import('primevue/ripple')['default']
-    Tooltip: typeof import('primevue/tooltip')['default']
   }
 }

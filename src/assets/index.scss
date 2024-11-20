@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    overflow-y: hidden;
+}
 
 .text-stroke {
     -webkit-text-stroke: 1px #000000CC;

@@ -66,7 +66,7 @@ async function onLoadSampleClick() {
 </script>
 
 <template>
-  <div class="h-full grid grid-rows-[min-content_1fr]">
+  <div class="h-full flex flex-col ">
     <Toolbar>
       <template #start>
         <InputText v-model="battle.name" />
@@ -98,9 +98,9 @@ async function onLoadSampleClick() {
         <Button label="匯出" icon="pi pi-file-export" @click="onExportClick" />
       </template>
     </Toolbar>
-    <div class="min-h-0">
+    <div class="flex-1 min-h-0" >
       <RouterView v-slot="{ Component }">
-        <TransitionFade group>
+        <TransitionFade  group >
           <Component :is="Component" class="h-full" />
         </TransitionFade>
       </RouterView>
