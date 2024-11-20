@@ -12,13 +12,11 @@ if (!currentTeam.value) router.replace("/strategy/pick");
 
 const page = ref(0);
 
-const showStages = computed(() => []
-    // battle.value.teams[0].slice(page.value * 8, (page.value + 1) * 8)
-);
+const showStages = computed(() => currentTeam.value?.stages.slice(page.value * 8, (page.value + 1) * 8) ?? []);
 
 const { pixelRatio } = useDevicePixelRatio();
 const container = ref();
-const totalPage = computed(() => Math.ceil(0 / 8));
+const totalPage = computed(() => Math.ceil((currentTeam.value?.stages.length ?? 0) / 8));
 const scaleFactor = computed(() => {
   const factor = pixelRatio.value < 0.01 ? 0 : 1 / pixelRatio.value;
   return { "--tw-scale-x": factor, "--tw-scale-y": factor };
@@ -27,7 +25,7 @@ const scaleFactor = computed(() => {
 function onDownloadClick() {
   if (!container.value) return;
   toPng(container.value).then((dataUrl) => {
-    download(dataUrl, `${battle.value.name}-${page.value + 1}.png`);
+    download(dataUrl, `${battle.value.name}第 ${currentTeamIndex.value + 1} 隊-${page.value + 1}.png`);
   });
 }
 </script>
@@ -44,12 +42,12 @@ function onDownloadClick() {
          class="preview-container transform"
          :style="scaleFactor"
     >
-      <Stage
-          v-for="(index) in showStages"
-          :team="currentTeam"
-          :stage-id="index"
-          :class="{ 'ml-auto': index < 4 }"
-      />
+      <template v-for="index in showStages.length" :key="page * 8 + index">
+        <Stage
+            :team="currentTeam"
+            :stage-id="page * 8 + index - 1"
+        />
+      </template>
     </div>
   </div>
 </template>
