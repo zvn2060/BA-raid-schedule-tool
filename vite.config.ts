@@ -35,5 +35,9 @@ export default defineConfig({
                 api: 'modern'
             },
         }
+    },
+    optimizeDeps: {
+        exclude: ["quill", "chart.js/auto"],
+        include: ["primevue/**"]
     }
 })
