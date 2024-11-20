@@ -67,15 +67,17 @@ function triggerParse() {
       </div>
     </SplitterPanel>
     <SplitterPanel>
-      <div class="overflow-y-auto p-2 h-full">
-        <div class="flex flex-col gap-2">
-          <Stage
-              v-for="(_, index) in currentTeam.stages"
-              :team="currentTeam"
-              :stage-id="index"
-          />
-        </div>
-      </div>
+      <DataList class="h-full">
+        <template #content>
+          <div class="flex flex-col gap-2">
+            <Stage
+                v-for="(_, index) in currentTeam.stages"
+                :team="currentTeam"
+                :stage-id="index"
+            />
+          </div>
+        </template>
+      </DataList>
     </SplitterPanel>
   </Splitter>
 </template>

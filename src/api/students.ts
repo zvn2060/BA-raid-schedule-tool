@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/vue-query";
-import { Collection, InsertType } from "dexie";
-import type { Ref } from "vue";
+import {useQuery} from "@tanstack/vue-query";
+import {Collection, InsertType} from "dexie";
+import type {Ref} from "vue";
 
 
 type StudentsQueryParams = {
@@ -15,7 +15,6 @@ type Pagination = {
 function hasQuery(param: StudentsQueryParams) {
     return param.name;
 }
-
 
 
 export function useStudents(params: Ref<StudentsQueryParams>, pagination?: Ref<Pagination>) {
@@ -49,6 +48,14 @@ export function useStudents(params: Ref<StudentsQueryParams>, pagination?: Ref<P
     })
 
     return { students, total }
+}
+
+type StudentDTO = {
+    Id: number
+    School: string,
+    StarGrade: number,
+    Name: string,
+    SquadType: "Main" | "Support"
 }
 
 function DTOtoStudent({ Id, Name, SquadType, School, StarGrade }: StudentDTO): Student {

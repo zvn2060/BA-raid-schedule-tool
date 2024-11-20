@@ -2,7 +2,8 @@ import {isNil} from "lodash-es";
 import {z} from "zod";
 
 declare global {
-    export type Stage = { members: Member[], comment?: string }
+    export type Action = { actor: StudentId | null, target?: StudentId | null };
+    export type Stage = { actions: Action[], comment?: string }
     export type StudentId = number;
     export type Student = {
         readonly id: StudentId;
@@ -45,13 +46,21 @@ type TeamStructure = "normal" | "unrestrict"
 export class Team implements Serializable<z.infer<typeof Team.schema>> {
     private _stages: Stage[] = [];
     private _members: Member[];
+    private _skillTargetMap: Map<StudentId, number> = new Map();
     private membersMap: Map<StudentId, number> = new Map();
-    private _structure: TeamStructure;
+    private readonly _structure: TeamStructure;
 
     static schema = z.object({
         text: z.string().nullish(),
         members: z.array(z.number().nullable()).nullish(),
-        stages: z.object({ members: z.number().nullable().array(), comment: z.string().optional() }).array().nullish()
+        stages: z.object({
+            actions: z.object({
+                actor: z.number().nullable(),
+                target: z.number().nullish()
+            }).array(),
+            comment: z.string().optional()
+        }).array().nullish(),
+        skillTargetMap: z.tuple([z.number(), z.number()]).array().nullish(),
     });
 
     text: string = "";
@@ -67,8 +76,10 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
         });
 
         if (teamProps?.text) this.text = teamProps.text;
-        if (teamProps?.stages) this._stages = teamProps.stages as Stage[];
-        else this.parse()
+        if (teamProps?.stages) {
+            this._stages = teamProps.stages as Stage[];
+            if (teamProps.skillTargetMap) this._skillTargetMap = new Map(teamProps.skillTargetMap);
+        } else this.parse()
     }
 
 
@@ -76,8 +87,18 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
         return this._stages;
     }
 
+    get skillTargetMap() {
+        return this._skillTargetMap
+    }
+
     get members(): Readonly<Member[]> {
         return this._members;
+    }
+
+    getMember(studentId: StudentId | null): Member {
+        if (studentId === null) return null;
+        const index = this.membersMap.get(studentId);
+        return index === undefined ? null : this._members[index];
     }
 
     get struture() {
@@ -99,6 +120,11 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
             if (student.squad === "striker") return stats.striker < 6;
             else return stats.special < 4
         }
+    }
+
+    private registerSkillTarget(studentId: StudentId) {
+        if (this._skillTargetMap.has(studentId)) return;
+        this._skillTargetMap.set(studentId, this._skillTargetMap.size);
     }
 
     addMember(student: Student) {
@@ -130,6 +156,10 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
         return this.membersMap.has(studentId)
     }
 
+    private static joinComment(commentA: string | undefined, commentB: string | undefined): string {
+        return [commentA, commentB].filter(it => Boolean(it)).join("，")
+    }
+
     // FLOW     := STAGE [ → FLOW]
     // STAGE    := ACTION [+STAGE] | COMMENT
     // ACTION   := STUDENTEX[STUDENT][(COMMENT)]
@@ -137,71 +167,85 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
     // COMMENT  := [^()]
     parse() {
         if (!this.text) return;
-        const stages = this.text.split(/\n+/).flatMap(line => line.split(" → "));
+        const stageTexts = this.text.split(/\n+/).flatMap(line => line.split(" → "));
         const searchStudentByNameMap = new Map(
             this._members
                 .filter(member => !isNil(member))
                 .flatMap(student => [...student.aliases, student.name].map(key => [key, student]))
         );
         const aggregateStage = new Array<Stage>();
-        stages.forEach(stage => {
-            const members = new Array<Member>();
+        this.skillTargetMap.clear();
+        stageTexts.forEach(stageText => {
+            const actions = new Array<Action>();
             const comments = new Array<string>();
-            stage.split("+").forEach(action => {
+            stageText.split("+").forEach(action => {
                 const match = action.match(Pattern.Action);
                 if (match?.groups) {
                     const { student1, student2, comment } = match.groups;
-                    members.push(searchStudentByNameMap.get(student1) ?? null);
-                    if (student2) members.push(searchStudentByNameMap.get(student2) ?? null);
+                    const action: Action = { actor: searchStudentByNameMap.get(student1)?.id ?? null };
+                    if (student2) {
+                        action.target = searchStudentByNameMap.get(student2)?.id ?? null;
+                        if (action.target) this.registerSkillTarget(action.target);
+                    }
+                    actions.push(action);
                     if (comment) comments.push(comment);
                 } else {
                     comments.push(action)
                 }
             });
 
-            const action = { members, comment: comments.join(", ") };
+            const stage = { actions, comment: comments.join(", ") };
             const previous = aggregateStage.at(-1)!;
-            if (action.comment || aggregateStage.length === 0) {
+            if (stage.comment || aggregateStage.length === 0) {
                 if (previous) previous.comment = previous.comment || "順著費用放";
-                aggregateStage.push(action)
+                aggregateStage.push(stage)
             } else {
-                previous.comment = [previous.comment, action.comment].filter(it => Boolean(it)).join(", ");
-                previous.members = [...previous.members, ...action.members];
+                previous.comment = Team.joinComment(previous.comment, stage.comment);
+                previous.actions = [...previous.actions, ...stage.actions];
             }
         });
         this._stages = aggregateStage;
     }
 
-    move(index: { stage: number, action: number }, direction: "previous" | "next") {
-        if (index.stage === 0 && this._stages[index.stage].members.length === 1 && direction === "previous") return;
-        if (index.stage === this._stages.length - 1 && this._stages[index.stage].members.length === 1 && direction === 'next') return;
-
-        const [member] = this._stages[index.stage].members.splice(index.action, 1);
-        if (member === undefined) return;
-        const empted = this._stages[index.stage].members.length === 0;
-        if (direction === "previous") {
-            if (index.stage === 0) this._stages.unshift({ members: [member], comment: "" });
-            else if (empted) this._stages[index.stage - 1].members.push(member);
-            else this._stages.splice(index.stage, 0, { members: [member], comment: "" })
+    moveStage(index: number, pop: "front" | "back") {
+        if (index === 0 && this._stages[index].actions.length === 1 && pop === "front") return;
+        else if (index === this._stages.length - 1 && this._stages[index].actions.length === 1 && pop === 'back') return;
+        const action = this._stages[index].actions[pop === "front" ? "shift" : "pop"]();
+        if (action === undefined) return;
+        const empted = this._stages[index].actions.length === 0;
+        if (pop === "front") {
+            if (index === 0) this._stages.unshift({ actions: [action] });
+            else this._stages[index - 1].actions.push(action);
         } else {
-            if (index.stage === this._stages.length - 1) this._stages.push({ members: [member], comment: "" });
-            else if (empted) this._stages[index.stage + 1].members.unshift(member);
-            else this._stages.splice(index.stage + 1, 0, { members: [member], comment: "" })
+            if (index === this._stages.length - 1) this._stages.push({ actions: [action] });
+            else this._stages[index + 1].actions.unshift(action)
         }
         if (empted) {
-            const [stage] = this._stages.splice(index.stage, 1);
-            const appendStage = this._stages.at(direction === "previous" ? index.stage - 1 : index.stage);
-            if (appendStage) appendStage.comment = [appendStage.comment, stage?.comment].filter(it => Boolean(it)).join(", ");
+            const [stage] = this._stages.splice(index, 1);
+            if (pop === "front") {
+                const appendStage = this._stages.at(index - 1);
+                if (appendStage) appendStage.comment = Team.joinComment(appendStage.comment, stage?.comment);
+            } else {
+                const appendStage = this._stages.at(index);
+                if (appendStage) appendStage.comment = Team.joinComment(stage?.comment, appendStage.comment);
+            }
         }
+    }
+
+    insertStage(index: number) {
+        this._stages.splice(index + 1, 0, { actions: [], comment: "新組" })
+    }
+
+    deleteStage(index: number) {
+        this._stages.splice(index, 1)
     }
 
     toObject() {
         return {
             text: this.text,
             members: this.members.map(it => it?.id ?? null),
-            stages: this.stages.map(({ members, ...otherStageData }) =>
-                ({ ...otherStageData, members: members.map(member => member?.id ?? null) })
-            )
+            stages: this._stages,
+            skillTargetMap: Array.from(this.skillTargetMap.entries()),
         }
     }
 }

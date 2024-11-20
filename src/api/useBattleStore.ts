@@ -15,11 +15,8 @@ export const useBattleStore = defineStore("軸", () => {
 
             battle.value = new Battle({
                 ...otherBattleData,
-                teams: teams?.map(({ members, stages, ...otherTeamData }) => ({
+                teams: teams?.map(({ members, ...otherTeamData }) => ({
                     members: members?.map(member => member === null ? null : studentMap[member]),
-                    stages: stages?.map(({ members, ...otherStageData }) =>
-                        ({ members: members.map(member => member ? studentMap[member] : null), ...otherStageData })
-                    ),
                     ...otherTeamData
                 }))
             })
