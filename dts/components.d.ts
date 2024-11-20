@@ -15,6 +15,7 @@ declare module 'vue' {
     Column: typeof import('primevue/column')['default']
     DataList: typeof import('./../src/components/DataList.vue')['default']
     DataTable: typeof import('primevue/datatable')['default']
+    Inplace: typeof import('primevue/inplace')['default']
     InputText: typeof import('primevue/inputtext')['default']
     Level: typeof import('./../src/components/Level.vue')['default']
     LevelColumn: typeof import('./../src/components/LevelColumn.vue')['default']

@@ -1,9 +1,8 @@
-import { isNil } from "lodash-es";
-import { z } from "zod";
+import {isNil} from "lodash-es";
+import {z} from "zod";
 
 declare global {
-    export type Action = { members: Member[], comment?: string }
-    export type Stage = Action[]
+    export type Stage = { members: Member[], comment?: string }
     export type StudentId = number;
     export type Student = {
         readonly id: StudentId;
@@ -52,7 +51,7 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
     static schema = z.object({
         text: z.string().nullish(),
         members: z.array(z.number().nullable()).nullish(),
-        stages: z.object({ members: z.number().nullable().array(), comment: z.string().optional() }).array().array().nullish()
+        stages: z.object({ members: z.number().nullable().array(), comment: z.string().optional() }).array().nullish()
     });
 
     text: string = "";
@@ -61,11 +60,11 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
         this._structure = structure;
         this._members = teamProps?.members
             ? teamProps.members.map(member => member ?? null)
-            : new Array(structure === "normal" ? 6 : 10).fill(null)
+            : new Array(structure === "normal" ? 6 : 10).fill(null);
 
         this._members.forEach((member, index) => {
             if (member) this.membersMap.set(member.id, index)
-        })
+        });
 
         if (teamProps?.text) this.text = teamProps.text;
         if (teamProps?.stages) this._stages = teamProps.stages as Stage[];
@@ -144,60 +143,64 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
                 .filter(member => !isNil(member))
                 .flatMap(student => [...student.aliases, student.name].map(key => [key, student]))
         );
-        const aggregateStage = new Array<Stage>()
+        const aggregateStage = new Array<Stage>();
         stages.forEach(stage => {
-            const members = new Array<Member>()
-            const comments = new Array<string>()
+            const members = new Array<Member>();
+            const comments = new Array<string>();
             stage.split("+").forEach(action => {
-                const match = action.match(Pattern.Action)
+                const match = action.match(Pattern.Action);
                 if (match?.groups) {
                     const { student1, student2, comment } = match.groups;
-                    members.push(searchStudentByNameMap.get(student1) ?? null)
-                    if (student2) members.push(searchStudentByNameMap.get(student2) ?? null)
+                    members.push(searchStudentByNameMap.get(student1) ?? null);
+                    if (student2) members.push(searchStudentByNameMap.get(student2) ?? null);
                     if (comment) comments.push(comment);
                 } else {
                     comments.push(action)
                 }
-            })
+            });
 
             const action = { members, comment: comments.join(", ") };
+            const previous = aggregateStage.at(-1)!;
             if (action.comment || aggregateStage.length === 0) {
-                const previousAction = aggregateStage.at(-1)?.at(-1);
-                if (previousAction) previousAction.comment = previousAction.comment || "順著費用放"
-                aggregateStage.push([action])
-            } else aggregateStage.at(-1)?.push(action)
-        })
+                if (previous) previous.comment = previous.comment || "順著費用放";
+                aggregateStage.push(action)
+            } else {
+                previous.comment = [previous.comment, action.comment].filter(it => Boolean(it)).join(", ");
+                previous.members = [...previous.members, ...action.members];
+            }
+        });
         this._stages = aggregateStage;
     }
 
     move(index: { stage: number, action: number }, direction: "previous" | "next") {
-        if (index.stage === 0 && this._stages[index.stage].length === 1 && direction === "previous") return;
-        if (index.stage === this._stages.length - 1 && this._stages[index.stage].length === 1 && direction === 'next') return;
+        if (index.stage === 0 && this._stages[index.stage].members.length === 1 && direction === "previous") return;
+        if (index.stage === this._stages.length - 1 && this._stages[index.stage].members.length === 1 && direction === 'next') return;
 
-        const action = this._stages.at(index.stage)?.at(index.action);
-        if (!action) return;
-        this._stages[index.stage].splice(index.action, 1);
-        const empted = this._stages[index.stage].length === 0;
+        const [member] = this._stages[index.stage].members.splice(index.action, 1);
+        if (member === undefined) return;
+        const empted = this._stages[index.stage].members.length === 0;
         if (direction === "previous") {
-            if (index.stage === 0) this._stages.unshift([action]);
-            else if (empted) this._stages[index.stage - 1].push(action);
-            else this._stages.splice(index.stage, 0, [action])
+            if (index.stage === 0) this._stages.unshift({ members: [member], comment: "" });
+            else if (empted) this._stages[index.stage - 1].members.push(member);
+            else this._stages.splice(index.stage, 0, { members: [member], comment: "" })
         } else {
-            if (index.stage === this._stages.length - 1) this._stages.push([action]);
-            else if (empted) this._stages[index.stage + 1].unshift(action);
-            else this._stages.splice(index.stage + 1, 0, [action])
+            if (index.stage === this._stages.length - 1) this._stages.push({ members: [member], comment: "" });
+            else if (empted) this._stages[index.stage + 1].members.unshift(member);
+            else this._stages.splice(index.stage + 1, 0, { members: [member], comment: "" })
         }
-        if (empted) this._stages.splice(index.stage, 1)
+        if (empted) {
+            const [stage] = this._stages.splice(index.stage, 1);
+            const appendStage = this._stages.at(direction === "previous" ? index.stage - 1 : index.stage);
+            if (appendStage) appendStage.comment = [appendStage.comment, stage?.comment].filter(it => Boolean(it)).join(", ");
+        }
     }
 
     toObject() {
         return {
             text: this.text,
             members: this.members.map(it => it?.id ?? null),
-            stages: this.stages.map(stage =>
-                stage.map(({ members, ...otherActionData }) =>
-                    ({ ...otherActionData, members: members.map(member => member?.id ?? null) })
-                )
+            stages: this.stages.map(({ members, ...otherStageData }) =>
+                ({ ...otherStageData, members: members.map(member => member?.id ?? null) })
             )
         }
     }

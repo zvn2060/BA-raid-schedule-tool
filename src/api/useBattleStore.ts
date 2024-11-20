@@ -1,8 +1,9 @@
-import { isNull, keyBy } from "lodash-es";
-import { ZodError } from "zod";
+import {isNull, keyBy} from "lodash-es";
+import {ZodError} from "zod";
 
 export const useBattleStore = defineStore("軸", () => {
     const battle = ref(new Battle())
+
     async function loadFromJsonFile(content: string) {
         try {
             const data = JSON.parse(content)
@@ -16,10 +17,8 @@ export const useBattleStore = defineStore("軸", () => {
                 ...otherBattleData,
                 teams: teams?.map(({ members, stages, ...otherTeamData }) => ({
                     members: members?.map(member => member === null ? null : studentMap[member]),
-                    stages: stages?.map(stage =>
-                        stage.map(({ members, ...otherActionData }) =>
-                            ({ members: members.map(member => member ? studentMap[member] : null), ...otherActionData })
-                        )
+                    stages: stages?.map(({ members, ...otherStageData }) =>
+                        ({ members: members.map(member => member ? studentMap[member] : null), ...otherStageData })
                     ),
                     ...otherTeamData
                 }))
