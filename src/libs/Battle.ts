@@ -1,5 +1,5 @@
-import { z } from "zod";
-import { Team } from "./Team";
+import {z} from "zod";
+import {Team} from "./Team";
 
 
 export const BattleEvent = {
@@ -13,6 +13,23 @@ export const BattleEventOptions = Object.values(BattleEvent);
 
 type BattleEvent = (typeof BattleEvent)[(keyof typeof BattleEvent)];
 
+const chineseNum = {
+    1: "一",
+    2: "二",
+    3: "三",
+    4: "四",
+    5: "五",
+    6: "六",
+    7: "七",
+    8: "八",
+    9: "九",
+    10: "十",
+} as Record<number, string>;
+
+function teamIndexToChinese(index: number): string {
+    return chineseNum[index + 1] ?? index;
+}
+
 export class Battle implements Serializable<z.infer<typeof Battle.schema>> {
     name: string = "總力軸";
     private _teams: Team[] = []
@@ -22,6 +39,7 @@ export class Battle implements Serializable<z.infer<typeof Battle.schema>> {
         mode: z.nativeEnum(BattleEvent).nullish(),
         teams: Team.schema.array().nullish()
     })
+
     get teams(): Readonly<Team[]> {
         return this._teams;
     }
@@ -52,5 +70,28 @@ export class Battle implements Serializable<z.infer<typeof Battle.schema>> {
             teams: this.teams.map(it => it.toObject()),
             mode: this.mode
         }
+    }
+
+    get description() {
+        if (!this._teams.length) return "";
+        const teamCount = this._teams.length;
+        const isMultipleTeams = teamCount > 1;
+        return [
+            "<簡述>",
+            "",
+            isMultipleTeams ? "<時間軸>\n" : null,
+            isMultipleTeams
+                ? this._teams.map((team, index) => `${teamIndexToChinese(index)}隊：\n${team.description}`).join("\n\n")
+                : `隊伍：\n${this._teams[0].description}`,
+            "",
+            "文字敘述重要時間點：",
+            "",
+            "※先說凹點：",
+            "<凹點>",
+            "",
+            isMultipleTeams
+                ? this._teams.map((team, index) => `${teamIndexToChinese(index)}隊：\n${team.text}`).join("\n\n")
+                : this._teams[0].text
+        ].filter(it => it !== null).join("\n");
     }
 }

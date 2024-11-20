@@ -1,4 +1,4 @@
-import {isNil} from "lodash-es";
+import {compact, isNil} from "lodash-es";
 import {z} from "zod";
 
 declare global {
@@ -42,6 +42,11 @@ const Pattern = {
      unrestrict   : 制約解除作戰
   */
 type TeamStructure = "normal" | "unrestrict"
+
+function skillTranscript(level: number) {
+    return level === 10 ? 'M' : `${level}`;
+}
+
 
 export class Team implements Serializable<z.infer<typeof Team.schema>> {
     private _stages: Stage[] = [];
@@ -167,7 +172,7 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
     // COMMENT  := [^()]
     parse() {
         if (!this.text) return;
-        const stageTexts = this.text.split(/\n+/).flatMap(line => line.split(" → "));
+        const stageTexts = this.text.split(/\n+/).filter(it => it.includes("→")).flatMap(line => line.split(" → "));
         const searchStudentByNameMap = new Map(
             this._members
                 .filter(member => !isNil(member))
@@ -247,5 +252,24 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
             stages: this._stages,
             skillTargetMap: Array.from(this.skillTargetMap.entries()),
         }
+    }
+
+
+    get description() {
+        return this.members.map(member => {
+            if (!member) return "空格";
+            const releases = [member.release_hp ?? 0, member.release_atk ?? 0, member.release_heal ?? 0];
+            return compact([
+                member.name,
+                `☆${Math.max(member.star)}`,
+                `LV${member.level}`,
+                `${member.skill_ex}${skillTranscript(member.skill_n)}${skillTranscript(member.skill_p)}${skillTranscript(member.skill_sub)}`,
+                member.star > 5 ? `固有${member.star - 5}` : null,
+                member.weapon_level,
+                `T${member.gear_1}T${member.gear_2}T${member.gear_3}`,
+                member.gear_unique ? `愛用品T${member.gear_unique}` : null,
+                releases.some(it => it) ? releases.join(" ") : null
+            ]).join(" ")
+        }).join("\n");
     }
 }
