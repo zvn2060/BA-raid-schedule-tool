@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import download from "downloadjs";
 import {toPng} from "html-to-image";
+import VideoCover from "../../components/VideoCover.vue";
 
 const { battle } = storeToRefs(useBattleStore());
 const router = useRouter();
@@ -32,7 +33,7 @@ function onDownloadClick() {
 
 <template>
 
-  <Tabs value="0">
+  <Tabs value="1">
     <TabList>
       <Tab value="0">資訊欄</Tab>
       <Tab value="1">影片封面</Tab>
@@ -44,7 +45,9 @@ function onDownloadClick() {
           {{ battle.description }}
         </div>
       </TabPanel>
-      <TabPanel value="1"></TabPanel>
+      <TabPanel value="1" class="h-full">
+        <VideoCover class="h-full"/>
+      </TabPanel>
       <TabPanel value="2"></TabPanel>
     </TabPanels>
   </Tabs>
