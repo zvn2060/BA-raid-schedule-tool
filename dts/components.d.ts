@@ -8,13 +8,16 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AutoText: typeof import('./../src/components/core/AutoText.vue')['default']
+    Badge: typeof import('primevue/badge')['default']
     BattleModeDropdown: typeof import('./../src/components/data/BattleModeDropdown.vue')['default']
     BlockUI: typeof import('primevue/blockui')['default']
     Breadcrumb: typeof import('primevue/breadcrumb')['default']
     Button: typeof import('primevue/button')['default']
+    Column: typeof import('primevue/column')['default']
     copy: typeof import('./../src/components/preview/VideoCover copy.vue')['default']
     CssImageEditor: typeof import('../src/components/core/ImageEditor.vue')['default']
     DataList: typeof import('./../src/components/core/DataList.vue')['default']
+    DataTable: typeof import('primevue/datatable')['default']
     Description: typeof import('./../src/components/preview/Description.vue')['default']
     FabricImageEditor: typeof import('./../src/components/core/FabricImageEditor.vue')['default']
     FabricVideoCover: typeof import('./../src/components/preview/FabricVideoCover.vue')['default']
@@ -54,5 +57,6 @@ declare module 'vue' {
   }
   export interface ComponentCustomProperties {
     Ripple: typeof import('primevue/ripple')['default']
+    Tooltip: typeof import('primevue/tooltip')['default']
   }
 }

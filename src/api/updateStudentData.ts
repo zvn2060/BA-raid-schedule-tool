@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/vue-query";
+import { useMutation, useQueryClient } from "@tanstack/vue-query";
 import { isNil } from "lodash-es";
 import { initParser } from "udsv";
 
@@ -97,10 +97,11 @@ function parseCsvStudentData(text: string): Array<Partial<Student> & { name: str
 
 
 export function updateStudentData() {
+    const queryClient = useQueryClient()
     const { mutateAsync: update } = useMutation({
         async mutationFn(file: File) {
             const students = parseCsvStudentData(await file.text());
-            return IndexDBClient.transaction("readwrite", IndexDBClient.students, async () => {
+            await IndexDBClient.transaction("readwrite", IndexDBClient.students, async () => {
                 const notModifies = new Array<string>()
                 for (const index in students) {
                     const { name, ...otherData } = students[index]
@@ -108,10 +109,12 @@ export function updateStudentData() {
                     if (updated < 1) notModifies.push(`第 ${parseInt(index) + 2} 筆：${name} `)
                 }
 
-                if(notModifies.length) throw Error([
+                if (notModifies.length) throw Error([
                     `以下資料不在資料庫中，請確認名字是否一致：`,
                     ...notModifies
                 ].join("\n"))
+
+                await queryClient.invalidateQueries({ queryKey: ["students"] })
             })
         }
     })

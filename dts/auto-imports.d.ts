@@ -341,7 +341,6 @@ declare module 'vue' {
     readonly BattleModeOptions: UnwrapRef<typeof import('../src/libs/Battle')['BattleModeOptions']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly IndexDBClient: UnwrapRef<typeof import('../src/api/clients')['IndexDBClient']>
-    readonly LayoutAlgo: UnwrapRef<typeof import('../src/libs/LayoutAlgo')['LayoutAlgo']>
     readonly SchaleDbClient: UnwrapRef<typeof import('../src/api/clients')['SchaleDbClient']>
     readonly Team: UnwrapRef<typeof import('../src/libs/Team')['Team']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Max from "../assets/max.png";
+import Max from "../../assets/max.png";
 
 defineProps<{ level: number | null; max?: number }>();
 </script>
