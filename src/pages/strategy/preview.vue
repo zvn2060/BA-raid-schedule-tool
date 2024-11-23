@@ -38,26 +38,27 @@ function onDownloadClick() {
     );
   });
 }
-
 </script>
 
 <template>
-  <Tabs value="1">
+  <Tabs value="2">
     <TabList>
       <Tab value="0">資訊欄</Tab>
       <Tab value="1">影片封面</Tab>
-      <Tab value="2">圖片軸</Tab>
+      <Tab value="2">網站隊伍</Tab>
+      <Tab value="3">圖片軸</Tab>
     </TabList>
     <TabPanels class="flex-1 min-h-0 !p-0">
-      <TabPanel value="0" class="overflow-y-auto h-full">
-        <div class="whitespace-pre-wrap px-4 py-2">
-          {{ battle.description }}
-        </div>
+      <TabPanel value="0" class="h-full">
+        <Description class="h-full"/>
       </TabPanel>
       <TabPanel value="1" class="h-full">
-        <VideoCover class="h-full"/>
+        <VideoCover class="h-full" />
       </TabPanel>
-      <TabPanel value="2"></TabPanel>
+      <TabPanel value="2" class="h-full">
+        <Teams class="h-full" />
+      </TabPanel>
+      <TabPanel value="3"></TabPanel>
     </TabPanels>
   </Tabs>
 </template>

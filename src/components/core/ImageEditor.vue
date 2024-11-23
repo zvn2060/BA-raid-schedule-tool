@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import download from "downloadjs";
 import { toPng } from "html-to-image";
-import { clamp } from "lodash-es";
+import { castArray, clamp } from "lodash-es";
 import { ShallowRef } from "vue";
 
 const props = defineProps<{
@@ -12,7 +12,7 @@ const props = defineProps<{
 const canvas = useTemplateRef("canvas");
 const container = useTemplateRef("container");
 const { width: containerW, height: containerH } = useElementSize(container);
-const factor = ref(0.5);
+const factor = ref(1);
 const offset = ref({ x: 0, y: 0 });
 const styles = computed(() => ({
   "--tw-scale-x": factor.value,
@@ -61,17 +61,24 @@ function mouseMoveHandler(event: MouseEvent) {
 
 async function exportPng(
   filename: string,
-  ref?: Readonly<ShallowRef<HTMLDivElement | null>>
+  ref?: Readonly<ShallowRef<HTMLDivElement | HTMLDivElement[] | null>>
 ) {
-  const target = ref ?? canvas;
-  if (!target.value) return;
+  const targets = ref ? castArray(ref.value) : [canvas.value];
   const oldState = { offset: { ...offset.value }, factor: factor.value };
-  offset.value.x = target.value.offsetWidth >> 1;
-  offset.value.y = target.value.offsetHeight >> 1;
-  factor.value = 1;
-  await nextTick();
-  const dataUrl = await toPng(target.value);
-  download(dataUrl, `${filename}.png`);
+  const multiple = targets.length > 1;
+  for (let i = 0; i < targets.length; i++) {
+    const target = targets[i];
+    if (!target) continue;
+    offset.value.x = target.offsetWidth >> 1;
+    offset.value.y = target.offsetHeight >> 1;
+    factor.value = 1;
+    await nextTick();
+    const dataUrl = await toPng(target);
+    download(
+      dataUrl,
+      multiple ? `${filename}-${i + 1}.png` : `${filename}.png`
+    );
+  }
   offset.value = oldState.offset;
   factor.value = oldState.factor;
 }
