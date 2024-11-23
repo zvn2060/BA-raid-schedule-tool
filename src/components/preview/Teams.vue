@@ -8,16 +8,21 @@ function onDownloadClick() {
   if (!editor.value) return;
   editor.value.export(battle.value.name, teams);
 }
+
+const height = computed(() => 220 * battle.value.teams.length - 20);
 </script>
 
 <template>
   <div class="relative">
-    <ImageEditor
-      :width="1000"
-      :height="220 * battle.teams.length - 20"
-      ref="editor"
-      class="h-full border-2"
-    >
+    <Button
+      rounded
+      class="!absolute right-4 top-4 z-10"
+      size="large"
+      label="下載"
+      icon="pi pi-download"
+      @click="onDownloadClick"
+    />
+    <ImageEditor :width="1000" :height ref="editor" class="h-full border-2">
       <div class="flex flex-col w-full h-full justify-evenly">
         <div
           v-for="team in battle.teams"
@@ -33,14 +38,6 @@ function onDownloadClick() {
         </div>
       </div>
     </ImageEditor>
-    <Button
-      rounded
-      class="!absolute right-4 top-4"
-      size="large"
-      label="下載"
-      icon="pi pi-download"
-      @click="onDownloadClick"
-    />
   </div>
 </template>
 

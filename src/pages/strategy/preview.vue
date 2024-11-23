@@ -41,7 +41,7 @@ function onDownloadClick() {
 </script>
 
 <template>
-  <Tabs value="2">
+  <Tabs value="3">
     <TabList>
       <Tab value="0">資訊欄</Tab>
       <Tab value="1">影片封面</Tab>
@@ -50,7 +50,7 @@ function onDownloadClick() {
     </TabList>
     <TabPanels class="flex-1 min-h-0 !p-0">
       <TabPanel value="0" class="h-full">
-        <Description class="h-full"/>
+        <Description class="h-full" />
       </TabPanel>
       <TabPanel value="1" class="h-full">
         <VideoCover class="h-full" />
@@ -58,7 +58,9 @@ function onDownloadClick() {
       <TabPanel value="2" class="h-full">
         <Teams class="h-full" />
       </TabPanel>
-      <TabPanel value="3"></TabPanel>
+      <TabPanel value="3" class="h-full">
+        <ImageFlow class="h-full"/>
+      </TabPanel>
     </TabPanels>
   </Tabs>
 </template>

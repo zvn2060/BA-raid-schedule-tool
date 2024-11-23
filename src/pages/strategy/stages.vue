@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {debounceFilter, pausableFilter} from "@vueuse/core";
+import { debounceFilter, pausableFilter } from "@vueuse/core";
 
 const battleStore = useBattleStore();
 const { battle } = storeToRefs(battleStore);
@@ -66,16 +66,15 @@ function triggerParse() {
         <ToggleSwitch v-model="auto"/>
       </div>
     </SplitterPanel>
-    <SplitterPanel>
+    <SplitterPanel :size="90">
       <DataList class="h-full">
         <template #content>
-          <div class="flex flex-col gap-2">
             <Stage
                 v-for="(_, index) in currentTeam.stages"
                 :team="currentTeam"
                 :stage-id="index"
+                class="ml-5"
             />
-          </div>
         </template>
       </DataList>
     </SplitterPanel>

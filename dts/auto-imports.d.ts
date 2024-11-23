@@ -12,6 +12,7 @@ declare global {
   const BattleModeOptions: typeof import('../src/libs/Battle')['BattleModeOptions']
   const EffectScope: typeof import('vue')['EffectScope']
   const IndexDBClient: typeof import('../src/api/clients')['IndexDBClient']
+  const LayoutAlgo: typeof import('../src/libs/LayoutAlgo')['LayoutAlgo']
   const SchaleDbClient: typeof import('../src/api/clients')['SchaleDbClient']
   const Student: typeof import('../src/libs/Battle')['Student']
   const Team: typeof import('../src/libs/Team')['Team']
@@ -340,6 +341,7 @@ declare module 'vue' {
     readonly BattleModeOptions: UnwrapRef<typeof import('../src/libs/Battle')['BattleModeOptions']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly IndexDBClient: UnwrapRef<typeof import('../src/api/clients')['IndexDBClient']>
+    readonly LayoutAlgo: UnwrapRef<typeof import('../src/libs/LayoutAlgo')['LayoutAlgo']>
     readonly SchaleDbClient: UnwrapRef<typeof import('../src/api/clients')['SchaleDbClient']>
     readonly Team: UnwrapRef<typeof import('../src/libs/Team')['Team']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
