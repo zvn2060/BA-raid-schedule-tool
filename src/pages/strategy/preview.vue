@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import download from "downloadjs";
-import { toPng } from "html-to-image";
 
 const { battle } = storeToRefs(useBattleStore());
 const router = useRouter();
@@ -10,34 +8,6 @@ const currentTeam = computed(() =>
 );
 if (!currentTeam.value) router.replace("/strategy/pick");
 
-const page = ref(0);
-
-const showStages = computed(
-  () =>
-    currentTeam.value?.stages.slice(page.value * 8, (page.value + 1) * 8) ?? []
-);
-
-const { pixelRatio } = useDevicePixelRatio();
-const container = ref();
-const totalPage = computed(() =>
-  Math.ceil((currentTeam.value?.stages.length ?? 0) / 8)
-);
-const scaleFactor = computed(() => {
-  const factor = pixelRatio.value < 0.01 ? 0 : 1 / pixelRatio.value;
-  return { "--tw-scale-x": factor, "--tw-scale-y": factor };
-});
-
-function onDownloadClick() {
-  if (!container.value) return;
-  toPng(container.value).then((dataUrl) => {
-    download(
-      dataUrl,
-      `${battle.value.name}第 ${currentTeamIndex.value + 1} 隊-${
-        page.value + 1
-      }.png`
-    );
-  });
-}
 </script>
 
 <template>

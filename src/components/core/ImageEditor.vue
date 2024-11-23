@@ -47,7 +47,7 @@ function mouseDownHandler(event: MouseEvent) {
   dragInfo.startY = event.y;
 }
 
-function mouseUpHandler(event: MouseEvent) {
+function mouseUpHandler() {
   dragInfo.isDragging = false;
 }
 
