@@ -44,7 +44,7 @@ const hover = useElementHover(container);
       <template v-for="action in stage.actions">
         <StudentAvatar
           :student="team.getMember(action.actor)"
-          class="border-2 w-[150px]"
+          class="border-4 w-[150px]"
           :style="{ 'border-color': getBorderColor(action.target) }"
         />
       </template>
@@ -85,7 +85,7 @@ const hover = useElementHover(container);
 }
 
 .stage-description {
-  @apply text-stroke-3 text-white leading-none max-w-[630px]  break-all;
+  @apply text-stroke-[5px] text-white leading-none max-w-[630px]  break-all;
   font-family: "Microsoft YaHei", sans-serif;
   font-size: 40px;
   paint-order: stroke;
