@@ -1,6 +1,6 @@
-import {useQuery} from "@tanstack/vue-query";
-import {Collection, InsertType} from "dexie";
-import type {Ref} from "vue";
+import { useQuery } from "@tanstack/vue-query";
+import { Collection, InsertType } from "dexie";
+import type { Ref } from "vue";
 
 
 type StudentsQueryParams = {
@@ -34,7 +34,8 @@ export function useStudents(params: Ref<StudentsQueryParams>, pagination?: Ref<P
                     .limit(pagination.value.itemPerPage)
 
             return collection.toArray()
-        }
+        },
+        placeholderData: old => old ?? []
     })
 
     const { data: total } = useQuery({
