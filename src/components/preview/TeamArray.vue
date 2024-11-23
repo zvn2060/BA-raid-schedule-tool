@@ -3,14 +3,17 @@ const { battle } = storeToRefs(useBattleStore());
 const isVertical = computed(() => battle.value.teams.length > 2);
 
 const teamContainerClass = computed(() => {
-  if (battle.value.mode === BattleEvent.Unrestrict) return "px-[20px] w-[1540px]";
+  if (battle.value.mode === BattleMode.Unrestrict)
+    return "px-[20px] w-[1540px]";
   return isVertical.value
     ? "p-[30px] w-[800px] h-[200px] border-[10px] border-white"
     : "px-[20px] w-[940px]";
 });
 
 const arrayClasses = computed(() =>
-  isVertical.value ? ["flex-col", "gap-[20px]"] : ["bg-black", "px-[10px] py-[15px]"]
+  isVertical.value
+    ? ["flex-col", "gap-[20px]"]
+    : ["bg-black", "px-[10px] py-[15px]"]
 );
 </script>
 

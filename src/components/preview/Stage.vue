@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type {Team} from "../libs";
-import {isNil} from "lodash-es";
-import {TransitionFade} from "@morev/vue-transitions";
+import { TransitionFade } from "@morev/vue-transitions";
+import { isNil } from "lodash-es";
+import type { Team } from "../../libs";
 
 const props = defineProps<{ team: Omit<Team, "">; stageId: number }>();
 const stage = computed(() => props.team.stages[props.stageId]);

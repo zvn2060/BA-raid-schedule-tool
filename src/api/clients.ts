@@ -10,9 +10,5 @@ export const IndexDBClient = new Dexie("ba-strategy-tool") as Dexie & {
 
 
 IndexDBClient.version(1).stores({
-    students: [
-        "&id",
-        "name",
-        "aliases",
-    ].join(",")
+    students: ["&id", "name", "aliases",].join(","),
 })

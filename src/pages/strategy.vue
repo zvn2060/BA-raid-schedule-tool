@@ -39,7 +39,7 @@ function handleLoadFile(content: string) {
 onChange(async (filelist) => {
   const file = filelist?.item(0);
   if (!file) return;
-  handleLoadFile(await file.text())
+  handleLoadFile(await file.text());
 });
 function onStepChange(value: "1" | "2" | "3") {
   switch (value) {
@@ -66,11 +66,11 @@ async function onLoadSampleClick() {
 </script>
 
 <template>
-  <div class="h-full flex flex-col ">
+  <div class="h-full flex flex-col">
     <Toolbar>
       <template #start>
         <InputText v-model="battle.name" />
-        <BattleEventDropdown v-model="battle.mode" class="ml-2" />
+        <BattleModeDropdown v-model="battle.mode" class="ml-2" />
       </template>
       <template #center>
         <Stepper :value="step" class="w-[400px]" @update:value="onStepChange">
@@ -98,9 +98,9 @@ async function onLoadSampleClick() {
         <Button label="匯出" icon="pi pi-file-export" @click="onExportClick" />
       </template>
     </Toolbar>
-    <div class="flex-1 min-h-0" >
+    <div class="flex-1 min-h-0">
       <RouterView v-slot="{ Component }">
-        <TransitionFade  group >
+        <TransitionFade group>
           <Component :is="Component" class="h-full" />
         </TransitionFade>
       </RouterView>

@@ -1,9 +1,18 @@
 <script setup lang="ts">
+import download from "downloadjs";
+import { toPng } from "html-to-image";
 import { clamp } from "lodash-es";
+import { ShallowRef } from "vue";
 
-const props = defineProps<{ width: number; height: number }>();
+const props = defineProps<{
+  width: number;
+  height: number;
+}>();
 
-const factor = ref(1);
+const canvas = useTemplateRef("canvas");
+const container = useTemplateRef("container");
+const { width: containerW, height: containerH } = useElementSize(container);
+const factor = ref(0.5);
 const offset = ref({ x: 0, y: 0 });
 const styles = computed(() => ({
   "--tw-scale-x": factor.value,
@@ -17,6 +26,11 @@ const styles = computed(() => ({
 function onWheel(event: WheelEvent) {
   factor.value = clamp(factor.value - event.deltaY / 1500, 0.2, 2);
 }
+
+onMounted(() => {
+  offset.value.x = containerW.value >> 1;
+  offset.value.y = containerH.value >> 1;
+});
 
 const isHoldAlt = useKeyModifier("Alt");
 
@@ -44,10 +58,30 @@ function mouseMoveHandler(event: MouseEvent) {
   dragInfo.startX = event.x;
   dragInfo.startY = event.y;
 }
+
+async function exportPng(
+  filename: string,
+  ref?: Readonly<ShallowRef<HTMLDivElement | null>>
+) {
+  const target = ref ?? canvas;
+  if (!target.value) return;
+  const oldState = { offset: { ...offset.value }, factor: factor.value };
+  offset.value.x = target.value.offsetWidth >> 1;
+  offset.value.y = target.value.offsetHeight >> 1;
+  factor.value = 1;
+  await nextTick();
+  const dataUrl = await toPng(target.value);
+  download(dataUrl, `${filename}.png`);
+  offset.value = oldState.offset;
+  factor.value = oldState.factor;
+}
+
+defineExpose({ export: exportPng });
 </script>
 
 <template>
   <div
+    ref="container"
     class="bg-checkboard relative overflow-hidden"
     :class="isHoldAlt ? 'cursor-move' : 'cursor-auto'"
     @wheel.passive="onWheel"
@@ -60,7 +94,7 @@ function mouseMoveHandler(event: MouseEvent) {
       }
     "
   >
-    <div id="base" :style="styles">
+    <div id="base" ref="canvas" :style="styles">
       <slot />
     </div>
   </div>
@@ -68,7 +102,7 @@ function mouseMoveHandler(event: MouseEvent) {
 
 <style scoped lang="scss">
 #base {
-  @apply absolute bg-gray-50 shadow top-1/2  left-1/2 transform;
+  @apply absolute bg-white shadow transform select-none pointer-events-none;
 
   > * {
     position: absolute;

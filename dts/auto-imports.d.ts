@@ -8,8 +8,8 @@ export {}
 declare global {
   const AxiosClient: typeof import('../src/libs/AxiosClient')['AxiosClient']
   const Battle: typeof import('../src/libs/Battle')['Battle']
-  const BattleEvent: typeof import('../src/libs/Battle')['BattleEvent']
-  const BattleEventOptions: typeof import('../src/libs/Battle')['BattleEventOptions']
+  const BattleMode: typeof import('../src/libs/Battle')['BattleMode']
+  const BattleModeOptions: typeof import('../src/libs/Battle')['BattleModeOptions']
   const EffectScope: typeof import('vue')['EffectScope']
   const IndexDBClient: typeof import('../src/api/clients')['IndexDBClient']
   const SchaleDbClient: typeof import('../src/api/clients')['SchaleDbClient']
@@ -163,6 +163,8 @@ declare global {
   const useClipboardItems: typeof import('@vueuse/core')['useClipboardItems']
   const useCloned: typeof import('@vueuse/core')['useCloned']
   const useColorMode: typeof import('@vueuse/core')['useColorMode']
+  const useConfig: typeof import('../src/api/config')['useConfig']
+  const useConfigData: typeof import('../src/api/config')['useConfigData']
   const useConfirmDialog: typeof import('@vueuse/core')['useConfirmDialog']
   const useCounter: typeof import('@vueuse/core')['useCounter']
   const useCssModule: typeof import('vue')['useCssModule']
@@ -290,6 +292,7 @@ declare global {
   const useVModel: typeof import('@vueuse/core')['useVModel']
   const useVModels: typeof import('@vueuse/core')['useVModels']
   const useVibrate: typeof import('@vueuse/core')['useVibrate']
+  const useVideoBackground: typeof import('../src/api/config')['useVideoBackground']
   const useVirtualList: typeof import('@vueuse/core')['useVirtualList']
   const useWakeLock: typeof import('@vueuse/core')['useWakeLock']
   const useWebNotification: typeof import('@vueuse/core')['useWebNotification']
@@ -321,6 +324,9 @@ declare global {
   // @ts-ignore
   export type { Component, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
+  // @ts-ignore
+  export type { BattleMode, BattleMode } from '../src/libs/Battle'
+  import('../src/libs/Battle')
 }
 
 // for vue template auto import
@@ -330,8 +336,8 @@ declare module 'vue' {
   interface ComponentCustomProperties {
     readonly AxiosClient: UnwrapRef<typeof import('../src/libs/AxiosClient')['AxiosClient']>
     readonly Battle: UnwrapRef<typeof import('../src/libs/Battle')['Battle']>
-    readonly BattleEvent: UnwrapRef<typeof import('../src/libs/Battle')['BattleEvent']>
-    readonly BattleEventOptions: UnwrapRef<typeof import('../src/libs/Battle')['BattleEventOptions']>
+    readonly BattleMode: UnwrapRef<typeof import('../src/libs/Battle')['BattleMode']>
+    readonly BattleModeOptions: UnwrapRef<typeof import('../src/libs/Battle')['BattleModeOptions']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly IndexDBClient: UnwrapRef<typeof import('../src/api/clients')['IndexDBClient']>
     readonly SchaleDbClient: UnwrapRef<typeof import('../src/api/clients')['SchaleDbClient']>
@@ -610,6 +616,7 @@ declare module 'vue' {
     readonly useVModel: UnwrapRef<typeof import('@vueuse/core')['useVModel']>
     readonly useVModels: UnwrapRef<typeof import('@vueuse/core')['useVModels']>
     readonly useVibrate: UnwrapRef<typeof import('@vueuse/core')['useVibrate']>
+    readonly useVideoBackground: UnwrapRef<typeof import('../src/api/config')['useVideoBackground']>
     readonly useVirtualList: UnwrapRef<typeof import('@vueuse/core')['useVirtualList']>
     readonly useWakeLock: UnwrapRef<typeof import('@vueuse/core')['useWakeLock']>
     readonly useWebNotification: UnwrapRef<typeof import('@vueuse/core')['useWebNotification']>

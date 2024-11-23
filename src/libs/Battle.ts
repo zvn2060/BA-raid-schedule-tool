@@ -2,16 +2,14 @@ import { z } from "zod";
 import { Team } from "./Team";
 
 
-export const BattleEvent = {
-    Raid: "總力戰",
-    Elimination: "大決戰",
-    Test: "綜合戰術考試",
-    Unrestrict: "制約解除"
-} as const;
+export enum BattleMode {
+    Raid = "總力戰",
+    Elimination = "大決戰",
+    Test = "綜合戰術考試",
+    Unrestrict = "制約解除"
+}
 
-export const BattleEventOptions = Object.values(BattleEvent);
-
-type BattleEvent = (typeof BattleEvent)[(keyof typeof BattleEvent)];
+export const BattleModeOptions = Object.values(BattleMode);
 
 const chineseNum = {
     1: "一",
@@ -36,11 +34,11 @@ export class Battle implements Serializable<z.infer<typeof Battle.schema>> {
     comment: string = "※註解";
     score: string = "0"
     private _teams: Team[] = []
-    mode: BattleEvent = BattleEvent.Raid;
+    mode: BattleMode = BattleMode.Raid;
     static schema = z.object({
         name: z.string().nullish(),
         comment: z.string().nullish(),
-        mode: z.nativeEnum(BattleEvent).nullish(),
+        mode: z.nativeEnum(BattleMode).nullish(),
         teams: Team.schema.array().nullish()
     })
 
@@ -59,7 +57,7 @@ export class Battle implements Serializable<z.infer<typeof Battle.schema>> {
 
 
     private get teamStruture() {
-        return this.mode === BattleEvent.Unrestrict ? "unrestrict" : "normal"
+        return this.mode === BattleMode.Unrestrict ? "unrestrict" : "normal"
     }
 
     addTeam() {
