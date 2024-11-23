@@ -1,61 +1,97 @@
 <script setup lang="ts">
-import {Canvas, Point, Rect} from "fabric";
-import {useWheel} from "@vueuse/gesture";
+const store = useBattleStore();
+const { battle } = storeToRefs(store);
 
-const canvas = ref();
-let canvasRef: Canvas;
-
-const container = ref();
-
-const { width, height } = useElementSize(container);
-const { elementY: y, elementX: x } = useMouseInElement(container);
-const rect = new Rect({
-  width: 1000,
-  height: 600,
-  fill: 'white',
-  selectable: false,
-  hoverCursor: null,
-  objectCaching: false,
-  stroke: '#e4e4e4',
-  strokeWidth: 2,
+const titleFontSize = ref("104px");
+const titleStyle = computed(() => {
+  switch (battle.value.mode) {
+    case BattleEvent.Raid:
+      return { "--tst-text-stroke-color": "#0088FC" };
+    case BattleEvent.Elimination:
+      return { "--tst-text-stroke-color": "#E6212A" };
+    case BattleEvent.Test:
+      return { "--tst-text-stroke-color": "#FF914D" };
+    case BattleEvent.Unrestrict:
+      return { "--tst-text-stroke-color": "#808080" };
+  }
 });
+const teamArrayPosition = computed(() => {
+  if (battle.value.teams.length <= 2) return ["bottom-0"];
+  const classes = [];
+  switch (battle.value.teams.length) {
+    case 3:
+      classes.push("top-[310px]");
+      break;
+    case 4:
+      classes.push("top-[200px]");
+      break;
+  }
 
-useWheel(({ movement }) => {
-  const isZoomOut = movement[1] > 0;
-  const zoom = canvasRef.getZoom();
-  if (isZoomOut && zoom < 0.5 || (!isZoomOut && zoom > 2)) return;
-  const delta = isZoomOut ? 200 : -200;
-  const factor = zoom - delta / width.value;
-  canvasRef?.zoomToPoint(new Point(x.value, y.value), factor)
-}, { domTarget: container, eventOptions: { passive: true }, axis: "y" });
+  classes.push(
+    battle.value.mode === BattleEvent.Test ? "right-[30px]" : "left-[20px]"
+  );
 
-watch([width, height], ([newW, newH]) => {
-  canvasRef?.setDimensions({ width: newW, height: newH });
-  canvasRef?.centerObject(rect);
+  return classes;
 });
-
-
-onMounted(() => {
-  canvasRef = new Canvas(canvas.value, { backgroundColor: "transparent" });
-  canvasRef.add(rect);
-  canvasRef.renderAll();
-})
-
-
 </script>
 
 <template>
-  <div ref="container" class="bg-checkboard">
-    <canvas ref="canvas"></canvas>
+  <div class="flex">
+    <div
+      class="w-fit min-w-[15rem] shadow-xl bg-surface-50 p-2 flex flex-col gap-2"
+    >
+      <Message> 請更改標題以更新註解字體大小 </Message>
+      <InputText v-model="battle.title" />
+      <InputText v-model="battle.comment" />
+      <InputText v-model="battle.score" />
+    </div>
+    <CssImageEditor
+      :width="1920"
+      :height="1280"
+      class="flex-1 font-[wanhanzon]"
+    >
+      <div class="w-full h-[180px] bg-black relative">
+        <AutoText
+          v-model="titleFontSize"
+          :width="1800"
+          :height="160"
+          text-class="video-font-stroke"
+          :style="titleStyle"
+          :text="battle.title"
+          class="justify-center !items-center absolute top-[10px] bottom-[10px] left-[60px] right-[60px]"
+        />
+      </div>
+      <span
+        v-if="battle.teams.length <= 2"
+        class="video-font-stroke text-stroke-[#ff3131] absolute top-[210px] bottom-[210px] left-[60px] right-[60px] break-all"
+        :style="{ fontSize: titleFontSize }"
+      >
+        {{ battle.comment }}
+      </span>
+      <div
+        v-if="battle.teams.length === 1"
+        :style="{
+          width: `${battle.mode === BattleEvent.Unrestrict ? 360 : 960}px`,
+        }"
+        class="bottom-0 bg-black right-0 relative h-[180px]"
+      >
+        <AutoText
+          :width="battle.mode === BattleEvent.Unrestrict ? 240 : 840"
+          :height="160"
+          :text="battle.score"
+          text-class="video-font-stroke"
+          :style="titleStyle"
+          class="justify-center !items-center absolute top-[10px] bottom-[10px] left-[60px] right-[60px]"
+        />
+      </div>
+      <TeamArray :class="teamArrayPosition" />
+    </CssImageEditor>
   </div>
 </template>
 
 <style lang="scss">
-
-.bg-checkboard {
-  --black: rgba(236, 236, 236, 0.8);
-  background: linear-gradient(45deg, var(--black) 25%, transparent 25%, transparent 75%, var(--black) 75%), linear-gradient(45deg, var(--black) 25%, transparent 25%, transparent 75%, var(--black) 75%);
-  background-size: 20px 20px;
-  background-position: 0 0, 10px 10px;
+.video-font-stroke {
+  @apply text-stroke  text-stroke-[12px] text-white;
+  paint-order: stroke;
 }
 </style>

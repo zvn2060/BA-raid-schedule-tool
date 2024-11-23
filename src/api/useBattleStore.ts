@@ -1,5 +1,5 @@
-import {isNull, keyBy} from "lodash-es";
-import {ZodError} from "zod";
+import { isNull, keyBy } from "lodash-es";
+import { ZodError } from "zod";
 
 export const useBattleStore = defineStore("軸", () => {
     const battle = ref(new Battle())

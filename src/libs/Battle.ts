@@ -1,5 +1,5 @@
-import {z} from "zod";
-import {Team} from "./Team";
+import { z } from "zod";
+import { Team } from "./Team";
 
 
 export const BattleEvent = {
@@ -32,10 +32,14 @@ function teamIndexToChinese(index: number): string {
 
 export class Battle implements Serializable<z.infer<typeof Battle.schema>> {
     name: string = "總力軸";
+    title: string = ""
+    comment: string = "※註解";
+    score: string = "0"
     private _teams: Team[] = []
     mode: BattleEvent = BattleEvent.Raid;
     static schema = z.object({
         name: z.string().nullish(),
+        comment: z.string().nullish(),
         mode: z.nativeEnum(BattleEvent).nullish(),
         teams: Team.schema.array().nullish()
     })
@@ -46,9 +50,11 @@ export class Battle implements Serializable<z.infer<typeof Battle.schema>> {
 
     constructor(battleProps?: Omit<PartialField<Battle>, "teams"> & { teams?: Pick<PartialField<Team>, "members" | "text">[] }) {
         if (battleProps?.name) this.name = battleProps.name;
+        if (battleProps?.comment) this.comment = battleProps.comment;
         if (battleProps?.mode) this.mode = battleProps.mode;
         const struture = this.teamStruture;
         if (battleProps?.teams) this._teams = battleProps.teams.map(team => new Team(struture, team));
+        this.title = `蔚藍檔案 ${this.mode}`
     }
 
 
