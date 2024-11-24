@@ -261,7 +261,7 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
             if (!member) return "空格";
             const releases = [member.release_hp ?? 0, member.release_atk ?? 0, member.release_heal ?? 0];
             return compact([
-                member.name,
+                member.name.replace("（", "(").replace("）", ")"),
                 `☆${Math.min(member.star, 5)}`,
                 `LV${member.level}`,
                 `${member.skill_ex}${skillTranscript(member.skill_n)}${skillTranscript(member.skill_p)}${skillTranscript(member.skill_sub)}`,
