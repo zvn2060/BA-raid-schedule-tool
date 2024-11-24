@@ -7,6 +7,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AutoComplete: typeof import('primevue/autocomplete')['default']
     AutoText: typeof import('./../src/components/core/AutoText.vue')['default']
     Badge: typeof import('primevue/badge')['default']
     BattleModeDropdown: typeof import('./../src/components/data/BattleModeDropdown.vue')['default']
@@ -17,9 +18,12 @@ declare module 'vue' {
     DataList: typeof import('./../src/components/core/DataList.vue')['default']
     DataTable: typeof import('primevue/datatable')['default']
     Description: typeof import('./../src/components/preview/Description.vue')['default']
+    Dialog: typeof import('primevue/dialog')['default']
+    Fluid: typeof import('primevue/fluid')['default']
     ImageEditor: typeof import('./../src/components/core/ImageEditor.vue')['default']
     ImageFlow: typeof import('./../src/components/preview/ImageFlow.vue')['default']
     Inplace: typeof import('primevue/inplace')['default']
+    InputNumber: typeof import('primevue/inputnumber')['default']
     InputText: typeof import('primevue/inputtext')['default']
     Level: typeof import('./../src/components/data/Level.vue')['default']
     LevelColumn: typeof import('./../src/components/data/LevelColumn.vue')['default']

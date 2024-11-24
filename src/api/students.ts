@@ -1,5 +1,6 @@
-import { useQuery } from "@tanstack/vue-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
 import { Collection, InsertType } from "dexie";
+import { set } from "lodash-es";
 import type { Ref } from "vue";
 
 
@@ -16,8 +17,12 @@ function hasQuery(param: StudentsQueryParams) {
     return param.name;
 }
 
+type StudentWriteModel = Omit<Student, "id" | "name" | "keywords">
+
+type UpdateStudentVariables<T> = { id: number, field: string, value: T[keyof T] }
 
 export function useStudents(params: Ref<StudentsQueryParams>, pagination?: Ref<Pagination>) {
+    const queryClient = useQueryClient()
     const { data: students } = useQuery({
         queryKey: ["students", params, pagination],
         queryFn: () => {
@@ -48,46 +53,25 @@ export function useStudents(params: Ref<StudentsQueryParams>, pagination?: Ref<P
                 .count()
     })
 
-    return { students, total }
-}
+    const { mutateAsync: update } = useMutation({
+        mutationFn: (data: UpdateStudentVariables<StudentWriteModel>) =>
+            IndexDBClient.students
+                .where("id")
+                .equals(data.id)
+                .modify(student => {
+                    if (data.field === "aliases") {
+                        student.aliases.length = 0;
+                        student.aliases.push(...(data.value as string[]));
+                        student.keywords = calculateKeywords(student)
+                    } else {
+                        set(student, data.field, data.value);
+                    }
+                }),
+        onSuccess() {
+            queryClient.invalidateQueries({ queryKey: ["students"], exact: true })
+            queryClient.invalidateQueries({ queryKey: ["students", params, pagination], exact: true })
+        }
+    })
 
-type StudentDTO = {
-    Id: number
-    School: string,
-    StarGrade: number,
-    Name: string,
-    SquadType: "Main" | "Support"
-}
-
-function DTOtoStudent({ Id, Name, SquadType, School, StarGrade }: StudentDTO): Student {
-    const data: Student = {
-        id: Id,
-        name: Name,
-        keywords: [],
-        squad: SquadType === "Main" ? "striker" : "special",
-        school: mapSchool(School),
-        aliases: [],
-        star: StarGrade,
-        kizuna: 1,
-        level: 1,
-        weapon_level: null,
-        gear_1: 0, gear_2: 0, gear_3: 0, gear_unique: null,
-        skill_ex: 1, skill_n: 1, skill_p: 1, skill_sub: 1,
-        release_atk: null, release_heal: null, release_hp: null
-    }
-
-    data.keywords = calculateKeywords(data)
-    return data;
-}
-
-
-export async function fetchStudents() {
-    const data = await SchaleDbClient.get<StudentDTO[]>("students.json")
-    const exists = await IndexDBClient.students.toArray()
-    const existIds = new Set(exists.map(it => it.id))
-    await IndexDBClient.students.bulkPut(
-        data
-            .filter(it => !existIds.has(it.Id))
-            .map((dto) => DTOtoStudent(dto))
-    )
+    return { students, total, update }
 }
