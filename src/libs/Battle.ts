@@ -33,11 +33,13 @@ export class Battle implements Serializable<z.infer<typeof Battle.schema>> {
     title: string = ""
     comment: string = "※註解";
     score: string = "0"
-    private _teams: Team[] = []
     mode: BattleMode = BattleMode.Raid;
+    private _teams: Team[] = []
     static schema = z.object({
         name: z.string().nullish(),
+        title: z.string().nullish(),
         comment: z.string().nullish(),
+        score: z.string().nullish(),
         mode: z.nativeEnum(BattleMode).nullish(),
         teams: Team.schema.array().nullish()
     })
@@ -49,10 +51,11 @@ export class Battle implements Serializable<z.infer<typeof Battle.schema>> {
     constructor(battleProps?: Omit<PartialField<Battle>, "teams"> & { teams?: Pick<PartialField<Team>, "members" | "text">[] }) {
         if (battleProps?.name) this.name = battleProps.name;
         if (battleProps?.comment) this.comment = battleProps.comment;
+        if (battleProps?.score) this.score = battleProps.score;
         if (battleProps?.mode) this.mode = battleProps.mode;
         const struture = this.teamStruture;
         if (battleProps?.teams) this._teams = battleProps.teams.map(team => new Team(struture, team));
-        this.title = `蔚藍檔案 ${this.mode}`
+        this.title = battleProps?.title ?? `蔚藍檔案 ${this.mode}`
     }
 
 
@@ -72,7 +75,10 @@ export class Battle implements Serializable<z.infer<typeof Battle.schema>> {
         return {
             name: this.name,
             teams: this.teams.map(it => it.toObject()),
-            mode: this.mode
+            mode: this.mode,
+            score: this.score,
+            comment: this.comment,
+            title: this.title
         }
     }
 

@@ -48,11 +48,11 @@ function onDownloadClick() {
         <label class="font-bold block mb-1">標題</label>
         <InputText v-model="battle.title" class="w-full" />
       </div>
-      <div>
+      <div v-if="battle.teams.length < 3">
         <label class="font-bold block mb-1">註解</label>
         <InputText v-model="battle.comment" class="w-full" />
       </div>
-      <div>
+      <div v-if="battle.teams.length < 2">
         <label class="font-bold block mb-1">分數</label>
         <InputText v-model="battle.score" class="w-full" />
       </div>

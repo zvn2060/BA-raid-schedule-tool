@@ -11,7 +11,7 @@ if (!currentTeam.value) router.replace("/strategy/pick");
 </script>
 
 <template>
-  <Tabs value="3">
+  <Tabs value="0">
     <TabList>
       <Tab value="0">資訊欄</Tab>
       <Tab value="1">影片封面</Tab>
