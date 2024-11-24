@@ -262,7 +262,7 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
             const releases = [member.release_hp ?? 0, member.release_atk ?? 0, member.release_heal ?? 0];
             return compact([
                 member.name,
-                `☆${Math.max(member.star)}`,
+                `☆${Math.min(member.star, 5)}`,
                 `LV${member.level}`,
                 `${member.skill_ex}${skillTranscript(member.skill_n)}${skillTranscript(member.skill_p)}${skillTranscript(member.skill_sub)}`,
                 member.star > 5 ? `固有${member.star - 5}` : null,
