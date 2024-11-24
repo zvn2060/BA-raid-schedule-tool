@@ -14,15 +14,15 @@ const height = computed(() => 220 * battle.value.teams.length - 20);
 
 <template>
   <div class="relative">
-    <Button
-      rounded
-      class="!absolute right-4 top-4 z-10"
-      size="large"
-      label="下載"
-      icon="pi pi-download"
-      @click="onDownloadClick"
-    />
-    <ImageEditor :width="1000" :height ref="editor" class="h-full border-2">
+    <ImageEditor :width="1000" :height ref="editor" class="h-full border-2" >
+      <template #control>
+        <Button
+          rounded
+          label="下載"
+          icon="pi pi-download"
+          @click="onDownloadClick"
+        />
+      </template>
       <div class="flex flex-col w-full h-full justify-evenly">
         <div
           v-for="team in battle.teams"

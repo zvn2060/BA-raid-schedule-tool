@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import download from "downloadjs";
 import { toPng } from "html-to-image";
-import { castArray, clamp } from "lodash-es";
+import { castArray, clamp, isNull } from "lodash-es";
 import { ShallowRef } from "vue";
 
 const props = defineProps<{
@@ -9,7 +9,6 @@ const props = defineProps<{
   height: number;
 }>();
 
-const canvas = useTemplateRef("canvas");
 const container = useTemplateRef("container");
 const { width: containerW, height: containerH } = useElementSize(container);
 const factor = ref(1);
@@ -59,28 +58,30 @@ function mouseMoveHandler(event: MouseEvent) {
   dragInfo.startY = event.y;
 }
 
+function onResetClick() {
+  offset.value.x = containerW.value >> 1;
+  offset.value.y = containerH.value >> 1;
+  factor.value = 1;
+}
+
 async function exportPng(
   filename: string,
-  ref?: Readonly<ShallowRef<HTMLDivElement | HTMLDivElement[] | null>>
+  ref: Readonly<ShallowRef<HTMLDivElement | HTMLDivElement[] | null>>
 ) {
-  const targets = ref ? castArray(ref.value) : [canvas.value];
-  const oldState = { offset: { ...offset.value }, factor: factor.value };
+  const targets = castArray(ref.value);
   const multiple = targets.length > 1;
-  for (let i = 0; i < targets.length; i++) {
-    const target = targets[i];
-    if (!target) continue;
-    offset.value.x = target.offsetWidth >> 1;
-    offset.value.y = target.offsetHeight >> 1;
-    factor.value = 1;
-    await nextTick();
-    const dataUrl = await toPng(target);
-    download(
-      dataUrl,
-      multiple ? `${filename}-${i + 1}.png` : `${filename}.png`
+  const promises = targets
+    .filter((target) => !isNull(target))
+    .map((target, index) =>
+      toPng(target, { pixelRatio: 1 }).then((dataUrl) =>
+        download(
+          dataUrl,
+          multiple ? `${filename}-${index + 1}.png` : `${filename}.png`
+        )
+      )
     );
-  }
-  offset.value = oldState.offset;
-  factor.value = oldState.factor;
+
+  await Promise.all(promises);
 }
 
 defineExpose({ export: exportPng });
@@ -101,7 +102,17 @@ defineExpose({ export: exportPng });
       }
     "
   >
-    <div id="base" ref="canvas" :style="styles">
+    <div class="absolute inset-y-4 right-4 flex flex-col items-end gap-2 z-10">
+      <slot name="control" />
+      <Button
+        icon="pi pi-refresh"
+        rounded
+        class="mt-auto"
+        severity="contrast"
+        @click="onResetClick"
+      />
+    </div>
+    <div id="base" :style="styles">
       <slot />
     </div>
   </div>

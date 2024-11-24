@@ -49,6 +49,8 @@ const stagePages = computed<Page[]>(() => {
   return pages.filter((it) => it.length);
 });
 
+const height = computed(() => stagePages.value.length * 1080);
+
 function onDownloadClick() {
   if (!editor.value) return;
   editor.value.export(`${battle.value.name}-圖片軸`, pages);
@@ -57,20 +59,15 @@ function onDownloadClick() {
 
 <template>
   <div class="relative">
-    <Button
-      rounded
-      class="!absolute right-4 top-4 z-10"
-      size="large"
-      label="下載"
-      icon="pi pi-download"
-      @click="onDownloadClick"
-    />
-    <ImageEditor
-      :width="1920"
-      :height="1080 * stagePages.length"
-      ref="editor"
-      class="h-full border-2"
-    >
+    <ImageEditor :width="1920" :height ref="editor" class="h-full border-2">
+      <template #control>
+        <Button
+          rounded
+          label="下載"
+          icon="pi pi-download"
+          @click="onDownloadClick"
+        />
+      </template>
       <div class="flex flex-col w-full h-full">
         <div
           ref="pages"

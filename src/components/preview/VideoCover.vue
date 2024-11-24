@@ -1,8 +1,12 @@
 <script setup lang="ts">
 const editor = useTemplateRef("editor");
+const cover = useTemplateRef("cover");
 const store = useBattleStore();
 const { battle } = storeToRefs(store);
 const { url } = useVideoBackground();
+const backgroundImage = computed(() => ({
+  "background-image": url.value ? `url(${url.value})` : "unset",
+}));
 const titleFontSize = ref("104px");
 const titleStyle = computed(() => {
   switch (battle.value.mode) {
@@ -37,7 +41,7 @@ const teamArrayPosition = computed(() => {
 
 function onDownloadClick() {
   if (!editor.value) return;
-  editor.value.export(battle.value.name);
+  editor.value.export(battle.value.name, cover);
 }
 </script>
 
@@ -57,14 +61,6 @@ function onDownloadClick() {
         <InputText v-model="battle.score" class="w-full" />
       </div>
       <Message>請更改標題以更新註解字體大小</Message>
-      <Button
-        rounded
-        class="self-center my-auto"
-        size="large"
-        label="下載"
-        icon="pi pi-download"
-        @click="onDownloadClick"
-      />
     </div>
     <ImageEditor
       :width="1920"
@@ -72,42 +68,57 @@ function onDownloadClick() {
       ref="editor"
       class="flex-1 font-[wanhanzon] border-2"
     >
-      <img v-if="url" :src="url" class="w-full h-full object-contain" />
-      <div class="w-full h-[180px] bg-black relative">
-        <AutoText
-          v-model="titleFontSize"
-          :width="1800"
-          :height="160"
-          text-class="video-font-stroke"
-          :style="titleStyle"
-          :text="battle.title"
-          class="justify-center !items-center absolute top-[10px] bottom-[10px] left-[60px] right-[60px]"
+      <template #control>
+        <Button
+          rounded
+          label="下載"
+          icon="pi pi-download"
+          @click="onDownloadClick"
         />
-      </div>
-      <span
-        v-if="battle.teams.length <= 2"
-        class="video-font-stroke text-stroke-[#ff3131] absolute top-[210px] bottom-[210px] left-[60px] right-[60px] break-all"
-        :style="{ fontSize: titleFontSize }"
-      >
-        {{ battle.comment }}
-      </span>
+      </template>
       <div
-        v-if="battle.teams.length === 1"
-        :style="{
-          width: `${battle.mode === BattleMode.Unrestrict ? 360 : 960}px`,
-        }"
-        class="bottom-0 bg-black right-0 relative h-[180px]"
+        ref="cover"
+        class="relative h-full w-full bg-contain"
+        :style="backgroundImage"
       >
-        <AutoText
-          :width="battle.mode === BattleMode.Unrestrict ? 240 : 840"
-          :height="160"
-          :text="battle.score"
-          text-class="video-font-stroke"
-          :style="titleStyle"
-          class="justify-center !items-center absolute top-[10px] bottom-[10px] left-[60px] right-[60px]"
-        />
+        <div class="w-full h-[180px] bg-black relative">
+          <AutoText
+            v-model="titleFontSize"
+            :width="1800"
+            :height="160"
+            mode="boxoneline"
+            text-class="video-font-stroke"
+            :style="titleStyle"
+            :text="battle.title"
+            class="justify-center !items-center absolute inset-y-[10px] inset-x-[50px]"
+          />
+        </div>
+        <span
+          v-if="battle.teams.length <= 2"
+          class="video-font-stroke text-stroke-[#ff3131] absolute inset-y-[210px] inset-x-[60px] break-all"
+          :style="{ fontSize: titleFontSize }"
+        >
+          {{ battle.comment }}
+        </span>
+        <div
+          v-if="battle.teams.length === 1"
+          :style="{
+            width: `${battle.mode === BattleMode.Unrestrict ? 360 : 960}px`,
+          }"
+          class="absolute bottom-0 bg-black right-0 h-[180px]"
+        >
+          <AutoText
+            :width="battle.mode === BattleMode.Unrestrict ? 240 : 840"
+            :height="180"
+            :text="battle.score"
+            mode="oneline"
+            text-class="video-font-stroke"
+            :style="titleStyle"
+            class="justify-center !items-center absolute inset-y-[10px] inset-x-[40px]"
+          />
+        </div>
+        <TeamArray :class="teamArrayPosition" />
       </div>
-      <TeamArray :class="teamArrayPosition" />
     </ImageEditor>
   </div>
 </template>

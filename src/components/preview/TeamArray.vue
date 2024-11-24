@@ -18,7 +18,7 @@ const arrayClasses = computed(() =>
 </script>
 
 <template>
-  <div class="flex items-center justify-center" :class="arrayClasses">
+  <div class="absolute flex items-center justify-center" :class="arrayClasses">
     <template v-for="(team, teamIndex) in battle.teams">
       <div
         v-if="!isVertical && teamIndex > 0"

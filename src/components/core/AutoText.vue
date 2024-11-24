@@ -6,6 +6,7 @@ const props = defineProps<{
   height: number;
   text: string;
   textClass: string;
+  mode?: "oneline" | "multiline" | "box" | "boxoneline" 
 }>();
 
 const container = useTemplateRef("container");
@@ -19,7 +20,7 @@ onMounted(() => {
   updateSize = autoTextSize({
     innerEl: textEl.value,
     containerEl: container.value,
-    mode: "boxoneline",
+    mode: props.mode,
   });
 });
 
