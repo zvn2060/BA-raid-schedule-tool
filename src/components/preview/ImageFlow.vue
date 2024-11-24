@@ -35,13 +35,12 @@ const stagePages = computed<Page[]>(() => {
     });
 
     let x = 0;
-
     columns.forEach((column) => {
       if (x + column.width + pages.at(-1)!.length * 80 <= 1760) {
         x += column.width;
         pages.at(-1)?.push(column.data);
       } else {
-        x = 0;
+        x = column.width;
         pages.push([column.data]);
       }
     });
