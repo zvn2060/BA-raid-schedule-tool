@@ -2,7 +2,7 @@ import Dexie, { EntityTable } from "dexie"
 import { uniq } from "lodash-es"
 
 export const SchaleDbClient = new AxiosClient({
-    baseURL: "https://raw.githubusercontent.com/SchaleDB/SchaleDB/refs/heads/main/data/tw"
+    baseURL: "https://schaledb.com/data/tw"
 })
 
 export const IndexDBClient = new Dexie("ba-strategy-tool") as Dexie & {
@@ -70,11 +70,11 @@ function DTOtoStudent({ Id, Name, SquadType, School, StarGrade }: StudentDTO): S
 
 IndexDBClient.on("ready", async (_db) => {
     const db = _db as typeof IndexDBClient;
-    const data = await SchaleDbClient.get<StudentDTO[]>("students.json")
+    const data = await SchaleDbClient.get<Record<number, StudentDTO>>("students.min.json")
     const exists = await db.students.toArray()
     const existIds = new Set(exists.map(it => it.id))
     await db.students.bulkPut(
-        data
+        Object.values(data)
             .filter(it => !existIds.has(it.Id))
             .map((dto) => DTOtoStudent(dto))
     )
