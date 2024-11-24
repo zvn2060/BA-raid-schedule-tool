@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
 import { Collection, InsertType } from "dexie";
-import { set } from "lodash-es";
+import { set, uniqBy } from "lodash-es";
 import type { Ref } from "vue";
 
 
@@ -29,7 +29,7 @@ export function useStudents(params: Ref<StudentsQueryParams>, pagination?: Ref<P
             let query = IndexDBClient.students;
             let collection: Collection<Student, number, InsertType<Student, "id">>
             if (hasQuery(params.value))
-                collection = query.where("keywords").anyOf([...params.value.name])
+                collection = query.where("keywords").equals(params.value.name)
             else
                 collection = query.toCollection()
             if (pagination)
@@ -37,7 +37,7 @@ export function useStudents(params: Ref<StudentsQueryParams>, pagination?: Ref<P
                     .offset(pagination.value.first)
                     .limit(pagination.value.itemPerPage)
 
-            return collection.toArray()
+            return collection.toArray().then(data => uniqBy(data, it => it.id))
         },
         placeholderData: old => old ?? []
     })
@@ -47,7 +47,7 @@ export function useStudents(params: Ref<StudentsQueryParams>, pagination?: Ref<P
         queryFn: () => hasQuery(params.value)
             ? IndexDBClient.students
                 .where("keywords")
-                .anyOf([...params.value.name])
+                .equals(params.value.name)
                 .count()
             : IndexDBClient.students
                 .count()

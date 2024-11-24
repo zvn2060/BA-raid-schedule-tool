@@ -25,7 +25,6 @@ declare module 'vue' {
     Inplace: typeof import('primevue/inplace')['default']
     InputNumber: typeof import('primevue/inputnumber')['default']
     InputText: typeof import('primevue/inputtext')['default']
-    Level: typeof import('./../src/components/data/Level.vue')['default']
     LevelColumn: typeof import('./../src/components/data/LevelColumn.vue')['default']
     MemberList: typeof import('./../src/components/pick/MemberList.vue')['default']
     Menubar: typeof import('primevue/menubar')['default']

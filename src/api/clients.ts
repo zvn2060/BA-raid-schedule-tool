@@ -10,7 +10,18 @@ export const IndexDBClient = new Dexie("ba-strategy-tool") as Dexie & {
 }
 
 export function calculateKeywords(student: Student) {
-    return uniq([...student.name, ...student.aliases.join("")]).filter(it => !("()（）＊".includes(it)))
+    const keywords = [student.name, ...student.aliases]
+        .flatMap(it => {
+            const match = it.match(/(?<name>[^()（）]+)([(（](?<skin>[^()（）]+)[)）])?/)
+            if (!match || !match.groups) return [it];
+            const { name, skin } = match.groups;
+            const keywords = name === "白子＊恐怖"
+                ? ["白子", "恐怖", ..."白子", ..."恐怖"]
+                : [name, ...name]
+            if (skin) keywords.push(skin, ...skin)
+            return keywords;
+        })
+    return uniq(keywords)
 }
 
 IndexDBClient
