@@ -1,5 +1,5 @@
-import {compact, isNil} from "lodash-es";
-import {z} from "zod";
+import { compact, isNil } from "lodash-es";
+import { z } from "zod";
 
 declare global {
     export type Action = { actor: StudentId | null, target?: StudentId | null };
@@ -8,6 +8,7 @@ declare global {
     export type Student = {
         readonly id: StudentId;
         readonly name: string;
+        keywords: string[];
         aliases: string[];
         squad: "striker" | "special";
         school: string,

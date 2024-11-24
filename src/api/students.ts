@@ -24,8 +24,7 @@ export function useStudents(params: Ref<StudentsQueryParams>, pagination?: Ref<P
             let query = IndexDBClient.students;
             let collection: Collection<Student, number, InsertType<Student, "id">>
             if (hasQuery(params.value))
-                collection = query
-                    .filter(students => [students.name, ...students.aliases].join(",").includes(params.value.name))
+                collection = query.where("keywords").anyOf([...params.value.name])
             else
                 collection = query.toCollection()
             if (pagination)
@@ -42,7 +41,8 @@ export function useStudents(params: Ref<StudentsQueryParams>, pagination?: Ref<P
         queryKey: ["students-total", params],
         queryFn: () => hasQuery(params.value)
             ? IndexDBClient.students
-                .filter(students => [students.name, ...students.aliases].join(",").includes(params.value.name))
+                .where("keywords")
+                .anyOf([...params.value.name])
                 .count()
             : IndexDBClient.students
                 .count()
@@ -60,9 +60,10 @@ type StudentDTO = {
 }
 
 function DTOtoStudent({ Id, Name, SquadType, School, StarGrade }: StudentDTO): Student {
-    return {
+    const data: Student = {
         id: Id,
         name: Name,
+        keywords: [],
         squad: SquadType === "Main" ? "striker" : "special",
         school: mapSchool(School),
         aliases: [],
@@ -74,6 +75,9 @@ function DTOtoStudent({ Id, Name, SquadType, School, StarGrade }: StudentDTO): S
         skill_ex: 1, skill_n: 1, skill_p: 1, skill_sub: 1,
         release_atk: null, release_heal: null, release_hp: null
     }
+
+    data.keywords = calculateKeywords(data)
+    return data;
 }
 
 

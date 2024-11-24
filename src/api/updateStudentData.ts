@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/vue-query";
-import { isNil } from "lodash-es";
+import { isNil, keyBy, merge } from "lodash-es";
 import { initParser } from "udsv";
+import { calculateKeywords } from "./clients";
 
 type StudentCsvDTO = {
     "名稱": string
@@ -74,14 +75,11 @@ const keyMap: Record<Exclude<keyof StudentCsvDTO, "名稱">, { key: keyof Studen
     "裝備二": { key: "gear_2" },
 }
 
-function parseCsvStudentData(text: string): Array<Partial<Student> & { name: string }> {
+function parseCsvStudentData(text: string): Record<string, { data: Partial<Student>, index: number, name: string }> {
     const lines = text.split("\n");
     const assureNoHeader = lines[0].startsWith("名稱") ? lines.slice(1).join("\n") : text;
-    return parser.typedObjs<StudentCsvDTO>(assureNoHeader).map((item) => {
-        const baseObj: Partial<Student> & { name: string } = {
-            name: item.名稱
-        }
-
+    const studentsData = parser.typedObjs<StudentCsvDTO>(assureNoHeader).map((item, index) => {
+        const baseObj: Partial<Student> = {}
         for (const key in keyMap) {
             const castKey = key as Exclude<keyof StudentCsvDTO, "名稱">
             const val = keyMap[castKey]
@@ -91,8 +89,9 @@ function parseCsvStudentData(text: string): Array<Partial<Student> & { name: str
             // @ts-expect-error key always to be key of item
             baseObj[val.key] = injectVal;
         }
-        return baseObj;
+        return { data: baseObj, index, name: item.名稱 };
     })
+    return keyBy(studentsData, it => it.name);
 }
 
 
@@ -100,18 +99,23 @@ export function updateStudentData() {
     const queryClient = useQueryClient()
     const { mutateAsync: update } = useMutation({
         async mutationFn(file: File) {
-            const students = parseCsvStudentData(await file.text());
-            await IndexDBClient.transaction("readwrite", IndexDBClient.students, async () => {
-                const notModifies = new Array<string>()
-                for (const index in students) {
-                    const { name, ...otherData } = students[index]
-                    const updated = await IndexDBClient.students.where("name").equals(name).modify(otherData)
-                    if (updated < 1) notModifies.push(`第 ${parseInt(index) + 2} 筆：${name} `)
-                }
+            const updateMap = parseCsvStudentData(await file.text());
+            const names = Object.keys(updateMap);
+            const notInDatabase = new Map(Object.entries(updateMap))
 
-                if (notModifies.length) throw Error([
+            await IndexDBClient.transaction("readwrite", IndexDBClient.students, async () => {
+                await IndexDBClient.students
+                    .where("name")
+                    .anyOf(names)
+                    .modify(student => {
+                        merge(student, updateMap[student.name].data);
+                        notInDatabase.delete(student.name);
+                        student.keywords = calculateKeywords(student)
+                    })
+
+                if (notInDatabase.size) throw Error([
                     `以下資料不在資料庫中，請確認名字是否一致：`,
-                    ...notModifies
+                    ...Array.from(notInDatabase.values()).map(it => `第 ${it.index + 2} 筆：${it.name} `)
                 ].join("\n"))
 
                 await queryClient.invalidateQueries({ queryKey: ["students"] })
