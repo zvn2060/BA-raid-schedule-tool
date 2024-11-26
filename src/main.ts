@@ -1,19 +1,20 @@
-import {definePreset} from '@primevue/themes';
+import { definePreset } from '@primevue/themes';
 import Aura from '@primevue/themes/aura';
-import {BlockUIDesignTokens} from '@primevue/themes/aura/blockui';
-import {MenubarDesignTokens} from '@primevue/themes/aura/menubar';
-import {VueQueryPlugin} from '@tanstack/vue-query';
+import { BlockUIDesignTokens } from '@primevue/themes/aura/blockui';
+import { MenubarDesignTokens } from '@primevue/themes/aura/menubar';
+import { InplaceDesignTokens } from "@primevue/themes/types/inplace";
+import { VueQueryPlugin } from '@tanstack/vue-query';
 import "primeicons/primeicons.css";
-import {Tooltip} from 'primevue';
+import { Tooltip } from 'primevue';
 import PrimeVue from 'primevue/config';
 import ToastService from 'primevue/toastservice';
-import {setupLayouts} from 'virtual:generated-layouts';
-import {createApp} from 'vue';
-import {createRouter, createWebHistory} from "vue-router";
-import {routes} from 'vue-router/auto-routes';
+import { setupLayouts } from 'virtual:generated-layouts';
+import { createApp } from 'vue';
+import VueKonva from "vue-konva";
+import { createRouter, createWebHistory } from "vue-router";
+import { routes } from 'vue-router/auto-routes';
 import App from './App.vue';
 import "./assets/index.scss";
-import {InplaceDesignTokens} from "@primevue/themes/types/inplace";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -41,6 +42,7 @@ const pinia = createPinia();
 
 createApp(App)
     .use(VueQueryPlugin)
+    .use(VueKonva, { prefix: "Konva", })
     .use(router)
     .use(pinia)
     .use(ToastService)

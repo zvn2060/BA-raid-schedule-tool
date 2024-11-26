@@ -152,6 +152,7 @@ declare global {
   const useAsyncQueue: typeof import('@vueuse/core')['useAsyncQueue']
   const useAsyncState: typeof import('@vueuse/core')['useAsyncState']
   const useAttrs: typeof import('vue')['useAttrs']
+  const useAutoSizeText: typeof import('../src/libs/useAutoSizeText')['useAutoSizeText']
   const useBase64: typeof import('@vueuse/core')['useBase64']
   const useBattery: typeof import('@vueuse/core')['useBattery']
   const useBattleStore: typeof import('../src/api/useBattleStore')['useBattleStore']
@@ -478,6 +479,7 @@ declare module 'vue' {
     readonly useAsyncQueue: UnwrapRef<typeof import('@vueuse/core')['useAsyncQueue']>
     readonly useAsyncState: UnwrapRef<typeof import('@vueuse/core')['useAsyncState']>
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
+    readonly useAutoSizeText: UnwrapRef<typeof import('../src/libs/useAutoSizeText')['useAutoSizeText']>
     readonly useBase64: UnwrapRef<typeof import('@vueuse/core')['useBase64']>
     readonly useBattery: UnwrapRef<typeof import('@vueuse/core')['useBattery']>
     readonly useBattleStore: UnwrapRef<typeof import('../src/api/useBattleStore')['useBattleStore']>

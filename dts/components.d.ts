@@ -8,7 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AutoComplete: typeof import('primevue/autocomplete')['default']
-    AutoText: typeof import('./../src/components/core/AutoText.vue')['default']
+    AutoText: typeof import('./../src/components/preview/AutoText.vue')['default']
     Badge: typeof import('primevue/badge')['default']
     BattleModeDropdown: typeof import('./../src/components/data/BattleModeDropdown.vue')['default']
     BlockUI: typeof import('primevue/blockui')['default']
@@ -25,6 +25,8 @@ declare module 'vue' {
     Inplace: typeof import('primevue/inplace')['default']
     InputNumber: typeof import('primevue/inputnumber')['default']
     InputText: typeof import('primevue/inputtext')['default']
+    KonvaAutoText: typeof import('./../src/components/preview/KonvaAutoText.vue')['default']
+    KonvaAvatar: typeof import('./../src/components/preview/KonvaAvatar.vue')['default']
     LevelColumn: typeof import('./../src/components/data/LevelColumn.vue')['default']
     MemberList: typeof import('./../src/components/pick/MemberList.vue')['default']
     Menubar: typeof import('primevue/menubar')['default']
