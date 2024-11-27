@@ -35,8 +35,7 @@ const stagePages = computed<Page[]>(() => {
         context?.measureText(stage.comment ?? "").width ?? 0;
       const commentHeight = Math.ceil(commentOnelineWidth / 630) * 40;
       const commentWidth = Math.min(commentOnelineWidth, 630);
-      const avatarsHeight =
-        avatarRows < 2 ? 150 : avatarRows * 160 - 10;
+      const avatarsHeight = avatarRows < 2 ? 150 : avatarRows * 160 - 10;
       const avatarsWidth =
         avatarCols < 2 ? avatarCols * 150 : avatarCols * 160 - 10;
       const occupiedY =
@@ -77,7 +76,6 @@ const stagePages = computed<Page[]>(() => {
     });
     pages.push([]);
   });
-  console.log(pages);
   return pages.filter((it) => it.length);
 });
 
@@ -86,14 +84,19 @@ const height = computed(() => stagePages.value.length * 1080);
 
 <template>
   <div class="relative">
-    <ImageEditor :width="1920" :height class="h-full border-2" :pixelRation="1">
+    <ImageEditor
+      :width="1920"
+      :height
+      class="h-full border-2"
+      :pixelRation="1"
+      :export-name="`${battle.name}-圖片軸`"
+    >
       <KonvaLayer>
         <KonvaGroup
           v-for="(page, pageId) in stagePages"
           :width="1920"
           :height="1080"
           :y="pageId * 1080"
-          :id="`${battle.name}-圖片軸-${pageId + 1}`"
           name="export"
         >
           <KonvaImage :image="state" :width="1920" :height="1080" />

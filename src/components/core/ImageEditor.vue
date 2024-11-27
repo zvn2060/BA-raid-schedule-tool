@@ -7,6 +7,7 @@ const props = defineProps<{
   pixelRation: number;
   width: number;
   height: number;
+  exportName: string;
 }>();
 const padding = 100;
 const container = useTemplateRef("container");
@@ -100,15 +101,17 @@ async function onDownloadClick() {
   await nextTick();
   const targets = stage.value?.getStage().find(".export");
   if (targets) {
-    const promises = targets
+    const isSingle = targets.length < 2;
+    const data = targets
       .filter((target) => !isNull(target))
-      .map((target) =>
-        download(
-          target.toDataURL({ pixelRatio: props.pixelRation }),
-          `${target.id()}.png`
-        )
-      );
-    Promise.all(promises);
+      .map((target, index) => ({
+        dataUrl: target.toDataURL({ pixelRatio: props.pixelRation }),
+        name: isSingle
+          ? `${props.exportName}.png`
+          : `${props.exportName}-${index + 1}.png`,
+      }));
+    if (isSingle) download(data[0].dataUrl, data[0].name);
+    else workerDownload({ files: data, name: `${props.exportName} (壓縮)` });
   }
   scale.value = oldScale;
 }
