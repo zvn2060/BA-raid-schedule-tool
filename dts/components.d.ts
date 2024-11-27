@@ -8,7 +8,6 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AutoComplete: typeof import('primevue/autocomplete')['default']
-    AutoText: typeof import('./../src/components/preview/AutoText.vue')['default']
     Badge: typeof import('primevue/badge')['default']
     BattleModeDropdown: typeof import('./../src/components/data/BattleModeDropdown.vue')['default']
     BlockUI: typeof import('primevue/blockui')['default']
@@ -25,12 +24,10 @@ declare module 'vue' {
     Inplace: typeof import('primevue/inplace')['default']
     InputNumber: typeof import('primevue/inputnumber')['default']
     InputText: typeof import('primevue/inputtext')['default']
-    KonvaAutoText: typeof import('./../src/components/preview/KonvaAutoText.vue')['default']
     KonvaAvatar: typeof import('./../src/components/preview/KonvaAvatar.vue')['default']
     LevelColumn: typeof import('./../src/components/data/LevelColumn.vue')['default']
     MemberList: typeof import('./../src/components/pick/MemberList.vue')['default']
     Menubar: typeof import('primevue/menubar')['default']
-    Message: typeof import('primevue/message')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Select: typeof import('primevue/select')['default']
@@ -47,7 +44,6 @@ declare module 'vue' {
     TabPanel: typeof import('primevue/tabpanel')['default']
     TabPanels: typeof import('primevue/tabpanels')['default']
     Tabs: typeof import('primevue/tabs')['default']
-    TeamArray: typeof import('./../src/components/preview/TeamArray.vue')['default']
     TeamListItem: typeof import('./../src/components/pick/TeamListItem.vue')['default']
     Teams: typeof import('./../src/components/preview/Teams.vue')['default']
     Textarea: typeof import('primevue/textarea')['default']

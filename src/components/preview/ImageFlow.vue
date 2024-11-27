@@ -1,9 +1,6 @@
 <script setup lang="ts">
 const { state } = useImage({
-  src: new URL(
-    encodeURI("../../assets/backgrounds/圖片軸底圖-1.png?url"),
-    import.meta.url
-  ).href,
+  src: ImageFlowBgUrl,
 });
 
 const { getColor } = useBorderColor();

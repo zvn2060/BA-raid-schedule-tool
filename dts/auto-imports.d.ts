@@ -11,6 +11,7 @@ declare global {
   const BattleMode: typeof import('../src/libs/Battle')['BattleMode']
   const BattleModeOptions: typeof import('../src/libs/Battle')['BattleModeOptions']
   const EffectScope: typeof import('vue')['EffectScope']
+  const ImageFlowBgUrl: typeof import('../src/api/config')['ImageFlowBgUrl']
   const IndexDBClient: typeof import('../src/api/clients')['IndexDBClient']
   const LayoutAlgo: typeof import('../src/libs/LayoutAlgo')['LayoutAlgo']
   const SchaleDbClient: typeof import('../src/api/clients')['SchaleDbClient']
@@ -343,6 +344,7 @@ declare module 'vue' {
     readonly BattleMode: UnwrapRef<typeof import('../src/libs/Battle')['BattleMode']>
     readonly BattleModeOptions: UnwrapRef<typeof import('../src/libs/Battle')['BattleModeOptions']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
+    readonly ImageFlowBgUrl: UnwrapRef<typeof import('../src/api/config')['ImageFlowBgUrl']>
     readonly IndexDBClient: UnwrapRef<typeof import('../src/api/clients')['IndexDBClient']>
     readonly SchaleDbClient: UnwrapRef<typeof import('../src/api/clients')['SchaleDbClient']>
     readonly Team: UnwrapRef<typeof import('../src/libs/Team')['Team']>

@@ -3,7 +3,7 @@ import { BattleMode } from "../libs";
 
 export function useVideoBackground() {
     const { battle } = storeToRefs(useBattleStore())
-    const conditions  = computed(() => ({ teamCount: battle.value.teams.length, mode: battle.value.mode }))
+    const conditions = computed(() => ({ teamCount: battle.value.teams.length, mode: battle.value.mode }))
     const { data: url } = useQuery({
         queryKey: ["background", conditions],
         queryFn: () => {
@@ -27,3 +27,5 @@ export function useVideoBackground() {
 
     return { url }
 }
+
+export const ImageFlowBgUrl = new URL("../assets/backgrounds/圖片軸底圖-1.png?url", import.meta.url).href
