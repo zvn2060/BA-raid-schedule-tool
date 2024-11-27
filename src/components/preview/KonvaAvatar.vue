@@ -6,6 +6,7 @@ const props = defineProps<{
   x: number;
   y: number;
   stroke?: string;
+  strokeWidth?: number
 }>();
 
 const { state } = useImage(() => ({
@@ -23,5 +24,6 @@ const { state } = useImage(() => ({
     :x="x"
     :y="y"
     :stroke
+    :strokeWidth
   />
 </template>

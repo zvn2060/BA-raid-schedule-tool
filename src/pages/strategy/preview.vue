@@ -29,7 +29,7 @@ if (!currentTeam.value) router.replace("/strategy/pick");
         <Teams class="h-full" />
       </TabPanel>
       <TabPanel value="3" class="h-full">
-        <!-- <ImageFlow class="h-full"/> -->
+        <ImageFlow class="h-full"/>
       </TabPanel>
     </TabPanels>
   </Tabs>

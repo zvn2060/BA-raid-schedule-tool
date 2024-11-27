@@ -66,7 +66,8 @@ const imageName = computed(() => `${battle.value.title}-影片封面`);
     <ImageEditor
       :width="1920"
       :height="1080"
-      class="flex-1 font-[wanhanzon] border-2"
+      class="flex-1 border-2"
+      :pixelRation="2 / 3"
     >
       <KonvaLayer>
         <KonvaGroup name="export" :id="imageName" :width="1920" :height="1080">

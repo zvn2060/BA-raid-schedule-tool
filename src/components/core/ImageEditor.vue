@@ -3,7 +3,11 @@ import download from "downloadjs";
 import Konva from "konva";
 import { clamp, isNull } from "lodash-es";
 
-const props = defineProps<{ width: number; height: number }>();
+const props = defineProps<{
+  pixelRation: number;
+  width: number;
+  height: number;
+}>();
 const padding = 100;
 const container = useTemplateRef("container");
 const stage = useTemplateRef<Konva.Stage>("stage");
@@ -72,7 +76,7 @@ function wheelHandler(event: Konva.KonvaEventObject<WheelEvent>) {
   scale.value = clamp(
     scale.value * (event.evt.deltaY > 0 ? 0.882 : 1.133),
     minScale.value,
-    4
+    10
   );
   stagePosition.value = {
     x: pointer.x - mousePointTo.x * scale.value,
@@ -98,9 +102,13 @@ async function onDownloadClick() {
   if (targets) {
     const promises = targets
       .filter((target) => !isNull(target))
-      .map((target) => download(target.toDataURL(), `${target.id()}.png`));
-
-    await Promise.all(promises);
+      .map((target) =>
+        download(
+          target.toDataURL({ pixelRatio: props.pixelRation }),
+          `${target.id()}.png`
+        )
+      );
+    Promise.all(promises);
   }
   scale.value = oldScale;
 }

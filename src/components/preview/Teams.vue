@@ -7,7 +7,7 @@ const height = computed(() => 220 * battle.value.teams.length + 20);
 
 <template>
   <div class="relative">
-    <ImageEditor :width="1000" :height class="h-full border-2">
+    <ImageEditor :width="1000" :height class="h-full border-2" :pixelRation="1">
       <KonvaLayer>
         <template v-if="battle.mode === BattleMode.Unrestrict">
           <KonvaGroup
