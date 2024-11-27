@@ -1,42 +1,73 @@
 <script setup lang="ts">
-const editor = useTemplateRef("editor");
-const teams = useTemplateRef("teams");
 const store = useBattleStore();
 const { battle } = storeToRefs(store);
 
-function onDownloadClick() {
-  if (!editor.value) return;
-  editor.value.export(battle.value.name, teams);
-}
-
-const height = computed(() => 220 * battle.value.teams.length - 20);
+const height = computed(() => 220 * battle.value.teams.length + 20);
 </script>
 
 <template>
   <div class="relative">
-    <ImageEditor :width="1000" :height ref="editor" class="h-full border-2" >
-      <template #control>
-        <Button
-          rounded
-          label="下載"
-          icon="pi pi-download"
-          @click="onDownloadClick"
-        />
-      </template>
-      <div class="flex flex-col w-full h-full justify-evenly">
-        <div
-          v-for="team in battle.teams"
-          class="team-container"
-          :class="team.struture"
-          ref="teams"
-        >
-          <template v-for="(member, index) in team.members">
-            <div v-if="battle.mode === BattleMode.Unrestrict && index === 6" />
-            <StudentAvatar v-if="member" :student="member" />
-            <div v-else />
-          </template>
-        </div>
-      </div>
+    <ImageEditor
+      :export-name="`${battle.name}-網站隊伍`"
+      :width="1000"
+      :height
+      class="h-full border-2"
+      :pixelRation="1"
+    >
+      <KonvaLayer>
+        <template v-if="battle.mode === BattleMode.Unrestrict">
+          <KonvaGroup
+            name="export"
+            v-for="(team, teamId) in battle.teams"
+            :width="1000"
+            :height="200"
+            :y="20 + teamId * 220"
+          >
+            <KonvaRect fill="#000000" :width="1000" :height="200" />
+            <template v-for="(member, index) in team.members.slice(0, 6)">
+              <KonvaAvatar
+                v-if="member"
+                :student="member"
+                :x="25 + index * 105"
+                :y="47.5"
+                :width="105"
+                :height="105"
+              />
+            </template>
+            <template v-for="(member, index) in team.members.slice(6)">
+              <KonvaAvatar
+                v-if="member"
+                :student="member"
+                :x="675 + index * 75"
+                :y="62.5"
+                :width="75"
+                :height="75"
+              />
+            </template>
+          </KonvaGroup>
+        </template>
+        <template v-else>
+          <KonvaGroup
+            name="export"
+            v-for="(team, teamId) in battle.teams"
+            :width="1000"
+            :height="200"
+            :y="20 + teamId * 220"
+          >
+            <KonvaRect fill="#000000" :width="1000" :height="200" />
+            <template v-for="(member, index) in team.members">
+              <KonvaAvatar
+                v-if="member"
+                :student="member"
+                :x="35 + index * 155"
+                :y="22.5"
+                :width="155"
+                :height="155"
+              />
+            </template>
+          </KonvaGroup>
+        </template>
+      </KonvaLayer>
     </ImageEditor>
   </div>
 </template>

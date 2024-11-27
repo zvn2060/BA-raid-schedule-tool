@@ -1,48 +1,50 @@
 <script setup lang="ts">
-const editor = useTemplateRef("editor");
-const cover = useTemplateRef("cover");
+import TempVar from "vue-temp-var";
+
 const store = useBattleStore();
 const { battle } = storeToRefs(store);
+const teamCount = computed(() => battle.value.teams.length);
+const showFooter = computed(() => teamCount.value <= 2);
+const showComment = computed(() => teamCount.value <= 2);
+const showScore = computed(() => teamCount.value === 1);
+const isNormal = computed(() => battle.value.mode !== BattleMode.Unrestrict);
 const { url } = useVideoBackground();
-const backgroundImage = computed(() => ({
-  "background-image": url.value ? `url(${url.value})` : "unset",
+
+const { state: backgroundImage } = useImage(() => ({
+  src: url.value ?? "",
+  crossorigin: "Anonymous",
 }));
-const titleFontSize = ref("104px");
-const titleStyle = computed(() => {
+
+const strokeColor = computed(() => {
   switch (battle.value.mode) {
     case BattleMode.Raid:
-      return { "--tst-text-stroke-color": "#0088FC" };
+      return "#0088FC";
     case BattleMode.Elimination:
-      return { "--tst-text-stroke-color": "#E6212A" };
+      return "#E6212A";
     case BattleMode.Test:
-      return { "--tst-text-stroke-color": "#FF914D" };
+      return "#FF914D";
     case BattleMode.Unrestrict:
-      return { "--tst-text-stroke-color": "#808080" };
+      return "#808080";
   }
 });
-const teamArrayPosition = computed(() => {
-  if (battle.value.teams.length <= 2) return ["bottom-0"];
-  const classes = [];
-  switch (battle.value.teams.length) {
-    case 3:
-      classes.push("top-[310px]");
-      break;
-    case 4:
-      classes.push("top-[200px]");
-      break;
-  }
 
-  classes.push(
-    battle.value.mode === BattleMode.Test ? "right-[30px]" : "left-[20px]"
-  );
-
-  return classes;
+const titleSize = useAutoSizeText(() => battle.value.title, {
+  width: 1800,
+  height: 160,
+  fontFamily: "wanhanzon",
+});
+const normalScoreSize = useAutoSizeText(() => battle.value.score, {
+  width: 840,
+  height: 160,
+  fontFamily: "wanhanzon",
+});
+const unrestrictScoreSize = useAutoSizeText(() => battle.value.score, {
+  width: 240,
+  height: 160,
+  fontFamily: "wanhanzon",
 });
 
-function onDownloadClick() {
-  if (!editor.value) return;
-  editor.value.export(battle.value.name, cover);
-}
+const imageName = computed(() => `${battle.value.title}-影片封面`);
 </script>
 
 <template>
@@ -50,82 +52,168 @@ function onDownloadClick() {
     <div class="w-fit min-w-[15rem] shadow-xl px-4 py-2 flex flex-col gap-2">
       <div>
         <label class="font-bold block mb-1">標題</label>
-        <InputText v-model="battle.title" class="w-full" />
+        <Textarea v-model="battle.title" class="w-full" auto-resize />
       </div>
-      <div v-if="battle.teams.length < 3">
+      <div v-if="showComment">
         <label class="font-bold block mb-1">註解</label>
-        <InputText v-model="battle.comment" class="w-full" />
+        <Textarea v-model="battle.comment" class="w-full" auto-resize />
       </div>
-      <div v-if="battle.teams.length < 2">
+      <div v-if="showScore">
         <label class="font-bold block mb-1">分數</label>
         <InputText v-model="battle.score" class="w-full" />
       </div>
-      <Message>請更改標題以更新註解字體大小</Message>
     </div>
     <ImageEditor
+      :export-name="imageName"
       :width="1920"
       :height="1080"
-      ref="editor"
-      class="flex-1 font-[wanhanzon] border-2"
+      class="flex-1 border-2"
+      :pixelRation="2 / 3"
     >
-      <template #control>
-        <Button
-          rounded
-          label="下載"
-          icon="pi pi-download"
-          @click="onDownloadClick"
-        />
-      </template>
-      <div
-        ref="cover"
-        class="relative h-full w-full bg-contain"
-        :style="backgroundImage"
-      >
-        <div class="w-full h-[180px] bg-black relative">
-          <AutoText
-            v-model="titleFontSize"
+      <KonvaLayer>
+        <KonvaGroup name="export" :width="1920" :height="1080">
+          <KonvaImage :width="1920" :height="1080" :image="backgroundImage" />
+          <KonvaRect :width="1920" :height="180" fill="black" />
+          <KonvaText
+            fill="#ffffff"
+            :x="60"
+            wrap="none"
+            fontFamily="wanhanzon"
+            align="center"
+            verticalAlign="middle"
+            :strokeWidth="12"
+            :stroke="strokeColor"
+            :y="10"
+            :fillAfterStrokeEnabled="true"
             :width="1800"
             :height="160"
-            mode="boxoneline"
-            text-class="video-font-stroke"
-            :style="titleStyle"
+            :fontSize="titleSize"
             :text="battle.title"
-            class="justify-center !items-center absolute inset-y-[10px] inset-x-[50px]"
           />
-        </div>
-        <span
-          v-if="battle.teams.length <= 2"
-          class="video-font-stroke text-stroke-[#ff3131] absolute inset-y-[210px] inset-x-[60px] break-all"
-          :style="{ fontSize: titleFontSize }"
-        >
-          {{ battle.comment }}
-        </span>
-        <div
-          v-if="battle.teams.length === 1"
-          :style="{
-            width: `${battle.mode === BattleMode.Unrestrict ? 360 : 960}px`,
-          }"
-          class="absolute bottom-0 bg-black right-0 h-[180px]"
-        >
-          <AutoText
-            :width="battle.mode === BattleMode.Unrestrict ? 240 : 840"
+          <KonvaText
+            v-if="showComment"
+            fill="#ffffff"
+            :x="60"
+            fontFamily="wanhanzon"
+            :strokeWidth="12"
+            stroke="#ff3131"
+            :y="210"
+            :fillAfterStrokeEnabled="true"
+            :width="1800"
+            :fontSize="titleSize"
+            :text="battle.comment"
+          />
+          <KonvaRect
+            v-if="showFooter"
+            :y="900"
+            :width="1920"
             :height="180"
-            :text="battle.score"
-            mode="oneline"
-            text-class="video-font-stroke"
-            :style="titleStyle"
-            class="justify-center !items-center absolute inset-y-[10px] inset-x-[40px]"
+            fill="black"
           />
-        </div>
-        <TeamArray :class="teamArrayPosition" />
-      </div>
+          <KonvaText
+            v-if="showScore"
+            fill="#ffffff"
+            :x="isNormal ? 1020 : 1620"
+            fontFamily="wanhanzon"
+            align="center"
+            verticalAlign="middle"
+            :strokeWidth="12"
+            :stroke="strokeColor"
+            :y="910"
+            :fillAfterStrokeEnabled="true"
+            :width="isNormal ? 840 : 240"
+            :height="160"
+            :fontSize="isNormal ? normalScoreSize : unrestrictScoreSize"
+            :text="battle.score"
+          />
+          <TempVar
+            v-if="battle.teams.length === 1"
+            v-slot="{ team }"
+            :define="{ team: battle.teams[0] }"
+          >
+            <KonvaGroup :x="40" :y="895">
+              <template v-for="(member, memberId) in team.members">
+                <KonvaAvatar
+                  v-if="member"
+                  :student="member"
+                  :x="20 + memberId * 150"
+                  :y="20"
+                  :width="150"
+                  :height="150"
+                />
+              </template>
+            </KonvaGroup>
+          </TempVar>
+          <TempVar
+            v-else-if="battle.teams.length === 2"
+            v-slot="{ offsetY, offsetX }"
+            :define="{
+              offsetY: 895,
+              offsetX: 10,
+            }"
+          >
+            <KonvaGroup
+              v-for="(team, teamId) in battle.teams"
+              :x="offsetX + 940 * teamId"
+              :y="offsetY"
+            >
+              <KonvaRect
+                v-if="teamId"
+                :width="20"
+                :height="150"
+                :x="0"
+                :y="20"
+                fill="#ffffff"
+              />
+              <template v-for="(member, memberId) in team.members">
+                <KonvaAvatar
+                  v-if="member"
+                  :student="member"
+                  :x="(teamId ? 40 : 20) + memberId * 150"
+                  :y="20"
+                  :width="150"
+                  :height="150"
+                />
+              </template>
+            </KonvaGroup>
+          </TempVar>
+          <TempVar
+            v-else
+            v-slot="{ offsetY, offsetX }"
+            :define="{
+              offsetY: teamCount === 3 ? 315 : 205,
+              offsetX: battle.mode === BattleMode.Test ? 1055 : 25,
+            }"
+          >
+            <KonvaGroup
+              v-for="(team, teamId) in battle.teams"
+              :x="offsetX"
+              :y="offsetY + teamId * 220"
+            >
+              <KonvaRect
+                :width="790"
+                :height="190"
+                stroke="#ffffff"
+                :strokeWidth="10"
+                fill="#000000"
+              />
+              <template v-for="(member, memberId) in team.members">
+                <KonvaAvatar
+                  v-if="member"
+                  :student="member"
+                  :x="35 + memberId * 120"
+                  :y="35"
+                  :width="120"
+                  :height="120"
+                  stroke="#000000"
+                />
+              </template>
+            </KonvaGroup>
+          </TempVar>
+        </KonvaGroup>
+      </KonvaLayer>
     </ImageEditor>
   </div>
 </template>
 
-<style lang="scss">
-.video-font-stroke {
-  @apply text-stroke  text-stroke-[12px] text-white;
-  paint-order: stroke;
-}
-</style>
+<style lang="scss"></style>

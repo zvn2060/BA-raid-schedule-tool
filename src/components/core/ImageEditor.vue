@@ -1,109 +1,131 @@
 <script setup lang="ts">
 import download from "downloadjs";
-import { toPng } from "html-to-image";
-import { castArray, clamp, isNull } from "lodash-es";
-import { ShallowRef } from "vue";
+import Konva from "konva";
+import { clamp, isNull } from "lodash-es";
 
 const props = defineProps<{
+  pixelRation: number;
   width: number;
   height: number;
+  exportName: string;
 }>();
-
+const padding = 100;
 const container = useTemplateRef("container");
+const stage = useTemplateRef<Konva.Stage>("stage");
+const pointerPosition = ref({ x: 0, y: 0 });
+const stagePosition = ref({ x: 0, y: 0 });
+const indicator = computed(() => {
+  const targetX = -stagePosition.value.x / scale.value;
+  const targetY = -stagePosition.value.y / scale.value;
+  const width = 1 / scale.value;
+  return {
+    x: pointerPosition.value.x,
+    y: pointerPosition.value.y,
+    targetX,
+    targetY,
+    width,
+    offset: { x: -width * 10, y: -width * 10 },
+    fontSize: 20 / scale.value,
+    label: `${pointerPosition.value.x.toFixed(
+      1
+    )}, ${pointerPosition.value.y.toFixed(1)}`,
+  };
+});
 const { width: containerW, height: containerH } = useElementSize(container);
-const factor = ref(1);
-const offset = ref({ x: 0, y: 0 });
-const styles = computed(() => ({
-  "--tw-scale-x": factor.value,
-  "--tw-scale-y": factor.value,
-  "--tw-translate-y": `calc(-50% + ${offset.value.y}px)`,
-  "--tw-translate-x": `calc(-50% + ${offset.value.x}px)`,
-  width: `${props.width}px`,
-  height: `${props.height}px`,
+const scale = ref(1);
+const minScale = computed(() =>
+  Math.max(
+    Math.min(
+      containerW.value / (props.width + padding * 2),
+      containerH.value / (props.height + padding * 2)
+    ),
+    Number.MIN_VALUE
+  )
+);
+const stageConfig = computed<Konva.StageConfig>(() => ({
+  width: containerW.value,
+  height: containerH.value,
+  scaleX: scale.value,
+  scaleY: scale.value,
+  draggable: true,
 }));
 
-function onWheel(event: WheelEvent) {
-  factor.value = clamp(factor.value - event.deltaY / 1500, 0.2, 2);
+onMounted(() => {});
+
+function dragMoveHandler() {
+  const pos = stage.value?.getStage().getPosition();
+  if (!pos) return;
+  stagePosition.value = { x: pos.x, y: pos.y };
 }
 
-onMounted(() => {
-  offset.value.x = containerW.value >> 1;
-  offset.value.y = containerH.value >> 1;
-});
-
-const isHoldAlt = useKeyModifier("Alt");
-
-const dragInfo = {
-  isDragging: false,
-  startX: 0,
-  startY: 0,
-};
-
-function mouseDownHandler(event: MouseEvent) {
-  if (!event.altKey) return;
-  dragInfo.isDragging = true;
-  dragInfo.startX = event.x;
-  dragInfo.startY = event.y;
+function mouseMoveHandler() {
+  const pointer = stage.value?.getStage().getRelativePointerPosition();
+  if (!pointer) return;
+  pointerPosition.value = { x: pointer.x, y: pointer.y };
 }
 
-function mouseUpHandler() {
-  dragInfo.isDragging = false;
-}
-
-function mouseMoveHandler(event: MouseEvent) {
-  if (!dragInfo.isDragging) return;
-  offset.value.x += event.x - dragInfo.startX;
-  offset.value.y += event.y - dragInfo.startY;
-  dragInfo.startX = event.x;
-  dragInfo.startY = event.y;
+function wheelHandler(event: Konva.KonvaEventObject<WheelEvent>) {
+  event.evt.preventDefault();
+  const stageInstance = stage.value?.getStage();
+  const pointer = stageInstance?.getPointerPosition();
+  if (!stageInstance || !pointer) return;
+  const oldScale = scale.value;
+  const mousePointTo = {
+    x: (pointer.x - stageInstance.x()) / oldScale,
+    y: (pointer.y - stageInstance.y()) / oldScale,
+  };
+  scale.value = clamp(
+    scale.value * (event.evt.deltaY > 0 ? 0.882 : 1.133),
+    minScale.value,
+    10
+  );
+  stagePosition.value = {
+    x: pointer.x - mousePointTo.x * scale.value,
+    y: pointer.y - mousePointTo.y * scale.value,
+  };
+  stage.value?.getStage().setPosition(stagePosition.value);
 }
 
 function onResetClick() {
-  offset.value.x = containerW.value >> 1;
-  offset.value.y = containerH.value >> 1;
-  factor.value = 1;
+  stagePosition.value = {
+    x: (containerW.value - props.width * minScale.value) >> 1,
+    y: (containerH.value - props.height * minScale.value) >> 1,
+  };
+  stage.value?.getStage().setPosition(stagePosition.value);
+  scale.value = minScale.value;
 }
 
-async function exportPng(
-  filename: string,
-  ref: Readonly<ShallowRef<HTMLDivElement | HTMLDivElement[] | null>>
-) {
-  const targets = castArray(ref.value);
-  const multiple = targets.length > 1;
-  const promises = targets
-    .filter((target) => !isNull(target))
-    .map((target, index) =>
-      toPng(target, { pixelRatio: 1 }).then((dataUrl) =>
-        download(
-          dataUrl,
-          multiple ? `${filename}-${index + 1}.png` : `${filename}.png`
-        )
-      )
-    );
-
-  await Promise.all(promises);
+async function onDownloadClick() {
+  const oldScale = scale.value;
+  scale.value = 1;
+  await nextTick();
+  const targets = stage.value?.getStage().find(".export");
+  if (targets) {
+    const isSingle = targets.length < 2;
+    const data = targets
+      .filter((target) => !isNull(target))
+      .map((target, index) => ({
+        dataUrl: target.toDataURL({ pixelRatio: props.pixelRation }),
+        name: isSingle
+          ? `${props.exportName}.png`
+          : `${props.exportName}-${index + 1}.png`,
+      }));
+    if (isSingle) download(data[0].dataUrl, data[0].name);
+    else workerDownload({ files: data, name: `${props.exportName} (壓縮)` });
+  }
+  scale.value = oldScale;
 }
-
-defineExpose({ export: exportPng });
 </script>
-
 <template>
-  <div
-    ref="container"
-    class="bg-checkboard relative overflow-hidden"
-    :class="isHoldAlt ? 'cursor-move' : 'cursor-auto'"
-    @wheel.passive="onWheel"
-    @mousedown="mouseDownHandler"
-    @mousemove.passive="mouseMoveHandler"
-    @mouseup="mouseUpHandler"
-    @mouseleave="
-      {
-        dragInfo.isDragging = false;
-      }
-    "
-  >
-    <div class="absolute inset-y-4 right-4 flex flex-col items-end gap-2 z-10">
+  <div ref="container" class="bg-checkboard relative overflow-hidden">
+    <div id="control-panel">
       <slot name="control" />
+      <Button
+        rounded
+        label="下載"
+        icon="pi pi-download"
+        @click="onDownloadClick"
+      />
       <Button
         icon="pi pi-refresh"
         rounded
@@ -112,18 +134,55 @@ defineExpose({ export: exportPng });
         @click="onResetClick"
       />
     </div>
-    <div id="base" :style="styles">
+    <KonvaStage
+      ref="stage"
+      v-bind="stageConfig"
+      @wheel="wheelHandler"
+      @dragmove="dragMoveHandler"
+      @mousemove="mouseMoveHandler"
+    >
+      <KonvaLayer>
+        <KonvaRect :width="props.width" :height="props.height" fill="white" />
+      </KonvaLayer>
       <slot />
-    </div>
+      <KonvaLayer>
+        <KonvaLabel
+          :x="indicator.x"
+          :y="indicator.y"
+          :offset="indicator.offset"
+        >
+          <KonvaTag fill="#000000" :opacity="0.74" />
+          <KonvaText
+            fill="#ffffff"
+            :text="indicator.label"
+            :fontSize="indicator.fontSize"
+            :padding="indicator.width * 4"
+          />
+        </KonvaLabel>
+        <KonvaRect
+          :x="indicator.x"
+          :y="indicator.targetY"
+          :width="indicator.width"
+          :height="containerH / scale"
+          fill="orange"
+        />
+        <KonvaRect
+          :x="indicator.targetX"
+          :y="indicator.y"
+          :width="containerW / scale"
+          :height="indicator.width"
+          fill="orange"
+        />
+      </KonvaLayer>
+    </KonvaStage>
   </div>
 </template>
 
 <style scoped lang="scss">
-#base {
-  @apply absolute bg-white shadow transform select-none pointer-events-none;
-
+#control-panel {
+  @apply absolute inset-y-4 right-4 flex flex-col items-end gap-2 z-10  pointer-events-none;
   > * {
-    position: absolute;
+    @apply pointer-events-auto;
   }
 }
 </style>
