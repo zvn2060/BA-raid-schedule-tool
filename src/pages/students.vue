@@ -2,7 +2,7 @@
 import {
   DataTableCellEditCompleteEvent,
   DataTableProps,
-  useToast
+  useToast,
 } from "primevue";
 import { updateStudentData } from "../api/updateStudentData";
 
@@ -10,15 +10,6 @@ const filter = ref({ name: "" });
 
 const nameInput = ref("");
 const toast = useToast();
-
-watchDebounced(
-  nameInput,
-  (value) => {
-    filter.value.name = value;
-  },
-  { debounce: 600 }
-);
-
 const first = ref(0);
 const rows = ref(20);
 const debouncedFirst = useDebounce(first, 300);
@@ -45,7 +36,7 @@ const rowsPerPageOptions = computed(() =>
   (total.value ?? 0) > 50 ? [10, 20, 50, total.value!] : [10, 20, 50]
 );
 
-const { open, onChange, reset } = useFileDialog({
+const uploadProgress = useFileDialog({
   accept: "text/csv",
   multiple: false,
 });
@@ -59,7 +50,7 @@ function onCellEditComplete(event: DataTableCellEditCompleteEvent) {
   });
 }
 
-onChange((filelist) => {
+uploadProgress.onChange((filelist) => {
   const file = filelist?.item(0);
   if (!file) return;
   update(file)
@@ -72,7 +63,7 @@ onChange((filelist) => {
       })
     )
     .finally(() => {
-      reset();
+      uploadProgress.reset();
     });
 });
 
@@ -87,6 +78,10 @@ const starOptions = [
   "專 3",
 ];
 
+function onEnter(event: KeyboardEvent) {
+  if (event.isComposing) return;
+  filter.value.name = nameInput.value;
+}
 </script>
 
 <template>
@@ -100,11 +95,18 @@ const starOptions = [
     @cell-edit-complete="onCellEditComplete"
   >
     <template #header>
-      <InputText v-model="nameInput" size="small" />
+      <InputGroup class="max-w-[300px]">
+        <InputText v-model="nameInput" @keydown.enter="onEnter" size="small" />
+        <Button size="small" label="搜尋" @click="filter.name = nameInput">
+          <template #icon>
+            <MdiKeyboardReturn />
+          </template>
+        </Button>
+      </InputGroup>
       <div class="flex-1" />
       <Button
         label="上傳資料"
-        @click="open()"
+        @click="uploadProgress.open()"
         size="small"
         icon="pi pi-upload"
       />

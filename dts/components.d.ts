@@ -7,20 +7,27 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AutoComplete: typeof import('primevue/autocomplete')['default']
+    Badge: typeof import('primevue/badge')['default']
     BattleModeDropdown: typeof import('./../src/components/data/BattleModeDropdown.vue')['default']
     BlockUI: typeof import('primevue/blockui')['default']
     Breadcrumb: typeof import('primevue/breadcrumb')['default']
     Button: typeof import('primevue/button')['default']
+    Column: typeof import('primevue/column')['default']
     DataList: typeof import('./../src/components/core/DataList.vue')['default']
+    DataTable: typeof import('primevue/datatable')['default']
     Description: typeof import('./../src/components/preview/Description.vue')['default']
+    Dialog: typeof import('primevue/dialog')['default']
+    Fluid: typeof import('primevue/fluid')['default']
     ImageEditor: typeof import('./../src/components/core/ImageEditor.vue')['default']
     ImageFlow: typeof import('./../src/components/preview/ImageFlow.vue')['default']
-    Inplace: typeof import('primevue/inplace')['default']
+    InputGroup: typeof import('primevue/inputgroup')['default']
+    InputGroupAddon: typeof import('primevue/inputgroupaddon')['default']
+    InputNumber: typeof import('primevue/inputnumber')['default']
     InputText: typeof import('primevue/inputtext')['default']
     KonvaAvatar: typeof import('./../src/components/preview/KonvaAvatar.vue')['default']
     LevelColumn: typeof import('./../src/components/data/LevelColumn.vue')['default']
-    MdiTableRowPlusAfter: typeof import('~icons/mdi/table-row-plus-after')['default']
-    MdiTableRowPlusBefore: typeof import('~icons/mdi/table-row-plus-before')['default']
+    MdiKeyboardReturn: typeof import('~icons/mdi/keyboard-return')['default']
     MemberList: typeof import('./../src/components/pick/MemberList.vue')['default']
     Menubar: typeof import('primevue/menubar')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
@@ -36,12 +43,11 @@ declare module 'vue' {
     StudentAvatar: typeof import('./../src/components/data/StudentAvatar.vue')['default']
     TeamListItem: typeof import('./../src/components/pick/TeamListItem.vue')['default']
     Teams: typeof import('./../src/components/preview/Teams.vue')['default']
-    Textarea: typeof import('primevue/textarea')['default']
-    ToggleSwitch: typeof import('primevue/toggleswitch')['default']
     Toolbar: typeof import('primevue/toolbar')['default']
     VideoCover: typeof import('./../src/components/preview/VideoCover.vue')['default']
   }
   export interface ComponentCustomProperties {
     Ripple: typeof import('primevue/ripple')['default']
+    Tooltip: typeof import('primevue/tooltip')['default']
   }
 }
