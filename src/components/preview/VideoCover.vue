@@ -25,6 +25,8 @@ const strokeColor = computed(() => {
       return "#FF914D";
     case BattleMode.Unrestrict:
       return "#808080";
+    case BattleMode.JpRaid:
+      return "#5E17EB";
   }
 });
 

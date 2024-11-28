@@ -6,8 +6,10 @@ export enum BattleMode {
     Raid = "總力戰",
     Elimination = "大決戰",
     Test = "綜合戰術考試",
+    JpRaid = "日服總力戰",
     Unrestrict = "制約解除"
 }
+
 
 export const BattleModeOptions = Object.values(BattleMode);
 

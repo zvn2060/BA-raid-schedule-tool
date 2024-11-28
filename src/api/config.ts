@@ -20,6 +20,8 @@ export function useVideoBackground() {
                     return new URL("../assets/backgrounds/考試底圖-1.png?url", import.meta.url)
                 case BattleMode.Unrestrict:
                     return new URL("../assets/backgrounds/賽特底圖-1.png?url", import.meta.url)
+                case BattleMode.JpRaid:
+                    return new URL("../assets/backgrounds/日版底圖-1.png?url", import.meta.url)
             }
         },
         select(data) { return data.href }
