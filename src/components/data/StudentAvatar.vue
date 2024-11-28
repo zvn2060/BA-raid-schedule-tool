@@ -1,6 +1,7 @@
 <script setup lang="ts">
+const props = defineProps<{ student: Student | null }>();
 
-defineProps<{ student: Student | null }>();
+const { avatar } = useStudentAvatar(() => props.student?.id);
 </script>
 
 <template>
@@ -8,14 +9,11 @@ defineProps<{ student: Student | null }>();
     :key="`student-${student?.id}`"
     class="aspect-square flex items-center justify-center select-none"
   >
-    <span v-if="!student">Empty</span>
-    <span class="text-xl" v-else-if="student.id === -1">
-      {{ student.name }}
-    </span>
     <img
-      v-else
-      :src="`https://schaledb.com/images/student/icon/${student.id}.webp`"
+      v-if="avatar"
+      :src="avatar"
       class="object-cover w-full h-full pointer-events-none"
     />
+    <span v-else>Empty</span>
   </div>
 </template>

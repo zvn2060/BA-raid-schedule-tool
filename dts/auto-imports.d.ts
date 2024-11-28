@@ -137,6 +137,7 @@ declare global {
   const until: typeof import('@vueuse/core')['until']
   const updateStudentData: typeof import('../src/api/updateStudentData')['updateStudentData']
   const uploadAvatars: typeof import('../src/api/avatar')['uploadAvatars']
+  const uploadStudentAvatar: typeof import('../src/api/avatar')['uploadStudentAvatar']
   const useActiveElement: typeof import('@vueuse/core')['useActiveElement']
   const useAnimate: typeof import('@vueuse/core')['useAnimate']
   const useArrayDifference: typeof import('@vueuse/core')['useArrayDifference']
@@ -270,6 +271,7 @@ declare global {
   const useStepper: typeof import('@vueuse/core')['useStepper']
   const useStorage: typeof import('@vueuse/core')['useStorage']
   const useStorageAsync: typeof import('@vueuse/core')['useStorageAsync']
+  const useStudentAvatar: typeof import('../src/api/avatar')['useStudentAvatar']
   const useStudents: typeof import('../src/api/students')['useStudents']
   const useStyleTag: typeof import('@vueuse/core')['useStyleTag']
   const useSupported: typeof import('@vueuse/core')['useSupported']
@@ -466,7 +468,7 @@ declare module 'vue' {
     readonly unrefElement: UnwrapRef<typeof import('@vueuse/core')['unrefElement']>
     readonly until: UnwrapRef<typeof import('@vueuse/core')['until']>
     readonly updateStudentData: UnwrapRef<typeof import('../src/api/updateStudentData')['updateStudentData']>
-    readonly uploadAvatars: UnwrapRef<typeof import('../src/api/avatar')['uploadAvatars']>
+    readonly uploadStudentAvatar: UnwrapRef<typeof import('../src/api/avatar')['uploadStudentAvatar']>
     readonly useActiveElement: UnwrapRef<typeof import('@vueuse/core')['useActiveElement']>
     readonly useAnimate: UnwrapRef<typeof import('@vueuse/core')['useAnimate']>
     readonly useArrayDifference: UnwrapRef<typeof import('@vueuse/core')['useArrayDifference']>
@@ -598,6 +600,7 @@ declare module 'vue' {
     readonly useStepper: UnwrapRef<typeof import('@vueuse/core')['useStepper']>
     readonly useStorage: UnwrapRef<typeof import('@vueuse/core')['useStorage']>
     readonly useStorageAsync: UnwrapRef<typeof import('@vueuse/core')['useStorageAsync']>
+    readonly useStudentAvatar: UnwrapRef<typeof import('../src/api/avatar')['useStudentAvatar']>
     readonly useStudents: UnwrapRef<typeof import('../src/api/students')['useStudents']>
     readonly useStyleTag: UnwrapRef<typeof import('@vueuse/core')['useStyleTag']>
     readonly useSupported: UnwrapRef<typeof import('@vueuse/core')['useSupported']>

@@ -23,6 +23,7 @@ const {
   update: updateProperty,
 } = useStudents(filter, pagination);
 const { update } = updateStudentData();
+const { upload } = uploadStudentAvatar();
 const datatableConfig: DataTableProps = {
   scrollable: true,
   scrollHeight: "flex",
@@ -32,6 +33,17 @@ const datatableConfig: DataTableProps = {
   pt: { header: { class: ["flex", "items-center", "gap-2"] } },
 };
 
+const starOptions = [
+  "1 星",
+  "2 星",
+  "3 星",
+  "4 星",
+  "5 星",
+  "專 1",
+  "專 2",
+  "專 3",
+];
+
 const rowsPerPageOptions = computed(() =>
   (total.value ?? 0) > 50 ? [10, 20, 50, total.value!] : [10, 20, 50]
 );
@@ -40,15 +52,6 @@ const uploadProgress = useFileDialog({
   accept: "text/csv",
   multiple: false,
 });
-
-function onCellEditComplete(event: DataTableCellEditCompleteEvent) {
-  if (event.value === event.newValue) return;
-  updateProperty({
-    id: event.data.id,
-    field: event.field,
-    value: event.newValue,
-  });
-}
 
 uploadProgress.onChange((filelist) => {
   const file = filelist?.item(0);
@@ -67,16 +70,24 @@ uploadProgress.onChange((filelist) => {
     });
 });
 
-const starOptions = [
-  "1 星",
-  "2 星",
-  "3 星",
-  "4 星",
-  "5 星",
-  "專 1",
-  "專 2",
-  "專 3",
-];
+const uploadAvatar = useFileDialog({
+  accept: "image/*",
+  multiple: true,
+});
+
+uploadAvatar.onChange((filelist) => {
+  if (!filelist) return;
+  upload(Array.from(filelist));
+});
+
+function onCellEditComplete(event: DataTableCellEditCompleteEvent) {
+  if (event.value === event.newValue) return;
+  updateProperty({
+    id: event.data.id,
+    field: event.field,
+    value: event.newValue,
+  });
+}
 
 function onEnter(event: KeyboardEvent) {
   if (event.isComposing) return;
@@ -109,6 +120,12 @@ function onEnter(event: KeyboardEvent) {
         @click="uploadProgress.open()"
         size="small"
         icon="pi pi-upload"
+      />
+      <Button
+        label="上傳頭像"
+        @click="uploadAvatar.open()"
+        size="small"
+        icon="pi pi-users"
       />
     </template>
     <Column field="id" body-class="!p-0" class="!w-12">

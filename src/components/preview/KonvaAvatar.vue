@@ -6,13 +6,15 @@ const props = defineProps<{
   x: number;
   y: number;
   stroke?: string;
-  strokeWidth?: number
+  strokeWidth?: number;
 }>();
 
+const { avatar } = useStudentAvatar(() => props.student.id);
 const { state } = useImage(() => ({
-  src: `https://schaledb.com/images/student/icon/${props.student.id}.webp`,
+  src: avatar.value ?? "#",
   crossorigin: "Anonymous",
 }));
+
 </script>
 
 <template>
