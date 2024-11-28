@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/vue-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
 import { keyBy } from "lodash-es";
 import type { MaybeRefOrGetter } from "vue";
 
@@ -27,6 +27,7 @@ type UploadAvatarData = Array<File>;
 */
 
 export function uploadStudentAvatar() {
+    const queryClient = useQueryClient()
     const { mutateAsync: upload } = useMutation({
         async mutationFn(data: UploadAvatarData) {
             const updateMap = keyBy(data, it => it.name.replace(/\.[^/.]+$/, ""));
@@ -41,8 +42,7 @@ export function uploadStudentAvatar() {
                     notInDatabase.delete(student.name);
                     success.add(student.name)
                 })
-            console.log(notInDatabase)
-            // await queryClient.invalidateQueries({ queryKey: ["students"] })
+            await queryClient.invalidateQueries({ queryKey: ["avatars"] })
         }
     })
 
@@ -56,7 +56,11 @@ export function useStudentAvatar(idRef: MaybeRefOrGetter<number | undefined>) {
         queryKey: ["avatars", { id }],
         enabled,
         queryFn: async () => IndexDBClient.students.get(id.value!),
-        select: (data) => data?.image ? URL.createObjectURL(data.image) : undefined
+        select: (data) => {
+            if (!data) return undefined;
+            if (!data.image) return `https://schaledb.com/images/student/icon/${data.id}.webp`;
+            return URL.createObjectURL(data.image)
+        }
     })
 
     return { avatar }
