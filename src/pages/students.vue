@@ -31,6 +31,9 @@ const datatableConfig: DataTableProps = {
   lazy: true,
   editMode: "cell",
   pt: { header: { class: ["flex", "items-center", "gap-2"] } },
+  rowClass(data) {
+    if (!data.image) return "!bg-red-50";
+  },
 };
 
 const starOptions = [

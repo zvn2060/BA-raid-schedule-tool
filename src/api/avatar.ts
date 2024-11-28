@@ -3,28 +3,6 @@ import { keyBy } from "lodash-es";
 import type { MaybeRefOrGetter } from "vue";
 
 type UploadAvatarData = Array<File>;
-/*
-    "千紗(樂團)",
-    "日和(泳裝)",
-    "吹雪(泳裝)",
-    "沙織(泳裝)",
-    "星野(臨戰)",
-    "美禰(偶像)",
-    "桃井(女僕)",
-    "桐乃(泳裝)",
-    "茜香(泳裝)",
-    "喜美(樂團)",
-    "敦子(泳裝)",
-    "智美子",
-    "智惠(旗袍)",
-    "萌(泳裝)",
-    "愛莉(樂團)",
-    "瑪麗(偶像)",
-    "瑪麗娜(旗袍)",
-    "綠(女僕)",
-    "環奈(泳裝)",
-    "櫻子(偶像)"
-*/
 
 export function uploadStudentAvatar() {
     const queryClient = useQueryClient()
