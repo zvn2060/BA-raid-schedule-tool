@@ -8,6 +8,9 @@ import {defineConfig} from 'vite';
 import RemoveConsole from "vite-plugin-remove-console";
 import VueDevTools from 'vite-plugin-vue-devtools';
 import Layouts from 'vite-plugin-vue-layouts';
+import Icons from 'unplugin-icons/vite';
+import IconsResolver from 'unplugin-icons/resolver';
+
 
 export default defineConfig({
     plugins: [
@@ -26,8 +29,10 @@ export default defineConfig({
         }),
         Components({
             dts: "dts/components.d.ts",
-            resolvers: [PrimeVueResolver()],
-        })
+            resolvers: [PrimeVueResolver(), IconsResolver({ prefix: '', enabledCollections: ["mdi", "line-md"] })],
+        }),
+        Icons({ autoInstall: true, compiler: "vue3" })
+
     ],
     css: {
         preprocessorOptions: {

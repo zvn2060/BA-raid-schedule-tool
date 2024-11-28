@@ -1,5 +1,5 @@
-import { compact, isNil } from "lodash-es";
-import { z } from "zod";
+import {compact, isNil} from "lodash-es";
+import {z} from "zod";
 
 declare global {
     export type Action = { actor: StudentId | null, target?: StudentId | null };
@@ -238,8 +238,8 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
         }
     }
 
-    insertStage(index: number) {
-        this._stages.splice(index + 1, 0, { actions: [], comment: "新組" })
+    insertStage(index: number, direction: "front" | "back") {
+        this._stages.splice(direction === "front" ? index : index + 1, 0, { actions: [], comment: "新組" })
     }
 
     deleteStage(index: number) {

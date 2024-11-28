@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { TransitionFade } from "@morev/vue-transitions";
-import { isNil } from "lodash-es";
-import type { Team } from "../../libs";
+import {TransitionFade} from "@morev/vue-transitions";
+import {isNil} from "lodash-es";
+import type {Team} from "../../libs";
 
 const props = defineProps<{ team: Omit<Team, "">; stageId: number }>();
 const stage = computed(() => props.team.stages[props.stageId]);
@@ -20,7 +20,7 @@ const hover = useElementHover(container);
 <template>
   <div ref="container" class="w-fit stage-container">
     <Inplace
-      :pt="{
+        :pt="{
         content: { class: ['!flex', 'items-center'] },
         display: { class: ['!border-none'] },
       }"
@@ -29,37 +29,41 @@ const hover = useElementHover(container);
         <div class="stage-description">{{ stage.comment || "&nbsp;" }}</div>
       </template>
       <template #content="{ closeCallback }">
-        <InputText v-model="stage.comment" class="flex-1" />
+        <InputText v-model="stage.comment" class="flex-1"/>
         <Button
-          size="small"
-          class="ml-1"
-          icon="pi pi-check"
-          text
-          rounded
-          @click="closeCallback"
+            size="small"
+            class="ml-1"
+            icon="pi pi-check"
+            text
+            rounded
+            @click="closeCallback"
         />
       </template>
     </Inplace>
     <div class="stage-avatars-container">
       <template v-for="action in stage.actions">
         <StudentAvatar
-          :student="team.getMember(action.actor)"
-          class="border-4 w-[150px]"
-          :style="{ 'border-color': getBorderColor(action.target) }"
+            :student="team.getMember(action.actor)"
+            class="border-4 w-[150px]"
+            :style="{ 'border-color': getBorderColor(action.target) }"
         />
       </template>
     </div>
     <TransitionFade no-move group class="stage-control">
       <div v-if="hover" class="">
-        <i class="pi pi-arrow-up" @click="team.moveStage(stageId, 'front')" />
-        <i class="pi pi-arrow-down" @click="team.moveStage(stageId, 'back')" />
-        <i
-          class="pi pi-plus text-green-600"
-          @click="team.insertStage(stageId)"
+        <i class="pi pi-arrow-up" @click="team.moveStage(stageId, 'front')"/>
+        <i class="pi pi-arrow-down" @click="team.moveStage(stageId, 'back')"/>
+        <MdiTableRowPlusBefore
+            class="pi pi-plus text-green-600"
+            @click="team.insertStage(stageId, 'front')"
+        />
+        <MdiTableRowPlusAfter
+            class="pi pi-plus text-green-600 "
+            @click="team.insertStage(stageId, 'back')"
         />
         <i
-          class="pi pi-trash text-red-600"
-          @click="team.deleteStage(stageId)"
+            class="pi pi-trash text-red-600"
+            @click="team.deleteStage(stageId)"
         />
       </div>
     </TransitionFade>
@@ -78,8 +82,8 @@ const hover = useElementHover(container);
   @apply absolute left-full top-0 bottom-0 pl-3 -my-4 -mr-4 py-4;
   > div {
     @apply flex items-center gap-2 bg-surface-100 px-2 py-1 rounded-lg;
-    > i {
-      @apply text-2xl cursor-pointer hover:bg-surface-200 p-2 rounded leading-none;
+    > * {
+      @apply text-2xl cursor-pointer hover:bg-surface-200 w-10 h-10 p-2  rounded leading-none;
     }
   }
 }
