@@ -1,4 +1,4 @@
-import { compact, isNil } from "lodash-es";
+import { compact, isNil, isNumber } from "lodash-es";
 import { z } from "zod";
 
 declare global {
@@ -49,6 +49,11 @@ function skillTranscript(level: number) {
     return level === 10 ? 'M' : `${level}`;
 }
 
+const replica: Record<string, number> = { "一次": 1, "兩次": 2, "二次": 2, "三次": 3, "四次": 4 }
+
+function isReplicaOrTarget(text: string): string | number {
+    return replica[text] ?? text
+}
 
 export class Team implements Serializable<z.infer<typeof Team.schema>> {
     private _stages: Stage[] = [];
@@ -174,7 +179,7 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
     // COMMENT  := [^()]
     parse() {
         if (!this.text) return;
-        const stageTexts = this.text.split(/\n+/).filter(it => it.includes("→")).flatMap(line => line.split(" → "));
+        const stageTexts = this.text.replaceAll("輪亞EX", "輪椅EX+亞子EX").split(/\n+/).filter(it => it.includes("→")).flatMap(line => line.split(" → "));
         const searchStudentByNameMap = new Map(
             this._members
                 .filter(member => !isNil(member))
@@ -191,10 +196,17 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
                     const { student1, student2, comment } = match.groups;
                     const action: Action = { actor: searchStudentByNameMap.get(student1)?.id ?? null };
                     if (student2) {
-                        action.target = searchStudentByNameMap.get(student2)?.id ?? null;
-                        if (action.target) this.registerSkillTarget(action.target);
+                        const studentOrCount = isReplicaOrTarget(student2)
+                        if (isNumber(studentOrCount)) {
+                            for (const _ of new Array(studentOrCount)) actions.push(action);
+                        } else {
+                            action.target = searchStudentByNameMap.get(student2)?.id ?? null;
+                            if (action.target) this.registerSkillTarget(action.target);
+                            actions.push(action);
+                        }
+                    } else {
+                        actions.push(action);
                     }
-                    actions.push(action);
                     if (comment) comments.push(comment);
                 } else {
                     comments.push(action)
