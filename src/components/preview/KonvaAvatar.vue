@@ -14,18 +14,11 @@ const { state } = useImage(() => ({
   src: avatar.value ?? "#",
   crossorigin: "Anonymous",
 }));
-
 </script>
 
 <template>
-  <KonvaImage
-    v-if="student"
-    :image="state"
-    :width
-    :height
-    :x="x"
-    :y="y"
-    :stroke
-    :strokeWidth
-  />
+  <template v-if="student">
+    <KonvaImage :image="state" :width :height :x="x" :y="y" />
+    <KonvaRect :stroke :strokeWidth :width :height :x="x" :y="y"/>
+  </template>
 </template>
