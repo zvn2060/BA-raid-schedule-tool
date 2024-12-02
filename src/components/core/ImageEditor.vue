@@ -117,70 +117,82 @@ async function onDownloadClick() {
 }
 </script>
 <template>
-  <div ref="container" class="bg-checkboard relative overflow-hidden">
-    <div id="control-panel">
-      <slot name="control" />
-      <Button
-        rounded
-        label="下載"
-        icon="pi pi-download"
-        @click="onDownloadClick"
-      />
-      <Button
-        icon="pi pi-refresh"
-        rounded
-        class="mt-auto"
-        severity="contrast"
-        @click="onResetClick"
-      />
+  <div class="flex">
+    <div class="w-fit min-w-[15rem] shadow-xl px-4 py-2 flex flex-col gap-2">
+      <slot name="config">
+        <span class="my-auto self-center font-bold">沒有可配置的選項</span>
+      </slot>
     </div>
-    <KonvaStage
-      ref="stage"
-      v-bind="stageConfig"
-      @wheel="wheelHandler"
-      @dragmove="dragMoveHandler"
-      @mousemove="mouseMoveHandler"
+    <div
+      ref="container"
+      class="bg-checkboard relative overflow-hidden flex-1 border-2"
     >
-      <KonvaLayer>
-        <KonvaRect :width="props.width" :height="props.height" fill="white" />
-      </KonvaLayer>
-      <slot />
-      <KonvaLayer>
-        <KonvaLabel
-          :x="indicator.x"
-          :y="indicator.y"
-          :offset="indicator.offset"
-        >
-          <KonvaTag fill="#000000" :opacity="0.74" />
-          <KonvaText
-            fill="#ffffff"
-            :text="indicator.label"
-            :fontSize="indicator.fontSize"
-            :padding="indicator.width * 4"
+      <div id="control-panel">
+        <slot name="control" />
+        <Button
+          icon="pi pi-refresh"
+          size="small"
+          rounded
+          severity="contrast"
+          @click="onResetClick"
+        />
+        <div class="flex-1" />
+        <Button
+          rounded
+          size="small"
+          label="下載"
+          icon="pi pi-download"
+          @click="onDownloadClick"
+        />
+      </div>
+      <KonvaStage
+        ref="stage"
+        v-bind="stageConfig"
+        @wheel="wheelHandler"
+        @dragmove="dragMoveHandler"
+        @mousemove="mouseMoveHandler"
+      >
+        <KonvaLayer>
+          <KonvaRect :width="props.width" :height="props.height" fill="white" />
+        </KonvaLayer>
+        <slot />
+        <KonvaLayer>
+          <KonvaLabel
+            :x="indicator.x"
+            :y="indicator.y"
+            :offset="indicator.offset"
+          >
+            <KonvaTag fill="#000000" :opacity="0.74" />
+            <KonvaText
+              fill="#ffffff"
+              :text="indicator.label"
+              :fontSize="indicator.fontSize"
+              :padding="indicator.width * 4"
+            />
+          </KonvaLabel>
+          <KonvaRect
+            :x="indicator.x"
+            :y="indicator.targetY"
+            :width="indicator.width"
+            :height="containerH / scale"
+            fill="orange"
           />
-        </KonvaLabel>
-        <KonvaRect
-          :x="indicator.x"
-          :y="indicator.targetY"
-          :width="indicator.width"
-          :height="containerH / scale"
-          fill="orange"
-        />
-        <KonvaRect
-          :x="indicator.targetX"
-          :y="indicator.y"
-          :width="containerW / scale"
-          :height="indicator.width"
-          fill="orange"
-        />
-      </KonvaLayer>
-    </KonvaStage>
+          <KonvaRect
+            :x="indicator.targetX"
+            :y="indicator.y"
+            :width="containerW / scale"
+            :height="indicator.width"
+            fill="orange"
+          />
+        </KonvaLayer>
+      </KonvaStage>
+    </div>
   </div>
 </template>
 
 <style scoped lang="scss">
 #control-panel {
-  @apply absolute inset-y-4 right-4 flex flex-col items-end gap-2 z-10  pointer-events-none;
+  @apply absolute top-2  inset-x-2 flex  items-end gap-2 z-10  pointer-events-none;
   > * {
     @apply pointer-events-auto;
   }
