@@ -28,10 +28,10 @@ jobs:
           cache: 'pnpm'
       - run: pnpm install
       - run: echo ${{ github.event.repository.name }}
-      - run: pnpm run build --base /${{ github.event.repository.name }}/
+      - run: NUXT_APP_BASE_URL=/${{ github.event.repository.name }}/ pnpm run build 
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: "dist/"
+          path: "./.output/public"
   deploy:
     needs: build
     permissions:
