@@ -31,7 +31,7 @@ jobs:
       - run: NUXT_APP_BASE_URL=/${{ github.event.repository.name }}/ pnpm run build:gh-page
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: "./.output/public"
+          path: "./dist"
   deploy:
     needs: build
     permissions:
