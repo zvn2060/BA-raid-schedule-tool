@@ -2,6 +2,17 @@
 import type { MenuItem } from "primevue/menuitem";
 
 const router = useRouter();
+const store = useBattleStore();
+
+onMounted(() => {
+  const content = localStorage.getItem("battle");
+  if (content) store.loadFromJsonFile(content);
+});
+
+useEventListener(window, "beforeunload", (evt) => {
+  localStorage.setItem("battle", JSON.stringify(store.battle.toObject()));
+});
+
 const topNavigations: MenuItem[] = [
   {
     label: "編排攻略",
