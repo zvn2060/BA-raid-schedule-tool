@@ -55,6 +55,19 @@ function isReplicaOrTarget(text: string): string | number {
     return replica[text] ?? text
 }
 
+const shorthands = [
+    ["輪亞EX", "輪椅EX+亞子EX"],
+    ["亞輪EX", "亞子EX+輪椅EX"],
+]
+
+function replaceShorthand(text: string) {
+    let output = text;
+    for (const [pattern, target] of shorthands) {
+        output = output.replaceAll(pattern, target);
+    }
+    return output;
+}
+
 export class Team implements Serializable<z.infer<typeof Team.schema>> {
     private _stages: Stage[] = [];
     private _members: Member[];
@@ -179,7 +192,7 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
     // COMMENT  := [^()]
     parse() {
         if (!this.text) return;
-        const stageTexts = this.text.replaceAll("輪亞EX", "輪椅EX+亞子EX").split(/\n+/).filter(it => it.includes("→")).flatMap(line => line.split(" → "));
+        const stageTexts = replaceShorthand(this.text).split(/\n+/).filter(it => it.includes("→")).flatMap(line => line.split(" → "));
         const searchStudentByNameMap = new Map(
             this._members
                 .filter(member => !isNil(member))
