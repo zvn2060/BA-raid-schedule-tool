@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { useImage } from "@vueuse/core";
+import { BackgroundImage, pickBorderColor } from "~/shared";
 
-const { state } = useImage({ src: ImageFlowBgUrl, crossorigin: "Anonymous" });
+const { state } = useImage({
+  src: BackgroundImage.圖片軸底圖1.href,
+  crossorigin: "Anonymous",
+});
 
-const { getColor } = useBorderColor();
 const store = useBattleStore();
 const { battle } = storeToRefs(store);
 type StageInfo = {
@@ -59,7 +62,9 @@ const stagePages = computed<Page[]>(() => {
         commentWidth: metrics.comment.width,
         actions: stage.actions.map(({ actor, target }) => ({
           actor: team.getMember(actor),
-          stroke: getColor(target ? team.skillTargetMap.get(target) ?? -1 : -1),
+          stroke: pickBorderColor(
+            target ? team.skillTargetMap.get(target) : -1
+          ),
         })),
         y,
         avatarsY: metrics.comment.height + 20,
