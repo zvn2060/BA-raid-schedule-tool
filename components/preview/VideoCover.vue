@@ -3,6 +3,7 @@ import { BattleMode } from "#shared";
 import { useImage } from "@vueuse/core";
 import type { TextConfig } from "konva/lib/shapes/Text";
 import TempVar from "vue-temp-var";
+import { BackgroundImage } from "~/shared/backgroundImage";
 
 const store = useBattleStore();
 const { battle } = storeToRefs(store);
@@ -11,7 +12,27 @@ const showFooter = computed(() => teamCount.value <= 2);
 const showComment = computed(() => teamCount.value <= 2);
 const showScore = computed(() => teamCount.value === 1);
 const isNormal = computed(() => battle.value.mode !== BattleMode.Unrestrict);
-const { url } = useVideoBackground();
+
+const videoCover = computed(() => {
+  const teamCount = battle.value.teams.length;
+  switch (battle.value.mode) {
+    case BattleMode.Raid:
+      return teamCount <= 2
+        ? BackgroundImage.總力戰底圖1
+        : BackgroundImage.總力戰底圖2;
+    case BattleMode.Elimination:
+      return teamCount <= 2
+        ? BackgroundImage.大決戰底圖1
+        : BackgroundImage.大決戰底圖2;
+    case BattleMode.Test:
+      return BackgroundImage.考試底圖1;
+    case BattleMode.Unrestrict:
+      return BackgroundImage.賽特底圖1;
+    case BattleMode.JpRaid:
+      return BackgroundImage.日版底圖1;
+  }
+});
+
 const config = useLocalStorage(
   "設定.影片封面",
   {
@@ -28,7 +49,7 @@ const config = useLocalStorage(
 );
 
 const { state: backgroundImage } = useImage(() => ({
-  src: url.value ?? "",
+  src: videoCover.value.href,
   crossorigin: "Anonymous",
 }));
 

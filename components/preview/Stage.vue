@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { isNil } from "lodash-es";
-import type { Team } from "../../shared";
+import type { Team } from "~/shared";
+import { pickBorderColor } from "~/shared";
 
 const props = defineProps<{ team: Omit<Team, "">; stageId: number }>();
 const stage = computed(() => props.team.stages[props.stageId]);
 
-const { getColor } = useBorderColor();
-
 function getBorderColor(targetId: StudentId | null | undefined) {
-  if (isNil(targetId)) return getColor(-1);
-  return getColor(props.team.skillTargetMap.get(targetId) ?? -1);
+  if (isNil(targetId)) return pickBorderColor(-1);
+  return pickBorderColor(props.team.skillTargetMap.get(targetId) ?? -1);
 }
 
 const container = useTemplateRef("container");

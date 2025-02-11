@@ -1,4 +1,4 @@
-import { compact, isNil, isNumber } from "lodash-es";
+import { compact, isNil } from "lodash-es";
 import { z } from "zod";
 
 declare global {
@@ -30,12 +30,12 @@ declare global {
         release_heal: number | null
     }
 
-    export type Member = Student | null;
+    export type Member = (Student & { preferredName?: string }) | null;
 }
 
 
 const Pattern = {
-    Action: /(?<student1>[^()EX]+?)EX(?<student2>[^()EX]+)?(\((?<comment>[^()]+)\))?/
+    Action: /(?<student1>[^\s()]+)(\((?<comment>[^()]+)\))?/
 };
 
 
@@ -55,18 +55,7 @@ function isReplicaOrTarget(text: string): string | number {
     return replica[text] ?? text
 }
 
-const shorthands = [
-    ["輪亞EX", "輪椅EX+亞子EX"],
-    ["亞輪EX", "亞子EX+輪椅EX"],
-]
 
-function replaceShorthand(text: string) {
-    let output = text;
-    for (const [pattern, target] of shorthands) {
-        output = output.replaceAll(pattern, target);
-    }
-    return output;
-}
 
 export class Team implements Serializable<z.infer<typeof Team.schema>> {
     private _stages: Stage[] = [];
@@ -187,12 +176,12 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
 
     // FLOW     := STAGE [ → FLOW]
     // STAGE    := ACTION [+STAGE] | COMMENT
-    // ACTION   := STUDENTEX[STUDENT][(COMMENT)]
-    // STUDENT  := [^EX\s]
+    // ACTION   := STUDENT[(COMMENT)]
+    // STUDENT  := [^\s]
     // COMMENT  := [^()]
     parse() {
         if (!this.text) return;
-        const stageTexts = replaceShorthand(this.text).split(/\n+/).filter(it => it.includes("→")).flatMap(line => line.split(" → "));
+        const stageTexts = this.text.split(/\n+/).filter(it => it.trim().length).flatMap(line => line.split(" → "));
         const searchStudentByNameMap = new Map(
             this._members
                 .filter(member => !isNil(member))
@@ -206,20 +195,9 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
             stageText.split("+").forEach(action => {
                 const match = action.match(Pattern.Action);
                 if (match?.groups) {
-                    const { student1, student2, comment } = match.groups;
+                    const { student1, comment } = match.groups;
                     const action: Action = { actor: searchStudentByNameMap.get(student1)?.id ?? null };
-                    if (student2) {
-                        const studentOrCount = isReplicaOrTarget(student2)
-                        if (isNumber(studentOrCount)) {
-                            for (const _ of new Array(studentOrCount)) actions.push(action);
-                        } else {
-                            action.target = searchStudentByNameMap.get(student2)?.id ?? null;
-                            if (action.target) this.registerSkillTarget(action.target);
-                            actions.push(action);
-                        }
-                    } else {
-                        actions.push(action);
-                    }
+                    actions.push(action);
                     if (comment) comments.push(comment);
                 } else {
                     comments.push(action)
