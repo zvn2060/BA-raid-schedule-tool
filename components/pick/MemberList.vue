@@ -60,6 +60,10 @@ function squadToBackground(member: Member) {
         </div>
       </template>
     </div>
+    <div v-if="member" class="flex items-center gap-1">
+      <span>使用名稱：</span>
+      <Select :default-value="member.name" v-model="member.preferredName" :options="[member.name, ...member.aliases]"/>
+    </div>
     <Button
       v-if="member"
       icon="pi pi-trash"

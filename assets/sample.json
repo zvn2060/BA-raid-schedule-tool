@@ -2,7 +2,7 @@
   "name": "雙若藻小春刀",
   "teams": [
     {
-      "text": "11歲EX(2費，補燈) → 若藻EX+水大叔EX(9費) → 水靜EX+11歲EX(5.5費，補燈) → 若藻EX+輪椅EX+春佳EX(9.9費) → 11歲EX+水靜EX(解點名，水靜續盾) → 若藻EX+輪椅EX+11歲EX(9.9費，補燈)\n\n水大叔EX+春佳EX(5費) → 水靜EX(續盾) → 若藻EX+輪椅EX(9.9費) → 11歲EX+春佳EX(解debuff後) → 水靜EX(續盾) → 輪椅EX+11歲EX+若藻EX(解點名) → 水大叔EX(6費) → 水靜EX(續盾，別斷技一)\n\n11歲EX(補燈) → 若藻EX+輪椅EX+春佳EX+11歲EX(9.9費) → 若藻EX(6.5費) → 水靜EX(續盾) → 水大叔EX+11歲EX(9費，解點名) → 若藻EX+輪椅EX+春佳EX+水靜EX(9.9費) → 若藻EX+11歲EX+輪椅EX+水靜EX(7費) → 轉場\n\n若藻EX+春佳EX+輪椅EX+水大叔EX(轉場秒放 or 6.8費) → 確定黃條到二分之一附近且有爆到後退出\n",
+      "text": "11歲(2費，補燈) → 若藻+水大叔(9費) → 水靜+11歲(5.5費，補燈) → 若藻+輪椅+春佳(9.9費) → 11歲+水靜(解點名，水靜續盾) → 若藻+輪椅+11歲(9.9費，補燈)\n\n水大叔+春佳(5費) → 水靜(續盾) → 若藻+輪椅(9.9費) → 11歲+春佳(解debuff後) → 水靜(續盾) → 輪椅+11歲+若藻(解點名) → 水大叔(6費) → 水靜(續盾，別斷技一)\n\n11歲(補燈) → 若藻+輪椅+春佳+11歲(9.9費) → 若藻(6.5費) → 水靜(續盾) → 水大叔+11歲(9費，解點名) → 若藻+輪椅+春佳+水靜(9.9費) → 若藻+11歲+輪椅+水靜(7費) → 轉場\n\n若藻+春佳+輪椅+水大叔(轉場秒放 or 6.8費) → 確定黃條到二分之一附近且有爆到後退出\n",
       "members": [
         10064,
         10045,
@@ -15,24 +15,29 @@
         {
           "actions": [
             {
-              "actor": 10050
-            },
-            {
-              "actor": 10033
-            },
-            {
-              "actor": 10045
+              "actor": null
             }
           ],
-          "comment": "2費，9費若藻"
+          "comment": "2費，補燈"
         },
         {
           "actions": [
             {
-              "actor": 26008
+              "actor": 10033
             },
             {
-              "actor": 10050
+              "actor": null
+            }
+          ],
+          "comment": "9費"
+        },
+        {
+          "actions": [
+            {
+              "actor": null
+            },
+            {
+              "actor": null
             }
           ],
           "comment": "5.5費，補燈"
@@ -46,7 +51,7 @@
               "actor": 20020
             },
             {
-              "actor": 10064
+              "actor": null
             }
           ],
           "comment": "9.9費"
@@ -54,10 +59,10 @@
         {
           "actions": [
             {
-              "actor": 10050
+              "actor": null
             },
             {
-              "actor": 26008
+              "actor": null
             }
           ],
           "comment": "解點名，水靜續盾"
@@ -71,7 +76,7 @@
               "actor": 20020
             },
             {
-              "actor": 10050
+              "actor": null
             }
           ],
           "comment": "9.9費，補燈"
@@ -79,16 +84,21 @@
         {
           "actions": [
             {
-              "actor": 10045
+              "actor": null
             },
             {
-              "actor": 10064
-            },
-            {
-              "actor": 26008
+              "actor": null
             }
           ],
-          "comment": "5費，水靜續盾"
+          "comment": "5費"
+        },
+        {
+          "actions": [
+            {
+              "actor": null
+            }
+          ],
+          "comment": "續盾"
         },
         {
           "actions": [
@@ -104,10 +114,10 @@
         {
           "actions": [
             {
-              "actor": 10050
+              "actor": null
             },
             {
-              "actor": 10064
+              "actor": null
             }
           ],
           "comment": "解debuff後"
@@ -115,7 +125,7 @@
         {
           "actions": [
             {
-              "actor": 26008
+              "actor": null
             }
           ],
           "comment": "續盾"
@@ -126,7 +136,7 @@
               "actor": 20020
             },
             {
-              "actor": 10050
+              "actor": null
             },
             {
               "actor": 10033
@@ -137,18 +147,23 @@
         {
           "actions": [
             {
-              "actor": 10045
-            },
-            {
-              "actor": 26008
+              "actor": null
             }
           ],
-          "comment": "6費大叔，水靜續盾，別斷技一"
+          "comment": "6費"
         },
         {
           "actions": [
             {
-              "actor": 10050
+              "actor": null
+            }
+          ],
+          "comment": "續盾，別斷技一"
+        },
+        {
+          "actions": [
+            {
+              "actor": null
             }
           ],
           "comment": "補燈"
@@ -162,10 +177,10 @@
               "actor": 20020
             },
             {
-              "actor": 10064
+              "actor": null
             },
             {
-              "actor": 10050
+              "actor": null
             }
           ],
           "comment": "9.9費"
@@ -174,20 +189,25 @@
           "actions": [
             {
               "actor": 10033
-            },
-            {
-              "actor": 26008
             }
           ],
-          "comment": "6.5費，水靜續盾"
+          "comment": "6.5費"
         },
         {
           "actions": [
             {
-              "actor": 10045
+              "actor": null
+            }
+          ],
+          "comment": "續盾"
+        },
+        {
+          "actions": [
+            {
+              "actor": null
             },
             {
-              "actor": 10050
+              "actor": null
             }
           ],
           "comment": "9費，解點名"
@@ -201,10 +221,10 @@
               "actor": 20020
             },
             {
-              "actor": 10064
+              "actor": null
             },
             {
-              "actor": 26008
+              "actor": null
             }
           ],
           "comment": "9.9費"
@@ -215,13 +235,16 @@
               "actor": 10033
             },
             {
-              "actor": 10050
+              "actor": null
             },
             {
               "actor": 20020
             },
             {
-              "actor": 26008
+              "actor": null
+            },
+            {
+              "actor": null
             }
           ],
           "comment": "7費"
@@ -232,20 +255,19 @@
               "actor": 10033
             },
             {
-              "actor": 10064
+              "actor": null
             },
             {
               "actor": 20020
             },
             {
-              "actor": 10045
+              "actor": null
+            },
+            {
+              "actor": null
             }
           ],
           "comment": "轉場秒放 or 6.8費"
-        },
-        {
-          "actions": [],
-          "comment": "確定黃條到二分之一附近且有爆到後退出"
         }
       ],
       "skillTargetMap": []
@@ -488,5 +510,8 @@
       "skillTargetMap": []
     }
   ],
-  "mode": "大決戰"
+  "mode": "大決戰",
+  "score": "0",
+  "comment": "※註解",
+  "title": "蔚藍檔案 大決戰"
 }
