@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { debounceFilter, pausableFilter } from "@vueuse/core";
+import { sumBy } from "lodash-es";
 
 const battleStore = useBattleStore();
 const { battle } = storeToRefs(battleStore);
@@ -42,23 +43,34 @@ function onBlur() {
   cursorPos = textArea.value?.selectionEnd ?? 0;
 }
 
-async function insertStr(str: string) {
+async function insertAdd() {
+  await insertString("+");
+}
+
+async function insertStudentName(studentName: string) {
   if (!currentTeam.value) return;
+  const before = currentTeam.value?.text.slice(0, cursorPos);
+  const lastIndexOfArrow = before.lastIndexOf("→");
+  const used = sumBy(
+    lastIndexOfArrow === -1 ? before : before.slice(lastIndexOfArrow),
+    (it) => Number(it === "+")
+  );
+
+  if (used === 3)    await insertString(`${studentName}() → `, studentName.length + 1);
+  else await insertString(`${studentName}+`);
+}
+
+async function insertArrow() {
+  await insertString("() → ", 1);
+}
+
+async function insertString(str: string, offset?: number) {
   document.execCommand("insertText", false, str);
   await nextTick();
   textArea.value?.focus();
-  textArea.value?.setSelectionRange(
-    cursorPos + str.length,
-    cursorPos + str.length
-  );
-}
-
-async function insertParenthess() {
-  if (!currentTeam.value) return;
-  document.execCommand("insertText", false, "()");
-  await nextTick();
-  textArea.value?.focus();
-  textArea.value?.setSelectionRange(cursorPos + 1, cursorPos + 1);
+  const selectionEnd = cursorPos + (offset ?? str.length);
+  textArea.value?.setSelectionRange(selectionEnd, selectionEnd);
+  cursorPos = selectionEnd;
 }
 </script>
 
@@ -87,25 +99,19 @@ async function insertParenthess() {
       <textarea
         ref="textarea"
         @blur="onBlur"
+        @click="onBlur"
         v-model="currentTeam.text"
         class="flex-1 !text-white !bg-slate-900 border-none outline-none"
         auto-resize
       />
-      <div class="overflow-x-auto -m-3 bg-[#00000040] pt-2">
-        <div class="flex w-fit gap-2 items-center px-2">
-          <Button icon="pi pi-plus" rounded @click="insertStr('+')" />
-          <Button icon="pi pi-arrow-right" rounded @click="insertStr(' → ')" />
-          <Button label="註" rounded @click="insertParenthess()" />
-          <StudentAvatar
-            v-for="member in currentTeam.members"
-            class="w-20 cursor-pointer"
-            :student="member"
-            @click="member && insertStr(member.preferredName ?? member.name)"
-          />
-        </div>
-      </div>
+      <StageSelector
+        :team="currentTeam"
+        @input:arrow="insertArrow"
+        @input:add="insertAdd"
+        @input:student="insertStudentName"
+      />
     </SplitterPanel>
-    <SplitterPanel >
+    <SplitterPanel>
       <DataList class="h-full">
         <template #content>
           <Stage
