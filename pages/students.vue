@@ -26,7 +26,7 @@ const {
   update: updateProperty,
 } = useStudents(filter, pagination);
 const { update } = updateStudentData();
-const { upload } = uploadStudentAvatar();
+const { upload } = uploadStudentAvatars();
 const datatableConfig: DataTableProps = {
   scrollable: true,
   scrollHeight: "flex",
