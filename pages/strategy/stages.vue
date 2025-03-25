@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { debounceFilter, pausableFilter } from "@vueuse/core";
-import { sumBy } from "lodash-es";
+import { split } from "lodash-es";
 
 const battleStore = useBattleStore();
 const { battle } = storeToRefs(battleStore);
@@ -51,13 +51,16 @@ async function insertStudentName(studentName: string) {
   if (!currentTeam.value) return;
   const before = currentTeam.value?.text.slice(0, cursorPos);
   const lastIndexOfArrow = before.lastIndexOf("→");
-  const used = sumBy(
-    lastIndexOfArrow === -1 ? before : before.slice(lastIndexOfArrow),
-    (it) => Number(it === "+")
-  );
-
-  if (used === 3)    await insertString(`${studentName}() → `, studentName.length + 1);
-  else await insertString(`${studentName}+`);
+  const used = split(lastIndexOfArrow === -1 ? before : before.slice(lastIndexOfArrow), "+").length;
+  console.log(before, Boolean(before),used)
+  if (before && !before.endsWith("→ ") && !before.endsWith("(")!) {
+    if(before.endsWith("+")){
+      await insertString(`${studentName}+`)      
+    } else {
+      if (used === 3 ) await insertString(`+${studentName}() → `, studentName.length + 2);
+      else await insertString(`+${studentName}`)      
+    }
+  } else await insertString(`${studentName}`)
 }
 
 async function insertArrow() {
