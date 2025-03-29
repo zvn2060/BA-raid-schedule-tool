@@ -28,6 +28,9 @@ export default defineNuxtConfig({
   ],
   primevue: {
     importTheme: { from: "@/primevue/mytheme.ts" },
+    components: {
+      exclude: ["Form", "FormField"],
+    },
     directives: {
       include: ['Tooltip']
     }
