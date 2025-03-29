@@ -69,8 +69,8 @@ importers:
         specifier: ^4.38.0
         version: 4.38.0
       udsv:
-        specifier: ^0.6.0
-        version: 0.6.0
+        specifier: ^0.7.1
+        version: 0.7.1
       uniqolor:
         specifier: ^1.1.1
         version: 1.1.1
@@ -3385,8 +3385,8 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
-  udsv@0.6.0:
-    resolution: {integrity: sha512-na+0EoqqpDeNKZ0HVTtgYtFP9aQgsMwPM77UEK7g4OX2C42w+Qw7QZs9t1ocDGLidtcKJnsPy+o5XrBYaZfzCA==}
+  udsv@0.7.1:
+    resolution: {integrity: sha512-f+r+dhMf6itVmkQXULl5OSvqobpKgm62DaXkkj+MIGLHFGKFct+6hE+5Qqf0KoLG3GS31AYOMygapUEJKMJfCg==}
 
   ufo@1.5.4:
     resolution: {integrity: sha512-UsUk3byDzKd04EyoZ7U4DOlxQaD14JUKQl6/P7wiX4FNvUfm3XL246n9W5AmqwW5RSFJ27NAuM0iLscAOYUiGQ==}
@@ -7407,7 +7407,7 @@ snapshots:
   typescript@5.7.2:
     optional: true
 
-  udsv@0.6.0: {}
+  udsv@0.7.1: {}
 
   ufo@1.5.4: {}
 

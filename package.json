@@ -31,7 +31,7 @@
     "primevue": "^4.3.3",
     "tailwindcss-primeui": "^0.3.4",
     "type-fest": "^4.38.0",
-    "udsv": "^0.6.0",
+    "udsv": "^0.7.1",
     "uniqolor": "^1.1.1",
     "vue": "latest",
     "vue-konva": "^3.2.0",
