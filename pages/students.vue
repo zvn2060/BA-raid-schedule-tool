@@ -3,6 +3,7 @@ import { range } from "lodash-es";
 import type {
   ColumnProps,
   DataTableCellEditCompleteEvent,
+  DataTableCellEditInitEvent,
   DataTableProps,
 } from "primevue";
 import type { Component } from "vue";
@@ -143,6 +144,30 @@ const levelColumnsProps = rawLevelColumnProps.map((props) => ({
     })) ??
     range(props.min, props.max + 1).map((it) => ({ value: it, label: it })),
 }));
+
+const editAliasesItem = ref()
+const editAliasesDialogVisible = computed({
+  get: () => editAliasesItem.value !== undefined,
+  set: val => (editAliasesItem.value = val ? editAliasesItem.value : undefined)
+})
+function onCellEditInit(event: DataTableCellEditInitEvent){
+  if(event.field !=="aliases") return;
+  editAliasesItem.value = {
+    id: event.data.id,
+    name: event.data.name,
+    aliases: event.data.aliases
+  };
+  
+}
+
+function onEditAliasesDone(){
+  updateProperty({
+    id: editAliasesItem.value.id,
+    field: "aliases",
+    value: editAliasesItem.value.aliases,
+  });
+  editAliasesItem.value = undefined;
+}
 </script>
 
 <template>
@@ -154,8 +179,32 @@ const levelColumnsProps = rawLevelColumnProps.map((props) => ({
     :rowsPerPageOptions
     :total-records="total"
     @cell-edit-complete="onCellEditComplete"
+    @cell-edit-init="onCellEditInit"
   >
     <template #header>
+      <Dialog
+          v-model:visible="editAliasesDialogVisible"
+          :header="`編輯${editAliasesItem?.name}的別名`"
+          :closable="false"
+          dismissable-mask
+          modal
+        >
+          <AutoComplete
+            v-model="editAliasesItem.aliases"
+            multiple
+            fluid
+            :typeahead="false"
+            size="small"
+          />
+          <template #footer>
+            <Button
+              label="取消"
+              severity="danger"
+              @click="editAliasesDialogVisible = false"
+            />
+            <Button label="儲存" @click="onEditAliasesDone" />
+          </template>
+        </Dialog>
       <InputGroup class="max-w-[300px]">
         <InputText v-model="nameInput" @keydown.enter="onEnter" size="small" />
         <Button size="small" label="搜尋" @click="filter.name = nameInput">
@@ -184,7 +233,7 @@ const levelColumnsProps = rawLevelColumnProps.map((props) => ({
       </template>
     </Column>
     <Column field="name" header="名稱" />
-    <Column field="aliases" header="別名">
+    <Column field="aliases" header="別名" >
       <template #body="{ data }">
         <div class="flex items-center gap-1">
           <span>{{ data.aliases[0] }}</span>
@@ -197,43 +246,7 @@ const levelColumnsProps = rawLevelColumnProps.map((props) => ({
           </Badge>
         </div>
       </template>
-      <template
-        #editor="{ data, field, editorCancelCallback, editorSaveCallback }"
-      >
-        <div class="flex items-center gap-1">
-          <span>{{ data.aliases[0] }}</span>
-          <Badge
-            v-if="data.aliases.length > 1"
-            severity="secondary"
-            v-tooltip="data.aliases.join(', ')"
-          >
-            {{ data.aliases.length }}
-          </Badge>
-        </div>
-        <Dialog
-          header="編輯別名"
-          visible
-          :closable="false"
-          modal
-          :pt="{ mask: { onClick: (e: Event) => e.stopPropagation() } }"
-        >
-          <AutoComplete
-            v-model="data[field]"
-            multiple
-            fluid
-            :typeahead="false"
-            size="small"
-          />
-          <template #footer>
-            <Button
-              label="取消"
-              severity="danger"
-              @click="editorCancelCallback"
-            />
-            <Button label="儲存" @click="editorSaveCallback" />
-          </template>
-        </Dialog>
-      </template>
+      <template #editor></template>
     </Column>
     <Column
       v-for="{
@@ -252,16 +265,17 @@ const levelColumnsProps = rawLevelColumnProps.map((props) => ({
         <Component
           v-if="component"
           :is="component"
-          v-bind="{ [field]: data[field] }"
+          
+          v-bind="{ [field as string]: data[field as string] }"
         />
         <div v-else class="flex items-center">
           <img
-            v-if="showMax && data[field] === max"
+            v-if="showMax && data[field as string] === max"
             alt="level"
             :src="Max"
             class="w-8"
           />
-          <span v-else>{{ data[field] }}</span>
+          <span v-else>{{ data[field as string] }}</span>
         </div>
       </template>
       <template #editor="{ data, field }">
