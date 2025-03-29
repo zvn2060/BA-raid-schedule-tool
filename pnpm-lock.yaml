@@ -21,8 +21,8 @@ importers:
         specifier: 1.10.3
         version: 1.10.3(magicast@0.3.5)(rollup@4.37.0)(vite@6.2.3(@types/node@22.10.2)(jiti@2.4.2)(sass-embedded@1.86.0)(terser@5.39.0)(yaml@2.7.0))(vue@3.5.13(typescript@5.7.2))
       '@pinia/nuxt':
-        specifier: 0.9.0
-        version: 0.9.0(magicast@0.3.5)(pinia@2.3.1(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)))(rollup@4.37.0)
+        specifier: 0.10.1
+        version: 0.10.1(magicast@0.3.5)(pinia@3.0.1(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)))
       '@primevue/forms':
         specifier: ^4.3.3
         version: 4.3.3(vue@3.5.13(typescript@5.7.2))
@@ -57,8 +57,8 @@ importers:
         specifier: ^3.16.1
         version: 3.16.1(@parcel/watcher@2.5.1)(@types/node@22.10.2)(db0@0.3.1)(ioredis@5.6.0)(magicast@0.3.5)(rollup@4.37.0)(sass-embedded@1.86.0)(terser@5.39.0)(typescript@5.7.2)(vite@6.2.3(@types/node@22.10.2)(jiti@2.4.2)(sass-embedded@1.86.0)(terser@5.39.0)(yaml@2.7.0))(yaml@2.7.0)
       pinia:
-        specifier: ^2.3.1
-        version: 2.3.1(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2))
+        specifier: ^3.0.1
+        version: 3.0.1(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2))
       primeicons:
         specifier: ^7.0.0
         version: 7.0.0
@@ -916,10 +916,10 @@ packages:
     resolution: {integrity: sha512-dfUnCxiN9H4ap84DvD2ubjw+3vUNpstxa0TneY/Paat8a3R4uQZDLSvWjmznAY/DoahqTHl9V46HF/Zs3F29pg==}
     engines: {node: '>= 10.0.0'}
 
-  '@pinia/nuxt@0.9.0':
-    resolution: {integrity: sha512-2yeRo7LeyCF68AbNeL3xu2h6uw0617RkcsYxmA8DJM0R0PMdz5wQHnc44KeENQxR/Mrq8T910XVT6buosqsjBQ==}
+  '@pinia/nuxt@0.10.1':
+    resolution: {integrity: sha512-xrpkKZHSmshPK6kQzboJ+TZiZ5zj73gBCI5SfiUaJkKKS9gx4B1hLEzJIjxZl0/HS5jRWrIvQ+u9ulvIRlNiow==}
     peerDependencies:
-      pinia: ^2.3.0
+      pinia: ^3.0.1
 
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -1295,6 +1295,9 @@ packages:
 
   '@vue/devtools-api@6.6.4':
     resolution: {integrity: sha512-sGhTPMuXqZ1rVOk32RylztWkfXTRhuS7vgAKv0zjqk8gbsHkJ7xfFf+jbySxt7tWObEJwyKaHMikV/WGDiQm8g==}
+
+  '@vue/devtools-api@7.7.2':
+    resolution: {integrity: sha512-1syn558KhyN+chO5SjlZIwJ8bV/bQ1nOVTG66t2RbG66ZGekyiYNmRO7X9BJCXQqPsFHlnksqvPhce2qpzxFnA==}
 
   '@vue/devtools-core@7.7.2':
     resolution: {integrity: sha512-lexREWj1lKi91Tblr38ntSsy6CvI8ba7u+jmwh2yruib/ltLUcsIzEjCnrkh1yYGGIKXbAuYV2tOG10fGDB9OQ==}
@@ -2645,8 +2648,8 @@ packages:
     resolution: {integrity: sha512-udgsAY+fTnvv7kI7aaxbqwWNb0AHiB0qBO89PZKPkoTmGOgdbrHDKD+0B2X4uTfJ/FT1R09r9gTsjUjNJotuog==}
     engines: {node: '>=0.10.0'}
 
-  pinia@2.3.1:
-    resolution: {integrity: sha512-khUlZSwt9xXCaTbbxFYBKDc/bWAGWJjOgvxETwkTN7KRm66EeT1ZdZj6i2ceh9sP2Pzqsbc704r2yngBrxBVug==}
+  pinia@3.0.1:
+    resolution: {integrity: sha512-WXglsDzztOTH6IfcJ99ltYZin2mY8XZCXujkYWVIJlBjqsP6ST7zw+Aarh63E1cDVYeyUcPCxPHzJpEOmzB6Wg==}
     peerDependencies:
       typescript: '>=4.4.4'
       vue: ^2.7.0 || ^3.5.11
@@ -4777,14 +4780,12 @@ snapshots:
       '@parcel/watcher-win32-ia32': 2.5.1
       '@parcel/watcher-win32-x64': 2.5.1
 
-  '@pinia/nuxt@0.9.0(magicast@0.3.5)(pinia@2.3.1(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)))(rollup@4.37.0)':
+  '@pinia/nuxt@0.10.1(magicast@0.3.5)(pinia@3.0.1(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)))':
     dependencies:
-      '@nuxt/kit': 3.15.0(magicast@0.3.5)(rollup@4.37.0)
-      pinia: 2.3.1(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2))
+      '@nuxt/kit': 3.16.1(magicast@0.3.5)
+      pinia: 3.0.1(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2))
     transitivePeerDependencies:
       - magicast
-      - rollup
-      - supports-color
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
@@ -5162,6 +5163,10 @@ snapshots:
       '@vue/shared': 3.5.13
 
   '@vue/devtools-api@6.6.4': {}
+
+  '@vue/devtools-api@7.7.2':
+    dependencies:
+      '@vue/devtools-kit': 7.7.2
 
   '@vue/devtools-core@7.7.2(vite@6.2.3(@types/node@22.10.2)(jiti@2.4.2)(sass-embedded@1.86.0)(terser@5.39.0)(yaml@2.7.0))(vue@3.5.13(typescript@5.7.2))':
     dependencies:
@@ -6703,15 +6708,12 @@ snapshots:
 
   pify@2.3.0: {}
 
-  pinia@2.3.1(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)):
+  pinia@3.0.1(typescript@5.7.2)(vue@3.5.13(typescript@5.7.2)):
     dependencies:
-      '@vue/devtools-api': 6.6.4
+      '@vue/devtools-api': 7.7.2
       vue: 3.5.13(typescript@5.7.2)
-      vue-demi: 0.14.10(vue@3.5.13(typescript@5.7.2))
     optionalDependencies:
       typescript: 5.7.2
-    transitivePeerDependencies:
-      - '@vue/composition-api'
 
   pirates@4.0.6: {}
 
