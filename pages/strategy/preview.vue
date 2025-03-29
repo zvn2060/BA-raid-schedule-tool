@@ -18,7 +18,7 @@ if (!currentTeam.value) router.replace("/strategy/pick");
       <Tab value="2">網站隊伍</Tab>
       <Tab value="3">圖片軸</Tab>
     </TabList>
-    <TabPanels class="flex-1 min-h-0 !p-0">
+    <TabPanels class="flex-1 min-h-0 p-0!">
       <TabPanel value="0" class="h-full">
         <Description class="h-full" />
       </TabPanel>
@@ -35,9 +35,3 @@ if (!currentTeam.value) router.replace("/strategy/pick");
   </Tabs>
 </template>
 
-<style lang="scss">
-.preview-container {
-  @apply grid grid-cols-2  py-8 px-12 grid-flow-col gap-y-2 gap-x-12;
-  grid-template-rows: repeat(4, max-content);
-}
-</style>

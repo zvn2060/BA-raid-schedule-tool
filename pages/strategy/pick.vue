@@ -102,22 +102,27 @@ const homeItem: MenuItem = {
   </Splitter>
 </template>
 
-<style lang="scss">
+<style >
+@reference "tailwindcss";
+@reference "tailwindcss-primeui";
+
 .school-container {
-  @apply grid grid-cols-[repeat(auto-fit,minmax(105px,1fr))] gap-2 p-2 border-y border-black border-opacity-20;
+  @apply grid grid-cols-[repeat(auto-fit,minmax(105px,1fr))] gap-2 p-2 border-y border-black/20 ;
 }
 
 .student-container {
   @apply flex flex-col rounded-lg overflow-hidden bg-surface-100 shadow-lg hover:shadow-xl cursor-pointer;
-  > .icon {
-    @apply bg-surface-300;
-  }
+}
+
+.student-container > .icon {
+  @apply bg-surface-300;
 }
 
 .student-container.selected {
   @apply bg-yellow-100;
-  > .icon {
-    @apply bg-yellow-200;
-  }
+}
+
+.student-container.selected > .icon {
+  @apply bg-yellow-200;
 }
 </style>

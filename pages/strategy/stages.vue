@@ -104,7 +104,7 @@ async function insertString(str: string, offset?: number) {
         @blur="onBlur"
         @click="onBlur"
         v-model="currentTeam.text"
-        class="flex-1 !text-white !bg-slate-900 border-none outline-none"
+        class="flex-1 text-white! bg-slate-900! border-none outline-hidden"
         auto-resize
       />
       <StageSelector
@@ -128,23 +128,3 @@ async function insertString(str: string, offset?: number) {
     </SplitterPanel>
   </Splitter>
 </template>
-
-<style lang="scss">
-.school-container {
-  @apply grid grid-cols-[repeat(auto-fit,minmax(105px,1fr))] gap-2 p-2 border-y border-black border-opacity-20;
-}
-
-.student-container {
-  @apply flex flex-col rounded-lg overflow-hidden bg-surface-100 shadow-lg hover:shadow-xl cursor-pointer;
-  > .icon {
-    @apply bg-surface-300;
-  }
-}
-
-.student-container.selected {
-  @apply bg-yellow-100;
-  > .icon {
-    @apply bg-yellow-200;
-  }
-}
-</style>
