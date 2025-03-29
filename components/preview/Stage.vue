@@ -23,8 +23,8 @@ const hover = useElementHover(container);
   >
     <Inplace
       :pt="{
-        content: { class: ['!flex', 'items-center'] },
-        display: { class: ['!border-none'] },
+        content: { class: ['flex!', 'items-center'] },
+        display: { class: ['border-none!'] },
       }"
     >
       <template #display>
@@ -69,23 +69,30 @@ const hover = useElementHover(container);
   </div>
 </template>
 
-<style lang="scss">
+<style >
+@reference "tailwindcss";
+@reference "tailwindcss-primeui";
+
 .stage-container {
   @apply relative flex flex-col gap-[20px] p-4 rounded-md;
-  .stage-avatars-container {
-    @apply flex gap-[10px] flex-1 max-w-[630px] flex-wrap;
-  }
+}
+
+.stage-avatars-container {
+  @apply flex gap-[10px] flex-1 max-w-[630px] flex-wrap;
 }
 
 .stage-control {
   @apply transition-opacity flex items-center gap-2 bg-surface-100 px-2 py-1 rounded-lg w-fit;
-  > * {
-    @apply text-2xl cursor-pointer hover:bg-surface-200 w-10 h-10 p-2  rounded leading-none;
-  }
+
+}
+
+.stage-control > * {
+  @apply text-2xl cursor-pointer hover:bg-surface-200 w-10 h-10 p-2  rounded leading-none;
 }
 
 .stage-description {
-  @apply text-stroke-[5px] text-white leading-none max-w-[630px]  break-all;
+  @apply  text-white leading-none max-w-[630px]  break-all;
+  -webkit-text-stroke: 5px black;
   font-family: "Microsoft YaHei", sans-serif;
   font-size: 40px;
   paint-order: stroke;

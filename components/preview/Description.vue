@@ -11,7 +11,7 @@ function onCopyClick() {
   <div class="overflow-y-auto relative">
     <Button
       rounded
-      class="!sticky left-full mr-4 top-4"
+      class="sticky! left-full mr-4 top-4"
       size="large"
       :label="copied ? '已複製' : '複製'"
       :icon="copied ? 'pi pi-check' : 'pi pi-copy'"

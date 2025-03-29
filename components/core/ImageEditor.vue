@@ -191,11 +191,15 @@ async function onDownloadClick() {
   </div>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
+@reference "tailwindcss";
+
 #control-panel {
   @apply absolute top-2  inset-x-2 flex  items-end gap-2 z-10  pointer-events-none;
-  > * {
-    @apply pointer-events-auto;
-  }
 }
+
+#control-panel > * {
+  @apply pointer-events-auto;
+}
+
 </style>

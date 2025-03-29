@@ -2,13 +2,6 @@
     overflow-y: hidden;
 }
 
-.text-stroke {
-    -webkit-text-stroke: 1px var(--text-stroke-color);
-}
-
-.rounded-list-item {
-    @apply bg-gray-100 rounded overflow-hidden;
-}
 
 
 @font-face {

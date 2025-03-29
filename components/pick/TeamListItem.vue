@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Team } from "../../shared";
+import type { Team } from "@/shared";
 
 defineProps<{ team: Omit<Team, ""> }>();
 defineEmits<{ delete: []; edit: [] }>();
@@ -13,7 +13,7 @@ function squadToBackground(member: Member) {
 
 <template>
   <div class="grid grid-cols-[1fr_max-content] rounded-list-item gap-2">
-    <div class="grid gap-2 p-2 team-list-item-content" :class="[team.struture]">
+    <div class="grid gap-2 p-2 items-center" :class="[team.struture === 'normal' ? 'grid-cols-6' : 'grid-cols-10']">
       <StudentAvatar
         v-for="member in team.members"
         :student="member"
@@ -35,13 +35,4 @@ function squadToBackground(member: Member) {
 </template>
 
 <style lang="scss">
-.team-list-item-content {
-  @apply items-center;
-  &.normal {
-    @apply grid-cols-6;
-  }
-  &.unrestrict {
-    @apply grid-cols-10;
-  }
-}
 </style>

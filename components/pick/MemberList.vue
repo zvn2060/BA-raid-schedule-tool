@@ -13,7 +13,7 @@ function squadToBackground(member: Member) {
 <template>
   <div
     v-for="member in team.members"
-    class="flex gap-3 rounded pr-2 overflow-hidden h-fit"
+    class="flex gap-3 rounded-sm pr-2 overflow-hidden h-fit"
     :class="squadToBackground(member)"
   >
     <StudentAvatar :student="member" class="w-24 bg-surface-300" />

@@ -35,7 +35,7 @@ const datatableConfig: DataTableProps = {
   editMode: "cell",
   pt: { header: { class: ["flex", "items-center", "gap-2"] } },
   rowClass(data) {
-    if (!data.image) return "!bg-red-50";
+    if (!data.image) return "bg-red-50!";
   },
 };
 
@@ -178,7 +178,7 @@ const levelColumnsProps = rawLevelColumnProps.map((props) => ({
         icon="pi pi-users"
       />
     </template>
-    <Column field="id" body-class="!p-0" class="!w-12">
+    <Column field="id" body-class="p-0!" class="w-12!">
       <template #body="{ data }">
         <StudentAvatar :student="data" />
       </template>

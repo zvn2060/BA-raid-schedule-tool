@@ -1,7 +1,12 @@
+import tailwindcss from "@tailwindcss/vite"
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   ssr: false,
-  css: ['~/assets/index.css', '~/assets/index.scss', 'primeicons/primeicons.css'],
+  css: ['~/assets/main.css', '~/assets/index.scss', 'primeicons/primeicons.css'],
+  vite: {
+    plugins: [tailwindcss()]
+  },
   hooks: {
     'prerender:routes'({ routes }) {
       routes.clear() // Do not generate any routes (except the defaults)
@@ -37,7 +42,6 @@ export default defineNuxtConfig({
   },
   postcss: {
     plugins: {
-      tailwindcss: {},
       autoprefixer: {},
     }
   }

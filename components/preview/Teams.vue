@@ -74,16 +74,3 @@ const height = computed(() => 220 * battle.value.teams.length + 20);
   </div>
 </template>
 
-<style lang="scss">
-.team-container {
-  @apply grid bg-black w-[1000px] h-[200px] items-center justify-center;
-  &.normal {
-    @apply px-[35px];
-    grid-template-columns: repeat(6, 155px);
-  }
-  &.unrestrict {
-    @apply px-[25px];
-    grid-template-columns: repeat(6, 105px) 20px repeat(4, 75px);
-  }
-}
-</style>
