@@ -6,6 +6,7 @@
     "build": "nuxt build",
     "build:gh-page": "nuxt build --preset github_pages",
     "dev": "nuxt dev",
+    "clean": "nuxt cleanup",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
