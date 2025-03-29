@@ -1,7 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   ssr: false,
-  css: ['~/assets/index.scss', 'primeicons/primeicons.css'],
+  css: ['~/assets/index.css', '~/assets/index.scss', 'primeicons/primeicons.css'],
   hooks: {
     'prerender:routes'({ routes }) {
       routes.clear() // Do not generate any routes (except the defaults)
