@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import type { BattleMode } from "~/shared";
-import { BattleModeOptions } from "~/shared";
-
 const model = defineModel<BattleMode>();
 </script>
 

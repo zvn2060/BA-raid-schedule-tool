@@ -49,14 +49,6 @@ function skillTranscript(level: number) {
     return level === 10 ? 'M' : `${level}`;
 }
 
-const replica: Record<string, number> = { "一次": 1, "兩次": 2, "二次": 2, "三次": 3, "四次": 4 }
-
-function isReplicaOrTarget(text: string): string | number {
-    return replica[text] ?? text
-}
-
-
-
 export class Team implements Serializable<z.infer<typeof Team.schema>> {
     private _stages: Stage[] = [];
     private _members: Member[];

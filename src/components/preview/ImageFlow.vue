@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useImage } from "@vueuse/core";
-import { BackgroundImage, pickBorderColor } from "~/shared";
 
 const { state } = useImage({
   src: BackgroundImage.圖片軸底圖1.href,

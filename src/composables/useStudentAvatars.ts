@@ -1,4 +1,3 @@
-import { IndexDBClient } from "#shared";
 import { useQuery } from "@tanstack/vue-query";
 import type { MaybeRefOrGetter } from "vue";
 

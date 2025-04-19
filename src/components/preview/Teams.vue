@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { BattleMode } from "#shared";
-
 const store = useBattleStore();
 const { battle } = storeToRefs(store);
 

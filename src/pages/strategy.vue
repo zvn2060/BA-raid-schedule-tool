@@ -59,7 +59,7 @@ function onExportClick() {
 }
 
 async function onLoadSampleClick() {
-  const data = await import("../assets/sample.json");
+  const data = await import("@/assets/sample.json");
   handleLoadFile(JSON.stringify(data.default));
 }
 </script>

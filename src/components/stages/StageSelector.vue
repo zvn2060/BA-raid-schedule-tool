@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { Team } from "~/shared";
-
 const { team } = defineProps<{ team: Omit<Team, ""> }>();
 const emit = defineEmits<{
   "input:add": [];

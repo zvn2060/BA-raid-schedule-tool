@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { isNil } from "lodash-es";
-import type { Team } from "~/shared";
-import { pickBorderColor } from "~/shared";
 
 const props = defineProps<{ team: Omit<Team, "">; stageId: number }>();
 const stage = computed(() => props.team.stages[props.stageId]);

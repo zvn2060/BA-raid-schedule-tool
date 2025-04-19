@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { Team } from "../../shared";
-
 defineProps<{ team: Omit<Team, ""> }>();
 
 function squadToBackground(member: Member) {

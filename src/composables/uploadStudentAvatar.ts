@@ -1,5 +1,4 @@
 import { keyBy } from "lodash-es";
-import { IndexDBClient } from "~/shared";
 
 type UploadAvatarData = Array<File>;
 
