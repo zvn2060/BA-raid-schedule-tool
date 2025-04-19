@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { workerDownload } from "#shared";
 import download from "downloadjs";
 import Konva from "konva";
 import { clamp, isNull } from "lodash-es";

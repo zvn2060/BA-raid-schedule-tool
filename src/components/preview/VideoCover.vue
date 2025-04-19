@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { BattleMode } from "#shared";
 import { useImage } from "@vueuse/core";
 import type { TextConfig } from "konva/lib/shapes/Text";
 import TempVar from "vue-temp-var";
-import { BackgroundImage } from "~/shared/backgroundImage";
 
 const store = useBattleStore();
 const { battle } = storeToRefs(store);

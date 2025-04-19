@@ -1,4 +1,3 @@
-import { calculateKeywords, IndexDBClient } from "#shared";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
 import type { Collection, InsertType } from "dexie";
 import { set, uniqBy } from "lodash-es";

@@ -2,6 +2,7 @@ import tailwindcss from "@tailwindcss/vite"
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  srcDir: "src/",
   ssr: false,
   css: ['~/assets/main.css', '~/assets/index.scss', 'primeicons/primeicons.css'],
   vite: {
