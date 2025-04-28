@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useImage } from '@vueuse/core';
+import { useImage } from "@vueuse/core";
 
 const props = defineProps<{
   student: Student;
@@ -20,7 +20,20 @@ const { state } = useImage(() => ({
 
 <template>
   <template v-if="student">
-    <KonvaImage :image="state" :width :height :x="x" :y="y" />
-    <KonvaRect :stroke :strokeWidth :width :height :x="x" :y="y"/>
+    <KonvaImage
+      :image="state"
+      :width
+      :height
+      :x="x"
+      :y="y"
+    />
+    <KonvaRect
+      :stroke
+      :strokeWidth
+      :width
+      :height
+      :x="x"
+      :y="y"
+    />
   </template>
 </template>

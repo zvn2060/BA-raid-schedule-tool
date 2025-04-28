@@ -1,16 +1,17 @@
 <script setup lang="ts">
-defineProps<{ team: Omit<Team, ""> }>();
+defineProps<{ team: Public<Team> }>();
 
 function squadToBackground(member: Member) {
-  if (member)
-    return [member.squad === "striker" ? "bg-red-100" : "bg-blue-100"];
-  return ["bg-surface-200"];
+  return member
+    ? [member.squad === "striker" ? "bg-red-100" : "bg-blue-100"]
+    : ["bg-surface-200"];
 }
 </script>
 
 <template>
   <div
     v-for="member in team.members"
+    :key="member?.id"
     class="flex gap-3 rounded-sm pr-2 overflow-hidden h-fit"
     :class="squadToBackground(member)"
   >
@@ -26,8 +27,7 @@ function squadToBackground(member: Member) {
           </span>
           <span>
             <i class="pi pi-heart-fill text-pink-300" />
-            {{ member.kizuna }}</span
-          >
+            {{ member.kizuna }}</span>
         </div>
         <div class="flex gap-2">
           <span>
@@ -40,27 +40,19 @@ function squadToBackground(member: Member) {
             <span>T{{ member.gear_1 }}</span>
             <span>T{{ member.gear_2 }}</span>
             <span>T{{ member.gear_3 }}</span>
-            <span v-if="member.gear_unique"
-              >愛用品 T{{ member.gear_unique }}</span
-            >
+            <span v-if="member.gear_unique">愛用品 T{{ member.gear_unique }}</span>
           </span>
           <span class="flex gap-1">
-            <span v-if="member.release_hp"
-              >生命：Lv.{{ member.release_hp }}</span
-            >
-            <span v-if="member.release_atk"
-              >攻擊：Lv.{{ member.release_atk }}</span
-            >
-            <span v-if="member.release_heal"
-              >治癒：Lv.{{ member.release_heal }}</span
-            >
+            <span v-if="member.release_hp">生命：Lv.{{ member.release_hp }}</span>
+            <span v-if="member.release_atk">攻擊：Lv.{{ member.release_atk }}</span>
+            <span v-if="member.release_heal">治癒：Lv.{{ member.release_heal }}</span>
           </span>
         </div>
       </template>
     </div>
     <div v-if="member" class="flex items-center gap-1">
       <span>使用名稱：</span>
-      <Select :default-value="member.name" v-model="member.preferredName" :options="[member.name, ...member.aliases]"/>
+      <Select v-model="member.preferredName" :default-value="member.name" :options="[member.name, ...member.aliases]" />
     </div>
     <Button
       v-if="member"

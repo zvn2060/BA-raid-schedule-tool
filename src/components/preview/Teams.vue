@@ -6,19 +6,20 @@ const height = computed(() => 220 * battle.value.teams.length + 20);
 </script>
 
 <template>
+  <!-- eslint-disable vue/valid-v-for -->
   <div class="relative">
     <ImageEditor
       :export-name="`${battle.name}-網站隊伍`"
       :width="1000"
       :height
       class="h-full border-2"
-      :pixelRation="1"
+      :pixel-ration="1"
     >
       <KonvaLayer>
         <template v-if="battle.mode === BattleMode.Unrestrict">
           <KonvaGroup
-            name="export"
             v-for="(team, teamId) in battle.teams"
+            name="export"
             :width="1000"
             :height="200"
             :y="20 + teamId * 220"
@@ -48,8 +49,8 @@ const height = computed(() => 220 * battle.value.teams.length + 20);
         </template>
         <template v-else>
           <KonvaGroup
-            name="export"
             v-for="(team, teamId) in battle.teams"
+            name="export"
             :width="1000"
             :height="200"
             :y="20 + teamId * 220"
@@ -71,4 +72,3 @@ const height = computed(() => 220 * battle.value.teams.length + 20);
     </ImageEditor>
   </div>
 </template>
-

@@ -1,12 +1,11 @@
 <script setup lang="ts">
-
-defineProps<{ team: Omit<Team, ""> }>();
+defineProps<{ team: Public<Team> }>();
 defineEmits<{ delete: []; edit: [] }>();
 
 function squadToBackground(member: Member) {
-  if (member)
-    return [member.squad === "striker" ? "bg-red-100" : "bg-blue-100"];
-  return ["bg-surface-200"];
+  return member
+    ? [member.squad === "striker" ? "bg-red-100" : "bg-blue-100"]
+    : ["bg-surface-200"];
 }
 </script>
 
@@ -15,12 +14,19 @@ function squadToBackground(member: Member) {
     <div class="grid gap-2 p-2 items-center" :class="[team.struture === 'normal' ? 'grid-cols-6' : 'grid-cols-10']">
       <StudentAvatar
         v-for="member in team.members"
+        :key="member?.id"
         :student="member"
         :class="squadToBackground(member)"
       />
     </div>
     <div class="flex flex-col items-center justify-center p-2 border-l gap-2">
-      <Button icon="pi pi-pencil" text rounded @click="$emit('edit')" raised />
+      <Button
+        icon="pi pi-pencil"
+        text
+        rounded
+        raised
+        @click="$emit('edit')"
+      />
       <Button
         icon="pi pi-trash"
         text

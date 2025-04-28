@@ -1,13 +1,7 @@
 <script setup lang="ts">
-
-const { battle } = storeToRefs(useBattleStore());
 const router = useRouter();
-const currentTeamIndex = ref(0);
-const currentTeam = computed(() =>
-  battle.value.teams.at(currentTeamIndex.value)
-);
-if (!currentTeam.value) router.replace("/strategy/pick");
-
+const { battle } = storeToRefs(useBattleStore());
+if (!battle.value.teams.length) router.replace("/strategy/pick");
 </script>
 
 <template>
@@ -29,9 +23,8 @@ if (!currentTeam.value) router.replace("/strategy/pick");
         <Teams class="h-full" />
       </TabPanel>
       <TabPanel value="3" class="h-full">
-        <ImageFlow class="h-full"/>
+        <ImageFlow class="h-full" />
       </TabPanel>
     </TabPanels>
   </Tabs>
 </template>
-

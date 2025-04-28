@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { isNil } from "lodash-es";
 
-const props = defineProps<{ team: Omit<Team, "">; stageId: number }>();
+const props = defineProps<{ team: Public<Team>; stageId: number }>();
 const stage = computed(() => props.team.stages[props.stageId]);
 
 function getBorderColor(targetId: StudentId | null | undefined) {
@@ -26,7 +26,9 @@ const hover = useElementHover(container);
       }"
     >
       <template #display>
-        <div class="stage-description">{{ stage.comment || "&nbsp;" }}</div>
+        <div class="stage-description">
+          {{ stage.comment || "&nbsp;" }}
+        </div>
       </template>
       <template #content="{ closeCallback }">
         <InputText v-model="stage.comment" class="flex-1" />
@@ -42,6 +44,7 @@ const hover = useElementHover(container);
     </Inplace>
     <div class="stage-avatars-container">
       <template v-for="action in stage.actions">
+        <!-- eslint-disable-next-line vue/valid-v-for -->
         <StudentAvatar
           :student="team.getMember(action.actor)"
           class="border-4 w-[150px]"
@@ -67,7 +70,7 @@ const hover = useElementHover(container);
   </div>
 </template>
 
-<style >
+<style>
 @reference "tailwindcss";
 @reference "tailwindcss-primeui";
 

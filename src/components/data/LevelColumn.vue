@@ -11,15 +11,11 @@ const props = withDefaults(
     showMax?: boolean;
     bodyClass?: string;
   }>(),
-  { bodyClass: "min-w-8 max-w-10", showMax: false }
+  { bodyClass: "min-w-8 max-w-10", showMax: false },
 );
 const transformedOptions = computed(
-  () =>
-    props.options?.map((it, index) => ({
-      value: props.min + index,
-      label: it,
-    })) ??
-    range(props.min, props.max + 1).map((it) => ({ value: it, label: it }))
+  () => props.options?.map((it, index) => ({ value: props.min + index, label: it }))
+    ?? range(props.min, props.max + 1).map(it => ({ value: it, label: it })),
 );
 
 const shouldUseInput = computed(() => props.max - props.min > 10);
@@ -31,12 +27,12 @@ const shouldUseInput = computed(() => props.max - props.min > 10);
       <slot v-if="$slots['body']" name="body" v-bind="slotProps" />
       <div v-else class="flex items-center">
         <img
-          v-if="showMax && slotProps.data[slotProps.field] === max"
+          v-if="showMax && slotProps.data[slotProps.field as string] === max"
           alt="level"
           :src="Max"
           class="w-8"
-        />
-        <span v-else>{{ slotProps.data[slotProps.field] }}</span>
+        >
+        <span v-else>{{ slotProps.data[slotProps.field as string] }}</span>
       </div>
     </template>
     <template #editor="{ data, field }">

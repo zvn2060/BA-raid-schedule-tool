@@ -8,7 +8,7 @@ const router = useRouter();
 const textArea = useTemplateRef("textarea");
 const currentTeamIndex = ref(0);
 const currentTeam = computed(() =>
-  battle.value.teams.at(currentTeamIndex.value)
+  battle.value.teams.at(currentTeamIndex.value),
 );
 if (!currentTeam.value) router.replace("/strategy/pick");
 
@@ -22,7 +22,7 @@ watch(
     if (value) pausableDebounceFilter.resume();
     else pausableDebounceFilter.pause();
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watchWithFilter(
@@ -30,7 +30,7 @@ watchWithFilter(
   () => {
     triggerParse();
   },
-  { eventFilter: pausableDebounceFilter.eventFilter }
+  { eventFilter: pausableDebounceFilter.eventFilter },
 );
 
 function triggerParse() {
@@ -52,15 +52,17 @@ async function insertStudentName(studentName: string) {
   const before = currentTeam.value?.text.slice(0, cursorPos);
   const lastIndexOfArrow = before.lastIndexOf("→");
   const used = split(lastIndexOfArrow === -1 ? before : before.slice(lastIndexOfArrow), "+").length;
-  console.log(before, Boolean(before),used)
+  console.log(before, Boolean(before), used);
   if (before && !before.endsWith("→ ") && !before.endsWith("(")!) {
-    if(before.endsWith("+")){
-      await insertString(`${studentName}+`)      
-    } else {
-      if (used === 3 ) await insertString(`+${studentName}() → `, studentName.length + 2);
-      else await insertString(`+${studentName}`)      
+    if (before.endsWith("+")) {
+      await insertString(`${studentName}+`);
     }
-  } else await insertString(`${studentName}`)
+    else {
+      if (used === 3) await insertString(`+${studentName}() → `, studentName.length + 2);
+      else await insertString(`+${studentName}`);
+    }
+  }
+  else await insertString(`${studentName}`);
 }
 
 async function insertArrow() {
@@ -78,15 +80,16 @@ async function insertString(str: string, offset?: number) {
 </script>
 
 <template>
+  <!-- eslint-disable vue/valid-v-for -->
   <Splitter v-if="currentTeam">
     <SplitterPanel class="flex flex-col p-3 bg-slate-900 gap-2">
       <div class="flex items-center gap-2 bg-[#FFFFFF60] p-2 rounded-lg">
         <Button
           v-for="(_, index) in battle.teams"
-          @click="currentTeamIndex = index"
           :label="`${index + 1}`"
           class="w-10"
           :severity="currentTeamIndex === index ? undefined : 'secondary'"
+          @click="currentTeamIndex = index"
         />
         <div class="flex-1" />
         <Button
@@ -101,11 +104,11 @@ async function insertString(str: string, offset?: number) {
       </div>
       <textarea
         ref="textarea"
-        @blur="onBlur"
-        @click="onBlur"
         v-model="currentTeam.text"
         class="flex-1 text-white! bg-slate-900! border-none outline-hidden"
         auto-resize
+        @blur="onBlur"
+        @click="onBlur"
       />
       <StageSelector
         :team="currentTeam"

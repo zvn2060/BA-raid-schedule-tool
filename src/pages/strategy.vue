@@ -1,13 +1,26 @@
 <script setup lang="ts">
 import download from "downloadjs";
+import { keyBy, mapValues } from "lodash-es";
 import { useToast } from "primevue";
+import type { RouteNamedMap } from "vue-router/auto-routes";
 
 const router = useRouter();
 const route = useRoute();
-const step = computed(() => {
-  if (route.name === "/strategy/preview") return "3";
-  else if (route.name === "/strategy/stages") return "2";
-  else return "1";
+
+const stepRoutes: Record<string, { name: keyof RouteNamedMap; label: string }> = {
+  1: { name: "strategy-pick", label: "編隊" },
+  2: { name: "strategy-stages", label: "寫軸" },
+  3: { name: "strategy-preview", label: "輸出" },
+};
+
+const reverseStepRoutes = mapValues(
+  keyBy(Object.entries(stepRoutes), it => it[1].name),
+  it => it[0],
+);
+
+const step = computed({
+  get: () => reverseStepRoutes[route.name as string],
+  set: val => router.replace({ name: stepRoutes[val].name }),
 });
 
 const battleStore = useBattleStore();
@@ -22,17 +35,15 @@ const toast = useToast();
 function handleLoadFile(content: string) {
   battleStore
     .loadFromJsonFile(content)
-    .catch((e) =>
+    .catch(e =>
       toast.add({
         summary: "錯誤",
         detail: (e as Error).message,
         severity: "error",
         life: 5000,
-      })
+      }),
     )
-    .finally(() => {
-      reset();
-    });
+    .finally(() => { reset(); });
 }
 
 onChange(async (filelist) => {
@@ -40,21 +51,11 @@ onChange(async (filelist) => {
   if (!file) return;
   handleLoadFile(await file.text());
 });
-function onStepChange(value: "1" | "2" | "3") {
-  switch (value) {
-    case "1":
-      return router.replace("/strategy/pick");
-    case "2":
-      return router.replace("/strategy/stages");
-    case "3":
-      return router.replace("/strategy/preview");
-  }
-}
 
 function onExportClick() {
   download(
     JSON.stringify(battle.value.toObject(), null, 2),
-    `${battle.value.name}.json`
+    `${battle.value.name}.json`,
   );
 }
 
@@ -66,17 +67,17 @@ async function onLoadSampleClick() {
 
 <template>
   <div class="h-full flex flex-col">
-    <Toolbar>
+    <Toolbar :pt="{ center: { class: ['flex-1', 'flex', 'justify-center'] } }">
       <template #start>
         <InputText v-model="battle.name" />
         <BattleModeDropdown v-model="battle.mode" class="ml-2" />
       </template>
       <template #center>
-        <Stepper :value="step" class="w-[400px]" @update:value="onStepChange">
+        <Stepper v-model:value="step" class="w-full max-w-[400px] mx-5">
           <StepList>
-            <Step value="1">編隊</Step>
-            <Step value="2" :disabled="battle.teams.length === 0">寫軸</Step>
-            <Step value="3" :disabled="battle.teams.length === 0">輸出</Step>
+            <Step v-for="[key, val] in Object.entries(stepRoutes)" :key="key" :value="key">
+              {{ val.label }}
+            </Step>
           </StepList>
         </Stepper>
       </template>
@@ -98,7 +99,7 @@ async function onLoadSampleClick() {
       </template>
     </Toolbar>
     <div class="flex-1 min-h-0">
-      <NuxtPage class="h-full"/>
+      <NuxtPage class="h-full" />
     </div>
   </div>
 </template>

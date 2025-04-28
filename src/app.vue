@@ -9,7 +9,7 @@ onMounted(() => {
   if (content) store.loadFromJsonFile(content);
 });
 
-useEventListener(window, "beforeunload", (evt) => {
+useEventListener(window, "beforeunload", () => {
   localStorage.setItem("battle", JSON.stringify(store.battle.toObject()));
 });
 
@@ -36,7 +36,7 @@ const topNavigations: MenuItem[] = [
   <div class="h-dvh flex flex-col">
     <Menubar :model="topNavigations">
       <template #start>
-        <img src="/favicon.svg" class="w-8 mr-2" />
+        <img src="/favicon.svg" class="w-8 mr-2">
         <span class="text-lg font-bold">檔案軸工具</span>
       </template>
       <template #item="{ item, props, hasSubmenu }">
@@ -46,7 +46,12 @@ const topNavigations: MenuItem[] = [
           :to="item.route"
           custom
         >
-          <a v-ripple :href="href" v-bind="props.action" @click="navigate">
+          <a
+            v-ripple
+            :href="href"
+            v-bind="props.action"
+            @click="navigate"
+          >
             <span :class="item.icon" />
             <span>{{ item.label }}</span>
           </a>

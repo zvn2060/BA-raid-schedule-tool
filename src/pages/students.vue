@@ -52,7 +52,7 @@ const starOptions = [
 ];
 
 const rowsPerPageOptions = computed(() =>
-  (total.value ?? 0) > 50 ? [10, 20, 50, total.value!] : [10, 20, 50]
+  (total.value ?? 0) > 50 ? [10, 20, 50, total.value!] : [10, 20, 50],
 );
 
 const uploadProgress = useFileDialog({
@@ -64,13 +64,13 @@ uploadProgress.onChange((filelist) => {
   const file = filelist?.item(0);
   if (!file) return;
   update(file)
-    .catch((e) =>
+    .catch(e =>
       toast.add({
         summary: "資料錯誤",
         detail: e instanceof Error ? e.message : `${e}`,
         severity: "error",
         life: 5000,
-      })
+      }),
     )
     .finally(() => {
       uploadProgress.reset();
@@ -135,32 +135,31 @@ const rawLevelColumnProps: Array<
   { field: "release_heal", min: 0, max: 25, header: "治癒" },
 ];
 
-const levelColumnsProps = rawLevelColumnProps.map((props) => ({
+const levelColumnsProps = rawLevelColumnProps.map(props => ({
   ...props,
   options:
     props.options?.map((it, index) => ({
       value: props.min + index,
       label: it,
-    })) ??
-    range(props.min, props.max + 1).map((it) => ({ value: it, label: it })),
+    }))
+    ?? range(props.min, props.max + 1).map(it => ({ value: it, label: it })),
 }));
 
-const editAliasesItem = ref()
+const editAliasesItem = ref();
 const editAliasesDialogVisible = computed({
   get: () => editAliasesItem.value !== undefined,
-  set: val => (editAliasesItem.value = val ? editAliasesItem.value : undefined)
-})
-function onCellEditInit(event: DataTableCellEditInitEvent){
-  if(event.field !=="aliases") return;
+  set: val => (editAliasesItem.value = val ? editAliasesItem.value : undefined),
+});
+function onCellEditInit(event: DataTableCellEditInitEvent) {
+  if (event.field !== "aliases") return;
   editAliasesItem.value = {
     id: event.data.id,
     name: event.data.name,
-    aliases: event.data.aliases
+    aliases: event.data.aliases,
   };
-  
 }
 
-function onEditAliasesDone(){
+function onEditAliasesDone() {
   updateProperty({
     id: editAliasesItem.value.id,
     field: "aliases",
@@ -176,37 +175,37 @@ function onEditAliasesDone(){
     v-model:first="first"
     :value="students"
     v-bind="datatableConfig"
-    :rowsPerPageOptions
+    :rows-per-page-options
     :total-records="total"
     @cell-edit-complete="onCellEditComplete"
     @cell-edit-init="onCellEditInit"
   >
     <template #header>
       <Dialog
-          v-model:visible="editAliasesDialogVisible"
-          :header="`編輯${editAliasesItem?.name}的別名`"
-          :closable="false"
-          dismissable-mask
-          modal
-        >
-          <AutoComplete
-            v-model="editAliasesItem.aliases"
-            multiple
-            fluid
-            :typeahead="false"
-            size="small"
+        v-model:visible="editAliasesDialogVisible"
+        :header="`編輯${editAliasesItem?.name}的別名`"
+        :closable="false"
+        dismissable-mask
+        modal
+      >
+        <AutoComplete
+          v-model="editAliasesItem.aliases"
+          multiple
+          fluid
+          :typeahead="false"
+          size="small"
+        />
+        <template #footer>
+          <Button
+            label="取消"
+            severity="danger"
+            @click="editAliasesDialogVisible = false"
           />
-          <template #footer>
-            <Button
-              label="取消"
-              severity="danger"
-              @click="editAliasesDialogVisible = false"
-            />
-            <Button label="儲存" @click="onEditAliasesDone" />
-          </template>
-        </Dialog>
+          <Button label="儲存" @click="onEditAliasesDone" />
+        </template>
+      </Dialog>
       <InputGroup class="max-w-[300px]">
-        <InputText v-model="nameInput" @keydown.enter="onEnter" size="small" />
+        <InputText v-model="nameInput" size="small" @keydown.enter="onEnter" />
         <Button size="small" label="搜尋" @click="filter.name = nameInput">
           <template #icon>
             <Icon name="mdi:keyboard-return" />
@@ -216,15 +215,15 @@ function onEditAliasesDone(){
       <div class="flex-1" />
       <Button
         label="上傳資料"
-        @click="uploadProgress.open()"
         size="small"
         icon="pi pi-upload"
+        @click="uploadProgress.open()"
       />
       <Button
         label="上傳頭像"
-        @click="uploadAvatar.open()"
         size="small"
         icon="pi pi-users"
+        @click="uploadAvatar.open()"
       />
     </template>
     <Column field="id" body-class="p-0!" class="w-12!">
@@ -233,21 +232,22 @@ function onEditAliasesDone(){
       </template>
     </Column>
     <Column field="name" header="名稱" />
-    <Column field="aliases" header="別名" >
+    <Column field="aliases" header="別名">
       <template #body="{ data }">
         <div class="flex items-center gap-1">
           <span>{{ data.aliases[0] }}</span>
           <Badge
             v-if="data.aliases.length > 1"
-            severity="secondary"
             v-tooltip="data.aliases.join(', ')"
+            severity="secondary"
           >
             {{ data.aliases.length }}
           </Badge>
         </div>
       </template>
-      <template #editor></template>
+      <template #editor />
     </Column>
+    <!-- eslint-disable-next-line vue/valid-v-for -->
     <Column
       v-for="{
         min,
@@ -263,9 +263,9 @@ function onEditAliasesDone(){
     >
       <template #body="{ data, field }">
         <Component
-          v-if="component"
           :is="component"
-          
+          v-if="component"
+
           v-bind="{ [field as string]: data[field as string] }"
         />
         <div v-else class="flex items-center">
@@ -274,7 +274,7 @@ function onEditAliasesDone(){
             alt="level"
             :src="Max"
             class="w-8"
-          />
+          >
           <span v-else>{{ data[field as string] }}</span>
         </div>
       </template>

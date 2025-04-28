@@ -14,7 +14,7 @@ const { avatar } = useStudentAvatar(() => props.student?.id);
       loading="lazy"
       :src="avatar"
       class="object-cover w-full h-full pointer-events-none"
-    />
+    >
     <span v-else>Empty</span>
   </div>
 </template>

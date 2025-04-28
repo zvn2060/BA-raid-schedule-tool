@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import download from "downloadjs";
-import Konva from "konva";
+import type Konva from "konva";
 import { clamp, isNull } from "lodash-es";
 
 const props = defineProps<{
@@ -27,7 +27,7 @@ const indicator = computed(() => {
     offset: { x: -width * 10, y: -width * 10 },
     fontSize: 20 / scale.value,
     label: `${pointerPosition.value.x.toFixed(
-      1
+      1,
     )}, ${pointerPosition.value.y.toFixed(1)}`,
   };
 });
@@ -37,10 +37,10 @@ const minScale = computed(() =>
   Math.max(
     Math.min(
       containerW.value / (props.width + padding * 2),
-      containerH.value / (props.height + padding * 2)
+      containerH.value / (props.height + padding * 2),
     ),
-    Number.MIN_VALUE
-  )
+    Number.MIN_VALUE,
+  ),
 );
 const stageConfig = computed<Konva.StageConfig>(() => ({
   width: containerW.value,
@@ -77,7 +77,7 @@ function wheelHandler(event: Konva.KonvaEventObject<WheelEvent>) {
   scale.value = clamp(
     scale.value * (event.evt.deltaY > 0 ? 0.882 : 1.133),
     minScale.value,
-    10
+    10,
   );
   stagePosition.value = {
     x: pointer.x - mousePointTo.x * scale.value,
@@ -103,7 +103,7 @@ async function onDownloadClick() {
   if (targets) {
     const isSingle = targets.length < 2;
     const data = targets
-      .filter((target) => !isNull(target))
+      .filter(target => !isNull(target))
       .map((target, index) => ({
         dataUrl: target.toDataURL({ pixelRatio: props.pixelRation }),
         name: isSingle
@@ -116,6 +116,7 @@ async function onDownloadClick() {
   scale.value = oldScale;
 }
 </script>
+
 <template>
   <div class="flex">
     <div class="w-fit min-w-[15rem] shadow-xl px-4 py-2 flex flex-col gap-2">
@@ -166,7 +167,7 @@ async function onDownloadClick() {
             <KonvaText
               fill="#ffffff"
               :text="indicator.label"
-              :fontSize="indicator.fontSize"
+              :font-size="indicator.fontSize"
               :padding="indicator.width * 4"
             />
           </KonvaLabel>
@@ -200,5 +201,4 @@ async function onDownloadClick() {
 #control-panel > * {
   @apply pointer-events-auto;
 }
-
 </style>

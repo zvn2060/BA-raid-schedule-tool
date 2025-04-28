@@ -3,5 +3,5 @@ const model = defineModel<BattleMode>();
 </script>
 
 <template>
-  <Select :options="BattleModeOptions" v-model="model" />
+  <Select v-model="model" :options="BattleModeOptions" />
 </template>

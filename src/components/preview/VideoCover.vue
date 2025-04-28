@@ -28,6 +28,8 @@ const videoCover = computed(() => {
       return BackgroundImage.賽特底圖1;
     case BattleMode.JpRaid:
       return BackgroundImage.日版底圖1;
+    default:
+      return BackgroundImage.總力戰底圖1;
   }
 });
 
@@ -43,7 +45,7 @@ const config = useLocalStorage(
       [BattleMode.JpRaid]: "5E17EB",
     },
   },
-  { mergeDefaults: true }
+  { mergeDefaults: true },
 );
 
 const { state: backgroundImage } = useImage(() => ({
@@ -52,7 +54,7 @@ const { state: backgroundImage } = useImage(() => ({
 }));
 
 const strokeColor = computed(
-  () => `#${config.value.strokeColor[battle.value.mode] ?? "00FF00"}`
+  () => `#${config.value.strokeColor[battle.value.mode] ?? "00FF00"}`,
 );
 
 const titleSize = useAutoSizeText(() => battle.value.title, {
@@ -81,11 +83,12 @@ const imageName = computed(() => `${battle.value.title}-影片封面`);
 </script>
 
 <template>
+  <!-- eslint-disable vue/attribute-hyphenation -->
   <ImageEditor
     :export-name="imageName"
     :width="1920"
     :height="1080"
-    :pixelRation="2 / 3"
+    :pixel-ration="2 / 3"
   >
     <template #config>
       <div>
@@ -103,8 +106,8 @@ const imageName = computed(() => `${battle.value.title}-影片封面`);
       <div>
         <label class="font-bold block mb-1">文字邊框寬度</label>
         <InputNumber
-          suffix=" px"
           v-model="config.strokeWidth"
+          suffix=" px"
           class="w-full"
           :min="1"
           :max="36"
@@ -127,12 +130,12 @@ const imageName = computed(() => `${battle.value.title}-影片封面`);
           :x="60"
           wrap="none"
           align="center"
-          verticalAlign="middle"
+          vertical-align="middle"
           :stroke="strokeColor"
           :y="10"
           :width="1800"
           :height="160"
-          :fontSize="titleSize"
+          :font-size="titleSize"
           :text="battle.title"
         />
         <KonvaText
@@ -142,7 +145,7 @@ const imageName = computed(() => `${battle.value.title}-影片封面`);
           stroke="#ff3131"
           :y="210"
           :width="1800"
-          :fontSize="titleSize"
+          :font-size="titleSize"
           :text="battle.comment"
         />
         <KonvaRect
@@ -157,12 +160,12 @@ const imageName = computed(() => `${battle.value.title}-影片封面`);
           v-bind="commonTextStyle"
           :x="isNormal ? 1020 : 1620"
           align="center"
-          verticalAlign="middle"
+          vertical-align="middle"
           :stroke="strokeColor"
           :y="910"
           :width="isNormal ? 840 : 240"
           :height="160"
-          :fontSize="isNormal ? normalScoreSize : unrestrictScoreSize"
+          :font-size="isNormal ? normalScoreSize : unrestrictScoreSize"
           :text="battle.score"
         />
         <TempVar
@@ -233,7 +236,7 @@ const imageName = computed(() => `${battle.value.title}-影片封面`);
               :width="790"
               :height="190"
               stroke="#ffffff"
-              :strokeWidth="10"
+              :stroke-width="10"
               fill="#000000"
             />
             <template v-for="(member, memberId) in team.members">

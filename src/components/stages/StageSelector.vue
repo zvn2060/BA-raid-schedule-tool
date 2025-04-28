@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { team } = defineProps<{ team: Omit<Team, ""> }>();
+const { team } = defineProps<{ team: Public<Team> }>();
 const emit = defineEmits<{
   "input:add": [];
   "input:arrow": [];
@@ -28,6 +28,11 @@ onKeyStroke((e) => {
   const member = team.members[index];
   if (member) emit("input:student", member.preferredName ?? member.name);
 });
+
+function onMemberClick(member: Member) {
+  if (!member) return;
+  emit("input:student", `${member.preferredName ?? member.name}`);
+}
 </script>
 
 <template>
@@ -35,14 +40,12 @@ onKeyStroke((e) => {
     <div class="flex w-fit gap-2 items-center px-2">
       <Button icon="pi pi-plus" rounded @click="$emit('input:add')" />
       <Button icon="pi pi-arrow-right" rounded @click="$emit('input:arrow')" />
+      <!-- eslint-disable-next-line vue/valid-v-for  -->
       <StudentAvatar
         v-for="member in team.members"
         class="w-20 cursor-pointer"
         :student="member"
-        @click="
-          member &&
-            $emit('input:student', `${member.preferredName ?? member.name}`)
-        "
+        @click="onMemberClick(member)"
       />
     </div>
   </div>

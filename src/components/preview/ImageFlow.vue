@@ -29,16 +29,16 @@ const gap = { col: 80, row: 20 };
 function estimateStage(stage: Stage) {
   const avatarRows = Math.ceil(stage.actions.length / 4);
   const avatarCols = Math.min(stage.actions.length, 4);
-  const commentOnelineWidth =
-    context?.measureText(stage.comment ?? "").width ?? 0;
+  const commentOnelineWidth
+    = context?.measureText(stage.comment ?? "").width ?? 0;
   const commentHeight = Math.ceil(commentOnelineWidth / 630) * 40;
   const commentWidth = Math.min(commentOnelineWidth, 630);
-  const avatarsHeight =
-    avatarRows < 2 ? avatarRows * 150 : avatarRows * 160 - 10;
-  const avatarsWidth =
-    avatarCols < 2 ? avatarCols * 150 : avatarCols * 160 - 10;
-  const totalHeight =
-    commentHeight + (commentHeight && avatarsHeight ? 20 : 0) + avatarsHeight;
+  const avatarsHeight
+    = avatarRows < 2 ? avatarRows * 150 : avatarRows * 160 - 10;
+  const avatarsWidth
+    = avatarCols < 2 ? avatarCols * 150 : avatarCols * 160 - 10;
+  const totalHeight
+    = commentHeight + (commentHeight && avatarsHeight ? 20 : 0) + avatarsHeight;
   const totalWidth = Math.max(avatarsWidth, commentWidth);
 
   return {
@@ -51,7 +51,7 @@ function estimateStage(stage: Stage) {
 const stagePages = computed<Page[]>(() => {
   const pages = new Array<Page>([]);
   battle.value.teams.forEach((team) => {
-    let columns = new Array<Omit<Column, "x">>({ data: [], width: 0 });
+    const columns = new Array<Omit<Column, "x">>({ data: [], width: 0 });
     let y = 0;
     team.stages.forEach((stage) => {
       const metrics = estimateStage(stage);
@@ -62,7 +62,7 @@ const stagePages = computed<Page[]>(() => {
         actions: stage.actions.map(({ actor, target }) => ({
           actor: team.getMember(actor),
           stroke: pickBorderColor(
-            target ? team.skillTargetMap.get(target) : -1
+            target ? team.skillTargetMap.get(target) : -1,
           ),
         })),
         y,
@@ -72,7 +72,8 @@ const stagePages = computed<Page[]>(() => {
         y += metrics.total.height + gap.row;
         lastColumn.width = Math.max(lastColumn.width, metrics.total.width);
         lastColumn.data.push(data);
-      } else {
+      }
+      else {
         columns.push({ data: [{ ...data, y: 0 }], width: metrics.total.width });
         y = metrics.total.height + gap.row;
       }
@@ -83,24 +84,26 @@ const stagePages = computed<Page[]>(() => {
       if (x + column.width <= 1760) {
         pages.at(-1)?.push({ ...column, x });
         x += column.width + gap.col;
-      } else {
+      }
+      else {
         pages.push([{ ...column, x: 0 }]);
         x = column.width + gap.col;
       }
     });
     pages.push([]);
   });
-  return pages.filter((it) => it.length);
+  return pages.filter(it => it.length);
 });
 
 const height = computed(() => stagePages.value.length * 1080);
 </script>
 
 <template>
+  <!-- eslint-disable vue/valid-v-for -->
   <ImageEditor
     :width="1920"
     :height
-    :pixelRation="1"
+    :pixel-ration="1"
     :export-name="`${battle.name}-圖片軸`"
   >
     <template #config>
@@ -129,14 +132,14 @@ const height = computed(() => stagePages.value.length * 1080);
             <!-- <KonvaRect :width="10" :height="10" fill="green" /> -->
             <KonvaText
               :text="group.comment"
-              :fontSize="40"
+              :font-size="40"
               fill="#ffffff"
-              :fillAfterStrokeEnabled="true"
-              :strokeWidth="config.strokeWidth"
+              :fill-after-stroke-enabled="true"
+              :stroke-width="config.strokeWidth"
               stroke="#000000"
               :width="group.commentWidth"
               :height="120"
-              fontFamily="Microsoft YaHei"
+              font-family="Microsoft YaHei"
             />
             <KonvaGroup :y="group.avatarsY">
               <template v-for="(action, index) in group.actions">
@@ -146,7 +149,7 @@ const height = computed(() => stagePages.value.length * 1080);
                   :width="148"
                   :height="148"
                   :stroke="action.stroke"
-                  :strokeWidth="2"
+                  :stroke-width="2"
                   :x="(index % 4) * 150 + 10 * (index % 4) + 1"
                   :y="Math.floor(index / 4) * 160 + 1"
                 />
