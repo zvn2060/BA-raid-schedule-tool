@@ -130,12 +130,12 @@ const imageName = computed(() => `${battle.value.title}-影片封面`);
           :x="60"
           wrap="none"
           align="center"
-          vertical-align="middle"
+          verticalAlign="middle"
           :stroke="strokeColor"
           :y="10"
           :width="1800"
           :height="160"
-          :font-size="titleSize"
+          :fontSize="titleSize"
           :text="battle.title"
         />
         <KonvaText
@@ -145,7 +145,7 @@ const imageName = computed(() => `${battle.value.title}-影片封面`);
           stroke="#ff3131"
           :y="210"
           :width="1800"
-          :font-size="titleSize"
+          :fontSize="titleSize"
           :text="battle.comment"
         />
         <KonvaRect
@@ -160,12 +160,12 @@ const imageName = computed(() => `${battle.value.title}-影片封面`);
           v-bind="commonTextStyle"
           :x="isNormal ? 1020 : 1620"
           align="center"
-          vertical-align="middle"
+          verticalAlign="middle"
           :stroke="strokeColor"
           :y="910"
           :width="isNormal ? 840 : 240"
           :height="160"
-          :font-size="isNormal ? normalScoreSize : unrestrictScoreSize"
+          :fontSize="isNormal ? normalScoreSize : unrestrictScoreSize"
           :text="battle.score"
         />
         <TempVar
@@ -236,7 +236,7 @@ const imageName = computed(() => `${battle.value.title}-影片封面`);
               :width="790"
               :height="190"
               stroke="#ffffff"
-              :stroke-width="10"
+              :strokeWidth="10"
               fill="#000000"
             />
             <template v-for="(member, memberId) in team.members">

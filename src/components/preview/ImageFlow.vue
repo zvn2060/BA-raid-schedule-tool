@@ -132,14 +132,14 @@ const height = computed(() => stagePages.value.length * 1080);
             <!-- <KonvaRect :width="10" :height="10" fill="green" /> -->
             <KonvaText
               :text="group.comment"
-              :font-size="40"
+              :fontSize="40"
               fill="#ffffff"
-              :fill-after-stroke-enabled="true"
-              :stroke-width="config.strokeWidth"
+              :fillAfterStrokeEnabled="true"
+              :strokeWidth="config.strokeWidth"
               stroke="#000000"
               :width="group.commentWidth"
               :height="120"
-              font-family="Microsoft YaHei"
+              fontFamily="Microsoft YaHei"
             />
             <KonvaGroup :y="group.avatarsY">
               <template v-for="(action, index) in group.actions">

@@ -167,7 +167,7 @@ async function onDownloadClick() {
             <KonvaText
               fill="#ffffff"
               :text="indicator.label"
-              :font-size="indicator.fontSize"
+              :fontSize="indicator.fontSize"
               :padding="indicator.width * 4"
             />
           </KonvaLabel>
