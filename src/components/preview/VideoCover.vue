@@ -80,6 +80,333 @@ const commonTextStyle: TextConfig = computed(() => ({
 }));
 
 const imageName = computed(() => `${battle.value.title}-影片封面`);
+
+const konvaConfig = computed(() => ({
+  attrs: {
+    width: 624,
+    height: 522.6875,
+    draggable: true,
+  },
+  className: "Stage",
+  children: [
+    {
+      attrs: {
+
+      },
+      className: "Layer",
+      children: [
+        {
+          attrs: {
+            name: "export",
+            width: 1920,
+            height: 1080,
+          },
+          className: "Group",
+          children: [
+            {
+              attrs: { },
+              className: "Image",
+            },
+            {
+              attrs: {
+                width: 1920,
+                height: 180,
+                fill: "black",
+              },
+              className: "Rect",
+            },
+            {
+              attrs: {
+                fill: "#ffffff",
+                fontFamily: "wanhanzon",
+                strokeWidth: 24,
+                fillAfterStrokeEnabled: true,
+                x: 60,
+                wrap: "none",
+                align: "center",
+                verticalAlign: "middle",
+                stroke: "#E6212A",
+                y: 10,
+                width: 1800,
+                height: 160,
+                fontSize: 150,
+                text: "蔚藍檔案 大決戰",
+              },
+              className: "Text",
+            },
+            {
+              attrs: {
+                fill: "#ffffff",
+                fontFamily: "wanhanzon",
+                strokeWidth: 24,
+                fillAfterStrokeEnabled: true,
+                x: 60,
+                stroke: "#ff3131",
+                y: 210,
+                width: 1800,
+                fontSize: 150,
+                text: "※註解",
+              },
+              className: "Text",
+            },
+            {
+              attrs: {
+                y: 900,
+                width: 1920,
+                height: 180,
+                fill: "black",
+              },
+              className: "Rect",
+            },
+            {
+              attrs: {
+                x: 10,
+                y: 895,
+              },
+              className: "Group",
+              children: [
+                {
+                  attrs: {
+                    width: 150,
+                    height: 150,
+                    x: 20,
+                    y: 20,
+                  },
+                  className: "Image",
+                },
+                {
+                  attrs: {
+                    width: 150,
+                    height: 150,
+                    x: 20,
+                    y: 20,
+                  },
+                  className: "Rect",
+                },
+                {
+                  attrs: {
+                    width: 150,
+                    height: 150,
+                    x: 170,
+                    y: 20,
+                  },
+                  className: "Image",
+                },
+                {
+                  attrs: {
+                    width: 150,
+                    height: 150,
+                    x: 170,
+                    y: 20,
+                  },
+                  className: "Rect",
+                },
+                {
+                  attrs: {
+                    width: 150,
+                    height: 150,
+                    x: 320,
+                    y: 20,
+                  },
+                  className: "Image",
+                },
+                {
+                  attrs: {
+                    width: 150,
+                    height: 150,
+                    x: 320,
+                    y: 20,
+                  },
+                  className: "Rect",
+                },
+                {
+                  attrs: {
+                    width: 150,
+                    height: 150,
+                    x: 470,
+                    y: 20,
+                  },
+                  className: "Image",
+                },
+                {
+                  attrs: {
+                    width: 150,
+                    height: 150,
+                    x: 470,
+                    y: 20,
+                  },
+                  className: "Rect",
+                },
+                {
+                  attrs: {
+                    width: 150,
+                    height: 150,
+                    x: 620,
+                    y: 20,
+                  },
+                  className: "Image",
+                },
+                {
+                  attrs: {
+                    width: 150,
+                    height: 150,
+                    x: 620,
+                    y: 20,
+                  },
+                  className: "Rect",
+                },
+                {
+                  attrs: {
+                    width: 150,
+                    height: 150,
+                    x: 770,
+                    y: 20,
+                  },
+                  className: "Image",
+                },
+                {
+                  attrs: {
+                    width: 150,
+                    height: 150,
+                    x: 770,
+                    y: 20,
+                  },
+                  className: "Rect",
+                },
+              ],
+            },
+            {
+              attrs: {
+                x: 950,
+                y: 895,
+              },
+              className: "Group",
+              children: [
+                {
+                  attrs: {
+                    width: 20,
+                    height: 150,
+                    y: 20,
+                    fill: "#ffffff",
+                  },
+                  className: "Rect",
+                },
+                {
+                  attrs: {
+                    width: 150,
+                    height: 150,
+                    x: 40,
+                    y: 20,
+                  },
+                  className: "Image",
+                },
+                {
+                  attrs: {
+                    width: 150,
+                    height: 150,
+                    x: 40,
+                    y: 20,
+                  },
+                  className: "Rect",
+                },
+                {
+                  attrs: {
+                    width: 150,
+                    height: 150,
+                    x: 190,
+                    y: 20,
+                  },
+                  className: "Image",
+                },
+                {
+                  attrs: {
+                    width: 150,
+                    height: 150,
+                    x: 190,
+                    y: 20,
+                  },
+                  className: "Rect",
+                },
+                {
+                  attrs: {
+                    width: 150,
+                    height: 150,
+                    x: 340,
+                    y: 20,
+                  },
+                  className: "Image",
+                },
+                {
+                  attrs: {
+                    width: 150,
+                    height: 150,
+                    x: 340,
+                    y: 20,
+                  },
+                  className: "Rect",
+                },
+                {
+                  attrs: {
+                    width: 150,
+                    height: 150,
+                    x: 490,
+                    y: 20,
+                  },
+                  className: "Image",
+                },
+                {
+                  attrs: {
+                    width: 150,
+                    height: 150,
+                    x: 490,
+                    y: 20,
+                  },
+                  className: "Rect",
+                },
+                {
+                  attrs: {
+                    width: 150,
+                    height: 150,
+                    x: 640,
+                    y: 20,
+                  },
+                  className: "Image",
+                },
+                {
+                  attrs: {
+                    width: 150,
+                    height: 150,
+                    x: 640,
+                    y: 20,
+                  },
+                  className: "Rect",
+                },
+                {
+                  attrs: {
+                    width: 150,
+                    height: 150,
+                    x: 790,
+                    y: 20,
+                  },
+                  className: "Image",
+                },
+                {
+                  attrs: {
+                    width: 150,
+                    height: 150,
+                    x: 790,
+                    y: 20,
+                  },
+                  className: "Rect",
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ],
+}));
 </script>
 
 <template>

@@ -2,6 +2,7 @@
 import download from "downloadjs";
 import type Konva from "konva";
 import { clamp, isNull } from "lodash-es";
+import { workerDownload } from "~/utils/worker/worker";
 
 const props = defineProps<{
   pixelRation: number;
@@ -111,7 +112,7 @@ async function onDownloadClick() {
           : `${props.exportName}-${index + 1}.png`,
       }));
     if (isSingle) download(data[0].dataUrl, data[0].name);
-    else workerDownload({ files: data, name: `${props.exportName}` });
+    else workerDownload(`${props.exportName}`, data);
   }
   scale.value = oldScale;
 }

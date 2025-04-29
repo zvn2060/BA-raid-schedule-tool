@@ -25,6 +25,7 @@
     "@vueuse/core": "^13.0.0",
     "@vueuse/nuxt": "13.0.0",
     "@zip.js/zip.js": "^2.7.58",
+    "canvas": "^3.1.0",
     "dexie": "^4.0.11",
     "downloadjs": "^1.4.7",
     "eslint": "^9.0.0",
@@ -42,7 +43,7 @@
     "vue-konva": "^3.2.0",
     "vue-router": "latest",
     "vue-temp-var": "^2.0.1",
-    "web-worker": "^1.5.0",
+    "workerpool": "^9.2.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {
