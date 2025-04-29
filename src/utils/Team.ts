@@ -50,7 +50,6 @@ function skillTranscript(level: number) {
 export class Team implements Serializable<z.infer<typeof Team.schema>> {
   private _stages: Stage[] = [];
   private _members: Member[];
-  private _skillTargetMap: Map<StudentId, number> = new Map();
   private membersMap: Map<StudentId, number> = new Map();
   private readonly _structure: TeamStructure;
 
@@ -80,19 +79,12 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
     });
 
     if (teamProps?.text) this.text = teamProps.text;
-    if (teamProps?.stages) {
-      this._stages = teamProps.stages as Stage[];
-      if (teamProps.skillTargetMap) this._skillTargetMap = new Map(teamProps.skillTargetMap);
-    }
+    if (teamProps?.stages) this._stages = teamProps.stages as Stage[];
     else this.parse();
   }
 
   get stages(): Readonly<Stage[]> {
     return this._stages;
-  }
-
-  get skillTargetMap() {
-    return this._skillTargetMap;
   }
 
   get members(): Readonly<Member[]> {
@@ -173,7 +165,6 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
         .flatMap(student => [...student.aliases, student.name].map(key => [key, student])),
     );
     const aggregateStage = new Array<Stage>();
-    this.skillTargetMap.clear();
     stageTexts.forEach((stageText) => {
       const actions = new Array<Action>();
       const comments = new Array<string>();
@@ -244,7 +235,6 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
       text: this.text,
       members: this.members.map(it => it?.id ?? null),
       stages: this._stages,
-      skillTargetMap: Array.from(this.skillTargetMap.entries()),
     };
   }
 

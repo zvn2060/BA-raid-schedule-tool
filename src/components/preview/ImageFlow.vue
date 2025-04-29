@@ -11,7 +11,7 @@ const { battle } = storeToRefs(store);
 type StageInfo = {
   comment: string | undefined;
   commentWidth: number;
-  actions: Array<{ actor: Member; stroke: string }>;
+  actions: Array<{ actor: Member }>;
   y: number;
   avatarsY: number;
 };
@@ -29,16 +29,12 @@ const gap = { col: 80, row: 20 };
 function estimateStage(stage: Stage) {
   const avatarRows = Math.ceil(stage.actions.length / 4);
   const avatarCols = Math.min(stage.actions.length, 4);
-  const commentOnelineWidth
-    = context?.measureText(stage.comment ?? "").width ?? 0;
+  const commentOnelineWidth = context?.measureText(stage.comment ?? "").width ?? 0;
   const commentHeight = Math.ceil(commentOnelineWidth / 630) * 40;
   const commentWidth = Math.min(commentOnelineWidth, 630);
-  const avatarsHeight
-    = avatarRows < 2 ? avatarRows * 150 : avatarRows * 160 - 10;
-  const avatarsWidth
-    = avatarCols < 2 ? avatarCols * 150 : avatarCols * 160 - 10;
-  const totalHeight
-    = commentHeight + (commentHeight && avatarsHeight ? 20 : 0) + avatarsHeight;
+  const avatarsHeight = avatarRows < 2 ? avatarRows * 150 : avatarRows * 160 - 10;
+  const avatarsWidth = avatarCols < 2 ? avatarCols * 150 : avatarCols * 160 - 10;
+  const totalHeight = commentHeight + (commentHeight && avatarsHeight ? 20 : 0) + avatarsHeight;
   const totalWidth = Math.max(avatarsWidth, commentWidth);
 
   return {
@@ -59,11 +55,8 @@ const stagePages = computed<Page[]>(() => {
       const data = {
         comment: stage.comment,
         commentWidth: metrics.comment.width,
-        actions: stage.actions.map(({ actor, target }) => ({
+        actions: stage.actions.map(({ actor }) => ({
           actor: team.getMember(actor),
-          stroke: pickBorderColor(
-            target ? team.skillTargetMap.get(target) : -1,
-          ),
         })),
         y,
         avatarsY: metrics.comment.height + 20,
@@ -148,7 +141,7 @@ const height = computed(() => stagePages.value.length * 1080);
                   :student="action.actor"
                   :width="148"
                   :height="148"
-                  :stroke="action.stroke"
+                  stroke="black"
                   :stroke-width="2"
                   :x="(index % 4) * 150 + 10 * (index % 4) + 1"
                   :y="Math.floor(index / 4) * 160 + 1"
