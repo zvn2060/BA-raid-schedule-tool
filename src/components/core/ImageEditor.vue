@@ -2,7 +2,6 @@
 import download from "downloadjs";
 import type Konva from "konva";
 import { clamp, isNull } from "lodash-es";
-import { workerDownload } from "~/utils/worker/worker";
 
 const props = defineProps<{
   pixelRation: number;
