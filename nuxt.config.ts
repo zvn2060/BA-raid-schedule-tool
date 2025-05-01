@@ -14,10 +14,7 @@ export default defineNuxtConfig({
   ],
   ssr: false,
   components: [
-    {
-      path: "~/components",
-      pathPrefix: false,
-    },
+    { path: "~/components", pathPrefix: false },
   ],
   devtools: { enabled: true },
   css: ["~/assets/main.css", "~/assets/index.scss", "primeicons/primeicons.css"],

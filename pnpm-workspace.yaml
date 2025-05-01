@@ -1,0 +1,7 @@
+onlyBuiltDependencies:
+  - '@hebilicious/vue-query-nuxt'
+  - '@morev/vue-transitions'
+  - '@parcel/watcher'
+  - canvas
+  - esbuild
+  - vue-demi

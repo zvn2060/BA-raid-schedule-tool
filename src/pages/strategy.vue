@@ -23,6 +23,13 @@ const step = computed({
   set: val => router.replace({ name: stepRoutes[val].name }),
 });
 
+const splitButtonActions = [
+  {
+    label: "匯出 JSON",
+    command: onExportJsonClick,
+  },
+];
+
 const battleStore = useBattleStore();
 
 const { battle } = storeToRefs(battleStore);
@@ -43,7 +50,9 @@ function handleLoadFile(content: string) {
         life: 5000,
       }),
     )
-    .finally(() => { reset(); });
+    .finally(() => {
+      reset();
+    });
 }
 
 onChange(async (filelist) => {
@@ -52,11 +61,12 @@ onChange(async (filelist) => {
   handleLoadFile(await file.text());
 });
 
-function onExportClick() {
-  download(
-    JSON.stringify(battle.value.toObject(), null, 2),
-    `${battle.value.name}.json`,
-  );
+function onExportXmlClick() {
+  workerCreateScene(battle.value.name, toRaw(battle.value).toObject());
+}
+
+function onExportJsonClick() {
+  download(JSON.stringify(battle.value.toObject(), null, 2), `${battle.value.name}.json`);
 }
 
 async function onLoadSampleClick() {
@@ -95,7 +105,12 @@ async function onLoadSampleClick() {
           class="mr-2"
           @click="open()"
         />
-        <Button label="匯出" icon="pi pi-file-export" @click="onExportClick" />
+        <SplitButton
+          label="匯出 PR 專案"
+          :model="splitButtonActions"
+          icon="pi pi-file-export"
+          @click="onExportXmlClick"
+        />
       </template>
     </Toolbar>
     <div class="flex-1 min-h-0">

@@ -24,11 +24,12 @@
     "@tanstack/vue-query": "^5.70.0",
     "@vueuse/core": "^13.0.0",
     "@vueuse/nuxt": "13.0.0",
-    "@zip.js/zip.js": "^2.7.58",
     "canvas": "^3.1.0",
     "dexie": "^4.0.11",
     "downloadjs": "^1.4.7",
     "eslint": "^9.0.0",
+    "fast-xml-parser": "^5.2.1",
+    "jszip": "^3.10.1",
     "konva": "^9.3.20",
     "lodash-es": "^4.17.21",
     "nuxt": "^3.16.1",
@@ -57,5 +58,5 @@
     "tailwindcss": "^4.0.17",
     "typescript": "^5.8.3"
   },
-  "packageManager": "pnpm@9.14.2+sha512.6e2baf77d06b9362294152c851c4f278ede37ab1eba3a55fda317a4a17b209f4dbb973fb250a77abc463a341fcb1f17f17cfa24091c4eb319cda0d9b84278387"
+  "packageManager": "pnpm@10.10.0+sha512.d615db246fe70f25dcfea6d8d73dee782ce23e2245e3c4f6f888249fb568149318637dca73c2c5c8ef2a4ca0d5657fb9567188bfab47f566d1ee6ce987815c39"
 }

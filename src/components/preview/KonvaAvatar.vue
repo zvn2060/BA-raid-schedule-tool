@@ -1,17 +1,16 @@
 <script setup lang="ts">
 import { useImage } from "@vueuse/core";
 
-const props = defineProps<{
-  student: Student;
-  width: number;
-  height: number;
+const { studentId } = defineProps<{
+  studentId?: number | null;
+  side: number;
   x: number;
   y: number;
   stroke?: string;
   strokeWidth?: number;
 }>();
 
-const { avatar } = useStudentAvatar(() => props.student.id);
+const { avatar } = useStudentAvatar(() => studentId ?? undefined);
 const { state } = useImage(() => ({
   src: avatar.value ?? "#",
   crossorigin: "Anonymous",
@@ -19,21 +18,19 @@ const { state } = useImage(() => ({
 </script>
 
 <template>
-  <template v-if="student">
-    <KonvaImage
-      :image="state"
-      :width
-      :height
-      :x="x"
-      :y="y"
-    />
-    <KonvaRect
-      :stroke
-      :strokeWidth
-      :width
-      :height
-      :x="x"
-      :y="y"
-    />
-  </template>
+  <KonvaImage
+    :image="state"
+    :width="side"
+    :height="side"
+    :x="x"
+    :y="y"
+  />
+  <KonvaRect
+    :stroke
+    :strokeWidth
+    :width="side"
+    :height="side"
+    :x="x"
+    :y="y"
+  />
 </template>

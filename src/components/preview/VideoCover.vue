@@ -172,11 +172,10 @@ const imageName = computed(() => `${battle.value.title}-影片封面`);
             <template v-for="(member, memberId) in team.members">
               <KonvaAvatar
                 v-if="member"
-                :student="member"
+                :student-id="member.id"
                 :x="20 + memberId * 150"
                 :y="20"
-                :width="150"
-                :height="150"
+                :side="150"
               />
             </template>
           </KonvaGroup>
@@ -205,11 +204,10 @@ const imageName = computed(() => `${battle.value.title}-影片封面`);
             <template v-for="(member, memberId) in team.members">
               <KonvaAvatar
                 v-if="member"
-                :student="member"
+                :student-id="member.id"
                 :x="(teamId ? 40 : 20) + memberId * 150"
                 :y="20"
-                :width="150"
-                :height="150"
+                :side="150"
               />
             </template>
           </KonvaGroup>
@@ -237,11 +235,10 @@ const imageName = computed(() => `${battle.value.title}-影片封面`);
             <template v-for="(member, memberId) in team.members">
               <KonvaAvatar
                 v-if="member"
-                :student="member"
+                :student-id="member.id"
                 :x="35 + memberId * 120"
                 :y="35"
-                :width="120"
-                :height="120"
+                :side="120"
                 stroke="#000000"
               />
             </template>
@@ -251,5 +248,3 @@ const imageName = computed(() => `${battle.value.title}-影片封面`);
     </KonvaLayer>
   </ImageEditor>
 </template>
-
-<style lang="scss"></style>
