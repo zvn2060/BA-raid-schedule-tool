@@ -50,7 +50,6 @@ function skillTranscript(level: number) {
 export class Team implements Serializable<z.infer<typeof Team.schema>> {
   private _stages: Stage[] = [];
   private _members: Member[];
-  private _skillTargetMap: Map<StudentId, number> = new Map();
   private membersMap: Map<StudentId, number> = new Map();
   private readonly _structure: TeamStructure;
 
@@ -80,19 +79,12 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
     });
 
     if (teamProps?.text) this.text = teamProps.text;
-    if (teamProps?.stages) {
-      this._stages = teamProps.stages as Stage[];
-      if (teamProps.skillTargetMap) this._skillTargetMap = new Map(teamProps.skillTargetMap);
-    }
+    if (teamProps?.stages) this._stages = teamProps.stages as Stage[];
     else this.parse();
   }
 
   get stages(): Readonly<Stage[]> {
     return this._stages;
-  }
-
-  get skillTargetMap() {
-    return this._skillTargetMap;
   }
 
   get members(): Readonly<Member[]> {
@@ -119,8 +111,7 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
     if (this._structure === "normal") {
       if (student.squad === "striker") return stats.striker < 4;
       else return stats.special < 2;
-    }
-    else {
+    } else {
       if (student.squad === "striker") return stats.striker < 6;
       else return stats.special < 4;
     }
@@ -173,7 +164,6 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
         .flatMap(student => [...student.aliases, student.name].map(key => [key, student])),
     );
     const aggregateStage = new Array<Stage>();
-    this.skillTargetMap.clear();
     stageTexts.forEach((stageText) => {
       const actions = new Array<Action>();
       const comments = new Array<string>();
@@ -184,8 +174,7 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
           const action: Action = { actor: searchStudentByNameMap.get(student1)?.id ?? null };
           actions.push(action);
           if (comment) comments.push(comment);
-        }
-        else {
+        } else {
           comments.push(action);
         }
       });
@@ -195,8 +184,7 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
       if (stage.comment || aggregateStage.length === 0) {
         if (previous) previous.comment = previous.comment || "順著費用放";
         aggregateStage.push(stage);
-      }
-      else {
+      } else {
         previous.comment = Team.joinComment(previous.comment, stage.comment);
         previous.actions = [...previous.actions, ...stage.actions];
       }
@@ -213,8 +201,7 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
     if (pop === "front") {
       if (index === 0) this._stages.unshift({ actions: [action] });
       else this._stages[index - 1].actions.push(action);
-    }
-    else {
+    } else {
       if (index === this._stages.length - 1) this._stages.push({ actions: [action] });
       else this._stages[index + 1].actions.unshift(action);
     }
@@ -223,8 +210,7 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
       if (pop === "front") {
         const appendStage = this._stages.at(index - 1);
         if (appendStage) appendStage.comment = Team.joinComment(appendStage.comment, stage?.comment);
-      }
-      else {
+      } else {
         const appendStage = this._stages.at(index);
         if (appendStage) appendStage.comment = Team.joinComment(stage?.comment, appendStage.comment);
       }
@@ -244,7 +230,6 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
       text: this.text,
       members: this.members.map(it => it?.id ?? null),
       stages: this._stages,
-      skillTargetMap: Array.from(this.skillTargetMap.entries()),
     };
   }
 

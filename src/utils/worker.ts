@@ -1,13 +1,19 @@
 import download from "downloadjs";
-import Worker from "web-worker";
-import workerBase64 from "./downloadWorker?worker&url";
+import workerpool from "workerpool";
+import WorkerScriptsURL from "./workerScripts?url";
 
-const worker = new Worker(workerBase64, { type: "module" });
+const pool = workerpool.pool(WorkerScriptsURL, { workerOpts: { type: "module" } });
 
-worker.addEventListener("message", (e) => {
-  download(e.data.data, `${e.data.name}.zip`);
-});
+export function workerDownload(name: string, files: Array<{ blob: Blob; name: string }>) {
+  pool
+    .exec("zipFiles", [files])
+    .then(promise => promise)
+    .then(blob => download(blob, `${name}.zip`));
+}
 
-export function workerDownload(data: { files: Array<{ dataUrl: string; name: string }>; name: string }) {
-  worker.postMessage(data);
+export function workerCreateScene(name: string, battle: object) {
+  pool
+    .exec("createProject", [battle])
+    .then(promise => promise)
+    .then(blob => download(blob, `${name}.zip`));
 }

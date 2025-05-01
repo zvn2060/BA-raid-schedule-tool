@@ -5,6 +5,7 @@ export default withNuxt(
   // Your custom configs here
   {
     rules: {
+      "@stylistic/brace-style": ["error", "1tbs"],
       "vue/max-attributes-per-line": [
         "error",
         {

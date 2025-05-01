@@ -28,21 +28,19 @@ const height = computed(() => 220 * battle.value.teams.length + 20);
             <template v-for="(member, index) in team.members.slice(0, 6)">
               <KonvaAvatar
                 v-if="member"
-                :student="member"
+                :student-id="member.id"
                 :x="25 + index * 105"
                 :y="47.5"
-                :width="105"
-                :height="105"
+                :side="105"
               />
             </template>
             <template v-for="(member, index) in team.members.slice(6)">
               <KonvaAvatar
                 v-if="member"
-                :student="member"
+                :student-id="member.id"
                 :x="675 + index * 75"
                 :y="62.5"
-                :width="75"
-                :height="75"
+                :side="75"
               />
             </template>
           </KonvaGroup>
@@ -59,11 +57,10 @@ const height = computed(() => 220 * battle.value.teams.length + 20);
             <template v-for="(member, index) in team.members">
               <KonvaAvatar
                 v-if="member"
-                :student="member"
+                :student-id="member.id"
                 :x="35 + index * 155"
                 :y="22.5"
-                :width="155"
-                :height="155"
+                :side="155"
               />
             </template>
           </KonvaGroup>

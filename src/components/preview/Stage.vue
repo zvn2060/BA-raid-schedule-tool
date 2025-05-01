@@ -1,13 +1,6 @@
 <script setup lang="ts">
-import { isNil } from "lodash-es";
-
 const props = defineProps<{ team: Public<Team>; stageId: number }>();
 const stage = computed(() => props.team.stages[props.stageId]);
-
-function getBorderColor(targetId: StudentId | null | undefined) {
-  if (isNil(targetId)) return pickBorderColor(-1);
-  return pickBorderColor(props.team.skillTargetMap.get(targetId) ?? -1);
-}
 
 const container = useTemplateRef("container");
 const hover = useElementHover(container);
@@ -47,8 +40,7 @@ const hover = useElementHover(container);
         <!-- eslint-disable-next-line vue/valid-v-for -->
         <StudentAvatar
           :student="team.getMember(action.actor)"
-          class="border-4 w-[150px]"
-          :style="{ 'border-color': getBorderColor(action.target) }"
+          class="border-4 w-[150px] border-black"
         />
       </template>
     </div>

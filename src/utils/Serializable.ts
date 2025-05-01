@@ -7,6 +7,6 @@ declare global {
     toObject(): T;
   }
   export type Public<T> = {
-    [P in keyof T]: T[P];
+    [P in keyof T]: Public<T[P]>;
   };
 }

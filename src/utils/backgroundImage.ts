@@ -7,7 +7,6 @@ export const BackgroundImage = {
   賽特底圖1: new URL("@/assets/backgrounds/賽特底圖-1.png?url", import.meta.url),
   日版底圖1: new URL("@/assets/backgrounds/日版底圖-1.png?url", import.meta.url),
   圖片軸底圖1: new URL("@/assets/backgrounds/圖片軸底圖-1.png?url", import.meta.url),
-
 };
 
 export const ImageFlowBgUrl = new URL("@/assets/backgrounds/圖片軸底圖-1.png?url", import.meta.url).href;

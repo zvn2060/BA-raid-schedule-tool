@@ -102,16 +102,16 @@ async function onDownloadClick() {
   const targets = stage.value?.getStage().find(".export");
   if (targets) {
     const isSingle = targets.length < 2;
-    const data = targets
+    const data = await Promise.all(targets
       .filter(target => !isNull(target))
-      .map((target, index) => ({
-        dataUrl: target.toDataURL({ pixelRatio: props.pixelRation }),
+      .map(async (target, index) => ({
+        blob: await target.toBlob({ pixelRatio: props.pixelRation }) as Blob,
         name: isSingle
           ? `${props.exportName}.png`
           : `${props.exportName}-${index + 1}.png`,
-      }));
-    if (isSingle) download(data[0].dataUrl, data[0].name);
-    else workerDownload({ files: data, name: `${props.exportName}` });
+      })));
+    if (isSingle) download(data[0].blob, data[0].name);
+    else workerDownload(`${props.exportName}`, data);
   }
   scale.value = oldScale;
 }

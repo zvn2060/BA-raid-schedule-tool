@@ -52,17 +52,14 @@ async function insertStudentName(studentName: string) {
   const before = currentTeam.value?.text.slice(0, cursorPos);
   const lastIndexOfArrow = before.lastIndexOf("→");
   const used = split(lastIndexOfArrow === -1 ? before : before.slice(lastIndexOfArrow), "+").length;
-  console.log(before, Boolean(before), used);
   if (before && !before.endsWith("→ ") && !before.endsWith("(")!) {
     if (before.endsWith("+")) {
       await insertString(`${studentName}+`);
-    }
-    else {
+    } else {
       if (used === 3) await insertString(`+${studentName}() → `, studentName.length + 2);
       else await insertString(`+${studentName}`);
     }
-  }
-  else await insertString(`${studentName}`);
+  } else await insertString(`${studentName}`);
 }
 
 async function insertArrow() {

@@ -2,7 +2,7 @@ import { isNull, keyBy } from "lodash-es";
 import { ZodError } from "zod";
 
 export const useBattleStore = defineStore("battleStore", () => {
-  const battle = ref(new Battle());
+  const battle = ref<Battle>(new Battle());
 
   async function loadFromJsonFile(content: string) {
     try {
@@ -20,8 +20,7 @@ export const useBattleStore = defineStore("battleStore", () => {
           ...otherTeamData,
         })),
       });
-    }
-    catch (error) {
+    } catch (error) {
       if (error instanceof SyntaxError) throw Error(error.message);
       else if (error instanceof ZodError) throw Error(error.format()._errors.join("\n"));
       else if (error instanceof Error) throw Error;
