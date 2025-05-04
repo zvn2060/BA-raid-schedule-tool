@@ -21,11 +21,7 @@ const pagination = computed(() => ({
   first: debouncedFirst.value,
   itemPerPage: rows.value,
 }));
-const {
-  students,
-  total,
-  update: updateProperty,
-} = useStudents(filter, pagination);
+const { students, total, update: updateProperty } = useStudents(filter, pagination);
 const { update } = updateStudentData();
 const { upload } = uploadStudentAvatars();
 const datatableConfig: DataTableProps = {
@@ -159,12 +155,19 @@ function onCellEditInit(event: DataTableCellEditInitEvent) {
   };
 }
 
-function onEditAliasesDone() {
-  updateProperty({
+async function onEditAliasesDone() {
+  await updateProperty({
     id: editAliasesItem.value.id,
     field: "aliases",
     value: editAliasesItem.value.aliases,
   });
+
+  await updateProperty({
+    id: editAliasesItem.value.id,
+    field: "prefer_name",
+    value: editAliasesItem.value.aliases.length ? editAliasesItem.value.aliases[0] : undefined,
+  });
+
   editAliasesItem.value = undefined;
 }
 </script>
@@ -228,7 +231,7 @@ function onEditAliasesDone() {
     </template>
     <Column field="id" body-class="p-0!" class="w-12!">
       <template #body="{ data }">
-        <StudentAvatar :student="data" />
+        <StudentAvatar :member="data.id" />
       </template>
     </Column>
     <Column field="name" header="名稱" />
@@ -245,7 +248,19 @@ function onEditAliasesDone() {
           </Badge>
         </div>
       </template>
-      <template #editor />
+      <template #editor="{ data }">
+        <div class="flex items-center gap-1">
+          <span>{{ data.aliases[0] }}</span>
+          <Badge v-if="data.aliases.length > 1" severity="secondary">
+            {{ data.aliases.length }}
+          </Badge>
+        </div>
+      </template>
+    </Column>
+    <Column field="prefer_name" header="偏好別名">
+      <template #editor="{ data }">
+        <Select v-if="data.aliases?.length" v-model="data.prefer_name" :options="data.aliases" />
+      </template>
     </Column>
     <!-- eslint-disable-next-line vue/valid-v-for -->
     <Column

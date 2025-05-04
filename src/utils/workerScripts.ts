@@ -28,42 +28,20 @@ async function fetchToImageBitmap(src: string): Promise<ImageBitmap> {
   return createImageBitmap(blob);
 }
 
-function choiceVideoCoverBackground(battle: ReturnType<Battle["toObject"]>) {
-  const teamCount = battle.teams.length;
-  switch (battle.mode) {
-    case BattleMode.Raid:
-      return teamCount <= 2
-        ? BackgroundImage.總力戰底圖1
-        : BackgroundImage.總力戰底圖2;
-    case BattleMode.Elimination:
-      return teamCount <= 2
-        ? BackgroundImage.大決戰底圖1
-        : BackgroundImage.大決戰底圖2;
-    case BattleMode.Test:
-      return BackgroundImage.考試底圖1;
-    case BattleMode.Unrestrict:
-      return BackgroundImage.賽特底圖1;
-    case BattleMode.JpRaid:
-      return BackgroundImage.日版底圖1;
-    default:
-      return BackgroundImage.總力戰底圖1;
-  }
-}
-
-export async function createProject(battle: ReturnType<Battle["toObject"]>) {
+export async function createProject(battle: BattleObject, teams: TeamObject[]) {
   // #region 前置作業
   const font = new FontFace("wanhanzon", `url(${fontUrl})`);
   await font.load();
   self.fonts.add(font);
   const avatars = await Promise.all(
-    uniq(battle.teams.flatMap(it => it.members).filter(Boolean))
+    uniq(teams.flatMap(it => it.members).filter(Boolean))
       .map(async (memberId) => {
         const data = await IndexDBClient.students.get(memberId!);
         const image = data?.image ?? await fetch(`https://schaledb.com/images/student/icon/${memberId}.webp`).then(res => res.blob());
         return { memberId, bitmap: await createImageBitmap(image!) };
       }));
   const avatarMap = mapValues(keyBy(avatars, "memberId"), "bitmap");
-  const videoCoverImage = await fetchToImageBitmap(choiceVideoCoverBackground(battle).href);
+  const videoCoverImage = await fetchToImageBitmap(choiceVideoCoverBackground(battle.mode, teams.length).href);
   const imageFlowImage = await fetchToImageBitmap(BackgroundImage.圖片軸底圖1.href);
   // #endregion
 
@@ -71,17 +49,17 @@ export async function createProject(battle: ReturnType<Battle["toObject"]>) {
 
   // #region 影片封面
   {
-    const config = generateVideoCover(battle, avatarMap);
+    const config = generateVideoCover(battle, teams, avatarMap);
     outputImages.VideoCover = await exportToBlob(1920, 1080, config, videoCoverImage);
   }
   // #endregion
 
   // #region 網站隊伍
-  outputImages.Teams = await Promise.all(battle.teams.map(team => exportToBlob(1000, 200, generateTeam(battle.mode, team, avatarMap))));
+  outputImages.Teams = await Promise.all(teams.map(team => exportToBlob(1000, 200, generateTeam(battle.mode, team, avatarMap))));
   // #endregion
 
   // #region 圖片軸
-  const pages = calculateStagePages(battle, { col: 80, row: 20 });
+  const pages = calculateStagePages(teams, { col: 80, row: 20 });
   outputImages.ImageFlow = await Promise.all(
     pages.map(page => exportToBlob(1920, 1080, generatePage(page, avatarMap), imageFlowImage)),
   );

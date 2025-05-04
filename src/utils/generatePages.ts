@@ -1,7 +1,7 @@
 export type StageInfo = {
   comment: string | undefined;
   commentWidth: number;
-  actions: Array<{ actor: number | null }>;
+  actions: Array<{ actor: Member }>;
   y: number;
   avatarsY: number;
 };
@@ -29,9 +29,9 @@ function estimateStage(stage: Stage) {
   };
 }
 
-export function calculateStagePages(battle: ReturnType<Battle["toObject"]>, gap: { col: number; row: number }) {
+export function calculateStagePages(teams: ReturnType<Team["toObject"]>[], gap: { col: number; row: number }) {
   const pages = new Array<Page>([]);
-  battle.teams.forEach((team) => {
+  teams.forEach((team) => {
     const columns = new Array<Omit<Column, "x">>({ data: [], width: 0 });
     let y = 0;
     team.stages.forEach((stage) => {

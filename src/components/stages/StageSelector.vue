@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { team } = defineProps<{ team: Public<Team> }>();
+const { team } = defineProps<{ team: Team }>();
 const emit = defineEmits<{
   "input:add": [];
   "input:arrow": [];
@@ -19,6 +19,8 @@ const keyNum = new Map([
   ["0", 9],
 ]);
 
+const memberData = useTeamMembers(() => team);
+
 onKeyStroke((e) => {
   if (!e.altKey) return;
   if (e.key === "q") return emit("input:add");
@@ -26,12 +28,16 @@ onKeyStroke((e) => {
   const index = keyNum.get(e.key);
   if (index === undefined || index >= team.members.length) return;
   const member = team.members[index];
-  if (member) emit("input:student", member.preferredName ?? member.name);
+  if (!member) return;
+  const student = memberData.value.data[member];
+  if (student) emit("input:student", student.prefer_name ?? student.name);
 });
 
 function onMemberClick(member: Member) {
   if (!member) return;
-  emit("input:student", `${member.preferredName ?? member.name}`);
+  const student = memberData.value.data[member];
+  if (!student) return;
+  emit("input:student", `${student.prefer_name ?? student.name}`);
 }
 </script>
 
@@ -44,7 +50,7 @@ function onMemberClick(member: Member) {
       <StudentAvatar
         v-for="member in team.members"
         class="w-20 cursor-pointer"
-        :student="member"
+        :member="member"
         @click="onMemberClick(member)"
       />
     </div>

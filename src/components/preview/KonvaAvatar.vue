@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useImage } from "@vueuse/core";
 
-const { studentId } = defineProps<{
-  studentId?: number | null;
+const { member } = defineProps<{
+  member: Member;
   side: number;
   x: number;
   y: number;
@@ -10,11 +10,8 @@ const { studentId } = defineProps<{
   strokeWidth?: number;
 }>();
 
-const { avatar } = useStudentAvatar(() => studentId ?? undefined);
-const { state } = useImage(() => ({
-  src: avatar.value ?? "#",
-  crossorigin: "Anonymous",
-}));
+const { avatar } = useStudentAvatar(() => member);
+const { state } = useImage(() => ({ src: avatar.value ?? "#", crossorigin: "Anonymous" }));
 </script>
 
 <template>

@@ -1,14 +1,11 @@
 <script setup lang="ts">
-const props = defineProps<{ student: Student | null }>();
+const { member } = defineProps<{ member: Member }>();
 
-const { avatar } = useStudentAvatar(() => props.student?.id);
+const { avatar } = useStudentAvatar(() => member);
 </script>
 
 <template>
-  <div
-    :key="`student-${student?.id}`"
-    class="aspect-square flex items-center justify-center select-none"
-  >
+  <div :key="`student-${member}`" class="aspect-square flex items-center justify-center select-none">
     <img
       v-if="avatar"
       loading="lazy"

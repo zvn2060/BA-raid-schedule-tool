@@ -1,8 +1,6 @@
 import type { TextConfig } from "konva/lib/shapes/Text";
 
 type AvatarMap = Record<number, ImageBitmap>;
-type BattleObject = ReturnType<Battle["toObject"]>;
-type TeamObject = ReturnType<Team["toObject"]>;
 type MemberAvatarProps = {
   side: number;
   x: number;
@@ -19,8 +17,8 @@ function optionalElement(show: boolean, element: unknown) {
   return show ? [element] : [];
 }
 
-function createMemberAvatar(memberId: number | null, props: MemberAvatarProps) {
-  if (memberId === null) return [];
+function createMemberAvatar(member: Member, props: MemberAvatarProps) {
+  if (member === undefined) return [];
   const { stroke, image, strokeWidth, side, ...commons } = props;
   return [
     { className: "Image", attrs: { ...commons, image, width: side, height: side } },
@@ -28,8 +26,8 @@ function createMemberAvatar(memberId: number | null, props: MemberAvatarProps) {
   ];
 }
 
-export function generateVideoCover(battle: BattleObject, avatarMap: AvatarMap): object {
-  const teamCount = battle.teams.length;
+export function generateVideoCover(battle: BattleObject, teams: TeamObject[], avatarMap: AvatarMap): object {
+  const teamCount = teams.length;
   const showFooter = teamCount <= 2;
   const showComment = teamCount <= 2;
   const showScore = teamCount === 1;
@@ -65,17 +63,17 @@ export function generateVideoCover(battle: BattleObject, avatarMap: AvatarMap): 
   // const bgImage = await fetchToImageBitmap(choiceVideoCoverBackground(battle).href);
 
   const teamsGroups = [];
-  if (battle.teams.length === 1) {
-    const avatars = battle.teams[0].members.flatMap((member, index) => createMemberAvatar(member, { x: 20 + index * 150, y: 20, side: 150, image: avatarMap[member ?? 0] }));
+  if (teams.length === 1) {
+    const avatars = teams[0].members.flatMap((member, index) => createMemberAvatar(member, { x: 20 + index * 150, y: 20, side: 150, image: avatarMap[member ?? 0] }));
     teamsGroups.push({
       attrs: { x: 40, y: 895 },
       className: "Group",
       children: avatars,
     });
-  } else if (battle.teams.length === 2) {
-    for (let teamId = 0; teamId < battle.teams.length; teamId++) {
+  } else if (teams.length === 2) {
+    for (let teamId = 0; teamId < teams.length; teamId++) {
       const avatarsOffset = teamId ? 40 : 20;
-      const children: unknown[] = battle.teams[teamId].members.flatMap((member, index) => createMemberAvatar(member, { x: avatarsOffset + index * 150, y: 20, side: 150, image: avatarMap[member ?? 0] }));
+      const children: unknown[] = teams[teamId].members.flatMap((member, index) => createMemberAvatar(member, { x: avatarsOffset + index * 150, y: 20, side: 150, image: avatarMap[member ?? 0] }));
       if (teamId) children.unshift({ className: "Rect", attrs: { width: 20, height: 150, x: 0, y: 20, fill: "#FFFFFF" } });
       teamsGroups.push({
         attrs: { x: 10 + 940 * teamId, y: 895 },
@@ -85,9 +83,9 @@ export function generateVideoCover(battle: BattleObject, avatarMap: AvatarMap): 
     }
   } else {
     const offsetX = battle.mode === BattleMode.Test ? 1055 : 25;
-    const offsetY = battle.teams.length === 3 ? 315 : 205;
-    for (let teamId = 0; teamId < battle.teams.length; teamId++) {
-      const children: unknown[] = battle.teams[teamId].members.flatMap((member, index) => createMemberAvatar(member, { x: 35 + index * 120, y: 35, side: 120, stroke: "#000000", image: avatarMap[member ?? 0] }));
+    const offsetY = teams.length === 3 ? 315 : 205;
+    for (let teamId = 0; teamId < teams.length; teamId++) {
+      const children: unknown[] = teams[teamId].members.flatMap((member, index) => createMemberAvatar(member, { x: 35 + index * 120, y: 35, side: 120, stroke: "#000000", image: avatarMap[member ?? 0] }));
       children.unshift({ className: "Rect", attrs: { width: 790, height: 190, fill: "#000000", stroke: "#FFFFFF", strokeWidth: 10 } });
       teamsGroups.push({
         attrs: { x: offsetX, y: offsetY + teamId * 220 },

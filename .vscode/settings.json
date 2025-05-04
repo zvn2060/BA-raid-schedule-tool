@@ -8,4 +8,7 @@
     "editor.defaultFormatter": "dbaeumer.vscode-eslint",
     "eslint.debug": true,
     "eslint.format.enable": true,
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
 }

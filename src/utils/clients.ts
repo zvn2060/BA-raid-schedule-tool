@@ -35,6 +35,18 @@ IndexDBClient
     }),
   );
 
+IndexDBClient
+  .version(3)
+  .stores({ students: ["&id", "name", "*keywords"].join(",") })
+  .upgrade(trans => trans
+    .table("students")
+    .toCollection()
+    .modify((student) => {
+      if (!student.aliases?.length) return;
+      student.prefer_name = student.aliases[0];
+    }),
+  );
+
 type StudentDTO = {
   Id: number;
   School: string;

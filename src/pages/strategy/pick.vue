@@ -4,28 +4,24 @@ import type { MenuItem } from "primevue/menuitem";
 import uniqolor from "uniqolor";
 
 const filter = ref({ name: "" });
-
 const nameInput = ref("");
+const onNameInput = useDebounceFn((val) => {
+  filter.value.name = val;
+}, 600);
 
-watchDebounced(
-  nameInput,
-  (value) => { filter.value.name = value; },
-  { debounce: 600 },
-);
 const { students } = useStudents(filter);
 const battleStore = useBattleStore();
-const { battle } = storeToRefs(battleStore);
-const studentsBySchool = computed(() =>
-  groupBy(students.value, it => it.school),
-);
-const schoolStyles = computed(() => {
-  return mapValues(studentsBySchool.value, (_, school) => {
+const { teams } = storeToRefs(battleStore);
+const studentsBySchool = computed(() => groupBy(students.value, "school"));
+const schoolStyles = computed(() =>
+  mapValues(studentsBySchool.value, (_, school) => {
     const { color, isLight } = uniqolor(school, { lightness: [90] });
     return { backgroundColor: color, color: isLight ? "black" : "white" };
-  });
-});
+  }),
+);
+
 const currentTeamIndex = ref(-1);
-const currentTeam = computed(() => battle.value.teams[currentTeamIndex.value] as Team);
+const currentTeam = computed(() => teams.value[currentTeamIndex.value] as Team);
 const breakcrumbItems = computed(() =>
   currentTeamIndex.value === -1
     ? []
@@ -53,7 +49,7 @@ const homeItem: MenuItem = {
             class="ml-auto"
             text
             rounded
-            @click="battle.addTeam()"
+            @click="battleStore.addTeam()"
           />
         </template>
         <template #content>
@@ -62,10 +58,10 @@ const homeItem: MenuItem = {
           </template>
           <template v-else>
             <TeamListItem
-              v-for="(team, index) in battle.teams"
+              v-for="(team, index) in teams"
               :key="index"
               :team="team"
-              @delete="battle.deleteTeam(index)"
+              @delete="battleStore.deleteTeam(index)"
               @edit="currentTeamIndex = index"
             />
           </template>
@@ -75,7 +71,12 @@ const homeItem: MenuItem = {
     <SplitterPanel :min-size="15">
       <DataList class="h-full" :blocked="!currentTeam">
         <template #header>
-          <InputText v-model="nameInput" size="small" class="ml-auto" />
+          <InputText
+            :model-value="nameInput"
+            size="small"
+            class="ml-auto"
+            @update:model-value="onNameInput"
+          />
         </template>
         <template #content>
           <div v-for="(students, school) in studentsBySchool">
@@ -89,10 +90,10 @@ const homeItem: MenuItem = {
                 :class="{ selected: currentTeam?.hasMember(student.id) }"
                 @click="currentTeam?.toogleMember(student)"
               >
-                <StudentAvatar :student="student" class="icon" />
-                <span class="text-center font-bold py-1 select-none">{{
-                  student.name
-                }}</span>
+                <StudentAvatar :member="student.id" class="icon" />
+                <span class="text-center font-bold py-1 select-none">
+                  {{ student.name }}
+                </span>
               </div>
             </div>
           </div>

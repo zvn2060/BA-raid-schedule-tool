@@ -4,10 +4,7 @@ defineProps<{ mirrorY?: boolean; blocked?: boolean }>();
 
 <template>
   <div class="flex flex-col">
-    <div
-      v-if="$slots['header']"
-      class="text-2xl flex items-center font-bold px-4 h-16"
-    >
+    <div v-if="$slots['header']" class="text-2xl flex items-center font-bold px-4 h-16">
       <slot name="header" />
     </div>
     <div

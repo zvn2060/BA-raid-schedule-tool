@@ -8,9 +8,12 @@ const { state } = useImage({
 });
 
 const store = useBattleStore();
-const { battle } = storeToRefs(store);
+const { battle, teams } = storeToRefs(store);
 const config = useLocalStorage("設定.圖片軸", { strokeWidth: 6 });
-const stagePages = computed(() => calculateStagePages(battle.value.toObject(), { col: 80, row: 20 }));
+const stagePages = computed(() => calculateStagePages(
+  teams.value.map(team => team.toObject()),
+  { col: 80, row: 20 },
+));
 
 const height = computed(() => stagePages.value.length * 1080);
 </script>
@@ -61,7 +64,7 @@ const height = computed(() => stagePages.value.length * 1080);
             <KonvaGroup :y="group.avatarsY">
               <template v-for="(action, index) in group.actions">
                 <KonvaAvatar
-                  :student-id="action.actor"
+                  :member="action.actor"
                   :side="148"
                   stroke="black"
                   :stroke-width="2"

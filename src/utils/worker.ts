@@ -11,9 +11,9 @@ export function workerDownload(name: string, files: Array<{ blob: Blob; name: st
     .then(blob => download(blob, `${name}.zip`));
 }
 
-export function workerCreateScene(name: string, battle: object) {
+export function workerCreateScene(name: string, battle: BattleObject, teams: TeamObject[]) {
   pool
-    .exec("createProject", [battle])
+    .exec("createProject", [battle, teams])
     .then(promise => promise)
     .then(blob => download(blob, `${name}.zip`));
 }

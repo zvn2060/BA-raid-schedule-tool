@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
 import type { Collection, InsertType } from "dexie";
 import { set, uniqBy } from "lodash-es";
 import type { Ref } from "vue";
@@ -38,7 +38,7 @@ export function useStudents(params: Ref<StudentsQueryParams>, pagination?: Ref<P
 
       return collection.toArray().then(data => uniqBy(data, it => it.id));
     },
-    placeholderData: old => old ?? [],
+    placeholderData: keepPreviousData,
   });
 
   const { data: total } = useQuery({
@@ -62,14 +62,14 @@ export function useStudents(params: Ref<StudentsQueryParams>, pagination?: Ref<P
             student.aliases.length = 0;
             student.aliases.push(...(data.value as string[]));
             student.keywords = calculateKeywords(student);
-          }
-          else {
+          } else {
             set(student, data.field, data.value);
           }
         }),
-    onSuccess() {
+    onSuccess(_, data) {
       queryClient.invalidateQueries({ queryKey: ["students"], exact: true });
       queryClient.invalidateQueries({ queryKey: ["students", params, pagination], exact: true });
+      queryClient.invalidateQueries({ queryKey: ["students", data.id], exact: true });
     },
   });
 

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 const store = useBattleStore();
-const { battle } = storeToRefs(store);
 const { copied, copy } = useClipboard();
+const description = await store.generateDescription();
 function onCopyClick() {
-  copy(battle.value.description);
+  copy(description);
 }
 </script>
 
@@ -18,7 +18,7 @@ function onCopyClick() {
       @click="onCopyClick"
     />
     <div class="whitespace-pre-wrap px-4 py-2">
-      {{ battle.description }}
+      {{ description }}
     </div>
   </div>
 </template>

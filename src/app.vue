@@ -10,7 +10,12 @@ onMounted(() => {
 });
 
 useEventListener(window, "beforeunload", () => {
-  localStorage.setItem("battle", JSON.stringify(store.battle.toObject()));
+  const battleObj = store.battle.toObject();
+  const teamsObj = store.teams.map(it => it.toObject());
+  localStorage.setItem("battle", JSON.stringify({
+    ...battleObj,
+    teams: teamsObj,
+  }));
 });
 
 const topNavigations: MenuItem[] = [
@@ -18,14 +23,14 @@ const topNavigations: MenuItem[] = [
     label: "編排攻略",
     icon: "pi pi-map",
     command: () => {
-      router.push("/strategy/pick");
+      router.replace("/strategy/pick");
     },
   },
   {
     label: "資料設定",
     icon: "pi pi-users",
     command: () => {
-      router.push("/students");
+      router.replace("/students");
     },
   },
 ];

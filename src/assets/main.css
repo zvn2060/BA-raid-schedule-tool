@@ -23,3 +23,15 @@
 .rounded-list-item {
     @apply bg-gray-100  overflow-hidden;
 }
+
+.bg-striker {
+  @apply bg-red-100;
+}
+
+.bg-special {
+  @apply bg-blue-100;
+}
+
+.bg-empty {
+  @apply bg-surface-200;
+}

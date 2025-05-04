@@ -53,4 +53,9 @@ export default defineNuxtConfig({
       include: ["Tooltip"],
     },
   },
+  vueQuery: {
+    vueQueryPluginOptions: {
+      enableDevtoolsV6Plugin: true,
+    },
+  },
 });

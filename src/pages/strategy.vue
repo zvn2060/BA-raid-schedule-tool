@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import download from "downloadjs";
 import { keyBy, mapValues } from "lodash-es";
 import { useToast } from "primevue";
 import type { RouteNamedMap } from "vue-router/auto-routes";
 
 const router = useRouter();
-const route = useRoute();
+const battleStore = useBattleStore();
+const { battle, teams } = storeToRefs(battleStore);
 
+const route = useRoute();
+const toast = useToast();
 const stepRoutes: Record<string, { name: keyof RouteNamedMap; label: string }> = {
   1: { name: "strategy-pick", label: "編隊" },
   2: { name: "strategy-stages", label: "寫軸" },
@@ -23,21 +25,11 @@ const step = computed({
   set: val => router.replace({ name: stepRoutes[val].name }),
 });
 
-const splitButtonActions = [
-  {
-    label: "匯出 JSON",
-    command: onExportJsonClick,
-  },
-];
-
-const battleStore = useBattleStore();
-
-const { battle } = storeToRefs(battleStore);
+const splitButtonActions = [{ label: "匯出 JSON", command: onExportJsonClick }];
 const { open, onChange, reset } = useFileDialog({
   accept: "application/json",
   multiple: false,
 });
-const toast = useToast();
 
 function handleLoadFile(content: string) {
   battleStore
@@ -62,11 +54,11 @@ onChange(async (filelist) => {
 });
 
 function onExportXmlClick() {
-  workerCreateScene(battle.value.name, toRaw(battle.value).toObject());
+  battleStore.exportProject("xml");
 }
 
 function onExportJsonClick() {
-  download(JSON.stringify(battle.value.toObject(), null, 2), `${battle.value.name}.json`);
+  battleStore.exportProject("json");
 }
 
 async function onLoadSampleClick() {
@@ -85,7 +77,12 @@ async function onLoadSampleClick() {
       <template #center>
         <Stepper v-model:value="step" class="w-full max-w-[400px] mx-5">
           <StepList>
-            <Step v-for="[key, val] in Object.entries(stepRoutes)" :key="key" :value="key">
+            <Step
+              v-for="[key, val] in Object.entries(stepRoutes)"
+              :key="key"
+              :value="key"
+              :disabled="teams.length === 0"
+            >
               {{ val.label }}
             </Step>
           </StepList>
@@ -106,11 +103,14 @@ async function onLoadSampleClick() {
           @click="open()"
         />
         <SplitButton
-          label="匯出 PR 專案"
           :model="splitButtonActions"
-          icon="pi pi-file-export"
           @click="onExportXmlClick"
-        />
+        >
+          <span class="flex items-center font-bold gap-2">
+            <Icon name="file-icons:adobe-premiere" class="text-xl" />
+            <span>匯出專案</span>
+          </span>
+        </SplitButton>
       </template>
     </Toolbar>
     <div class="flex-1 min-h-0">

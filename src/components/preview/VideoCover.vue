@@ -4,34 +4,19 @@ import type { TextConfig } from "konva/lib/shapes/Text";
 import TempVar from "vue-temp-var";
 
 const store = useBattleStore();
-const { battle } = storeToRefs(store);
-const teamCount = computed(() => battle.value.teams.length);
+const { battle, teams } = storeToRefs(store);
+const teamCount = computed(() => teams.value.length);
 const showFooter = computed(() => teamCount.value <= 2);
 const showComment = computed(() => teamCount.value <= 2);
 const showScore = computed(() => teamCount.value === 1);
 const isNormal = computed(() => battle.value.mode !== BattleMode.Unrestrict);
 
-const videoCover = computed(() => {
-  const teamCount = battle.value.teams.length;
-  switch (battle.value.mode) {
-    case BattleMode.Raid:
-      return teamCount <= 2
-        ? BackgroundImage.總力戰底圖1
-        : BackgroundImage.總力戰底圖2;
-    case BattleMode.Elimination:
-      return teamCount <= 2
-        ? BackgroundImage.大決戰底圖1
-        : BackgroundImage.大決戰底圖2;
-    case BattleMode.Test:
-      return BackgroundImage.考試底圖1;
-    case BattleMode.Unrestrict:
-      return BackgroundImage.賽特底圖1;
-    case BattleMode.JpRaid:
-      return BackgroundImage.日版底圖1;
-    default:
-      return BackgroundImage.總力戰底圖1;
-  }
-});
+const videoCover = computed(() =>
+  choiceVideoCoverBackground(
+    battle.value.mode,
+    teams.value.length,
+  ),
+);
 
 const config = useLocalStorage(
   "設定.影片封面",
@@ -78,7 +63,6 @@ const imageName = computed(() => `${battle.value.title}-影片封面`);
 </script>
 
 <template>
-  <!-- eslint-disable vue/attribute-hyphenation -->
   <ImageEditor
     :export-name="imageName"
     :width="1920"
@@ -163,16 +147,12 @@ const imageName = computed(() => `${battle.value.title}-影片封面`);
           :fontSize="scoreSize"
           :text="battle.score"
         />
-        <TempVar
-          v-if="battle.teams.length === 1"
-          v-slot="{ team }"
-          :define="{ team: battle.teams[0] }"
-        >
+        <TempVar v-if="teamCount === 1" v-slot="{ team }" :define="{ team: teams[0] }">
           <KonvaGroup :x="40" :y="895">
             <template v-for="(member, memberId) in team.members">
               <KonvaAvatar
                 v-if="member"
-                :student-id="member.id"
+                :member="member"
                 :x="20 + memberId * 150"
                 :y="20"
                 :side="150"
@@ -181,15 +161,12 @@ const imageName = computed(() => `${battle.value.title}-影片封面`);
           </KonvaGroup>
         </TempVar>
         <TempVar
-          v-else-if="battle.teams.length === 2"
+          v-else-if="teamCount === 2"
           v-slot="{ offsetY, offsetX }"
-          :define="{
-            offsetY: 895,
-            offsetX: 10,
-          }"
+          :define="{ offsetY: 895, offsetX: 10 }"
         >
           <KonvaGroup
-            v-for="(team, teamId) in battle.teams"
+            v-for="(team, teamId) in teams"
             :x="offsetX + 940 * teamId"
             :y="offsetY"
           >
@@ -204,7 +181,7 @@ const imageName = computed(() => `${battle.value.title}-影片封面`);
             <template v-for="(member, memberId) in team.members">
               <KonvaAvatar
                 v-if="member"
-                :student-id="member.id"
+                :member="member"
                 :x="(teamId ? 40 : 20) + memberId * 150"
                 :y="20"
                 :side="150"
@@ -221,7 +198,7 @@ const imageName = computed(() => `${battle.value.title}-影片封面`);
           }"
         >
           <KonvaGroup
-            v-for="(team, teamId) in battle.teams"
+            v-for="(team, teamId) in teams"
             :x="offsetX"
             :y="offsetY + teamId * 220"
           >
@@ -235,7 +212,7 @@ const imageName = computed(() => `${battle.value.title}-影片封面`);
             <template v-for="(member, memberId) in team.members">
               <KonvaAvatar
                 v-if="member"
-                :student-id="member.id"
+                :member="member"
                 :x="35 + memberId * 120"
                 :y="35"
                 :side="120"

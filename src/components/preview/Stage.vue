@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const props = defineProps<{ team: Public<Team>; stageId: number }>();
+const props = defineProps<{ team: Team; stageId: number }>();
 const stage = computed(() => props.team.stages[props.stageId]);
 
 const container = useTemplateRef("container");
@@ -37,26 +37,14 @@ const hover = useElementHover(container);
     </Inplace>
     <div class="stage-avatars-container">
       <template v-for="action in stage.actions">
-        <!-- eslint-disable-next-line vue/valid-v-for -->
-        <StudentAvatar
-          :student="team.getMember(action.actor)"
-          class="border-4 w-[150px] border-black"
-        />
+        <StudentAvatar :member="action.actor" class="border-4 w-[150px] border-black" />
       </template>
     </div>
     <div class="stage-control" :class="[hover ? 'opacity-100' : 'opacity-0']">
       <i class="pi pi-arrow-up" @click="team.moveStage(stageId, 'front')" />
       <i class="pi pi-arrow-down" @click="team.moveStage(stageId, 'back')" />
-      <Icon
-        name="mdi:table-row-plus-before"
-        class="pi pi-plus text-green-600"
-        @click="team.insertStage(stageId, 'front')"
-      />
-      <Icon
-        name="mdi:table-row-plus-after"
-        class="pi pi-plus text-green-600"
-        @click="team.insertStage(stageId, 'back')"
-      />
+      <Icon name="mdi:table-row-plus-before" class="pi pi-plus text-green-600" @click="team.insertStage(stageId, 'front')" />
+      <Icon name="mdi:table-row-plus-after" class="pi pi-plus text-green-600" @click="team.insertStage(stageId, 'back')" />
       <i class="pi pi-trash text-red-600" @click="team.deleteStage(stageId)" />
     </div>
   </div>

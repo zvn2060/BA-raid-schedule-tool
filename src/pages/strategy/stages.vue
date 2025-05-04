@@ -3,17 +3,12 @@ import { debounceFilter, pausableFilter } from "@vueuse/core";
 import { split } from "lodash-es";
 
 const battleStore = useBattleStore();
-const { battle } = storeToRefs(battleStore);
-const router = useRouter();
+const { teams } = storeToRefs(battleStore);
 const textArea = useTemplateRef("textarea");
 const currentTeamIndex = ref(0);
-const currentTeam = computed(() =>
-  battle.value.teams.at(currentTeamIndex.value),
-);
-if (!currentTeam.value) router.replace("/strategy/pick");
-
+const currentTeam = computed(() => teams.value[currentTeamIndex.value]);
+const memberMap = useTeamMembers(currentTeam);
 const auto = ref(false);
-
 const pausableDebounceFilter = pausableFilter(debounceFilter(1000));
 
 watch(
@@ -34,7 +29,8 @@ watchWithFilter(
 );
 
 function triggerParse() {
-  currentTeam.value?.parse();
+  // @ts-expect-error memberMap student will not undefined
+  currentTeam.value?.parse(memberMap.value.data);
 }
 
 let cursorPos = 0;
@@ -82,7 +78,7 @@ async function insertString(str: string, offset?: number) {
     <SplitterPanel class="flex flex-col p-3 bg-slate-900 gap-2">
       <div class="flex items-center gap-2 bg-[#FFFFFF60] p-2 rounded-lg">
         <Button
-          v-for="(_, index) in battle.teams"
+          v-for="(_, index) in teams"
           :label="`${index + 1}`"
           class="w-10"
           :severity="currentTeamIndex === index ? undefined : 'secondary'"

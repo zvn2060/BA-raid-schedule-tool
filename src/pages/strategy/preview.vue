@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const router = useRouter();
-const { battle } = storeToRefs(useBattleStore());
-if (!battle.value.teams.length) router.replace("/strategy/pick");
+const { teams } = storeToRefs(useBattleStore());
+if (!teams.value.length) router.replace("/strategy/pick");
 </script>
 
 <template>

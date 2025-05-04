@@ -1,64 +1,29 @@
 import { compact, isNil } from "lodash-es";
 import { z } from "zod";
 
-declare global {
-  export type Action = { actor: StudentId | null; target?: StudentId | null };
-  export type Stage = { actions: Action[]; comment?: string };
-  export type StudentId = number;
-  export type Student = {
-    readonly id: StudentId;
-    readonly name: string;
-    image?: File;
-    keywords: string[];
-    aliases: string[];
-    squad: "striker" | "special";
-    school: string;
-    star: number;
-    level: number;
-    kizuna: number;
-    weapon_level: number | null;
-    gear_1: number;
-    gear_2: number;
-    gear_3: number;
-    gear_unique: number | null;
-    skill_ex: number;
-    skill_n: number;
-    skill_p: number;
-    skill_sub: number;
-    release_hp: number | null;
-    release_atk: number | null;
-    release_heal: number | null;
-  };
-
-  export type Member = (Student & { preferredName?: string }) | null;
-}
-
 const Pattern = {
   Action: /(?<student1>[^\s()]+)(\((?<comment>[^()]+)\))?/,
 };
-
-/*
-     normal       : 一般
-     unrestrict   : 制約解除作戰
-  */
-type TeamStructure = "normal" | "unrestrict";
 
 function skillTranscript(level: number) {
   return level === 10 ? "M" : `${level}`;
 }
 
-export class Team implements Serializable<z.infer<typeof Team.schema>> {
+export class Team {
   private _stages: Stage[] = [];
   private _members: Member[];
   private membersMap: Map<StudentId, number> = new Map();
   private readonly _structure: TeamStructure;
+  private stats = { special: 0, striker: 0, empty: 0 };
+
+  text: string = "";
 
   static schema = z.object({
     text: z.string().nullish(),
-    members: z.array(z.number().nullable()).nullish(),
+    members: z.array(z.number().nullable().transform(it => it ?? undefined)).nullish(),
     stages: z.object({
       actions: z.object({
-        actor: z.number().nullable(),
+        actor: z.number().nullish(),
         target: z.number().nullish(),
       }).array(),
       comment: z.string().optional(),
@@ -66,21 +31,21 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
     skillTargetMap: z.tuple([z.number(), z.number()]).array().nullish(),
   });
 
-  text: string = "";
-
-  constructor(structure: TeamStructure, teamProps?: PartialField<Team>) {
+  constructor(
+    structure: TeamStructure,
+    supporterCount: number = 0,
+    strikerCount: number = 0,
+    teamProps?: z.infer<typeof Team.schema>,
+  ) {
     this._structure = structure;
-    this._members = teamProps?.members
-      ? teamProps.members.map(member => member ?? null)
-      : new Array(structure === "normal" ? 6 : 10).fill(null);
-
+    this.stats.special = supporterCount;
+    this.stats.striker = strikerCount;
+    this._members = teamProps?.members ?? new Array(structure === "normal" ? 6 : 10).fill(undefined);
     this._members.forEach((member, index) => {
-      if (member) this.membersMap.set(member.id, index);
+      if (member) this.membersMap.set(member, index);
+      else this.stats.empty++;
     });
-
     if (teamProps?.text) this.text = teamProps.text;
-    if (teamProps?.stages) this._stages = teamProps.stages as Stage[];
-    else this.parse();
   }
 
   get stages(): Readonly<Stage[]> {
@@ -91,43 +56,19 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
     return this._members;
   }
 
-  getMember(studentId: StudentId | null): Member {
-    if (studentId === null) return null;
-    const index = this.membersMap.get(studentId);
-    return index === undefined ? null : this._members[index];
-  }
-
   get struture() {
     return this._structure;
   }
 
   private checkStruture(student: Student) {
-    const stats = { empty: 0, striker: 0, special: 0 };
-    for (const member of this._members) {
-      if (member) stats[member.squad]++;
-      else stats.empty++;
-    }
-    if (stats.empty === 0) return false;
+    if (this.stats.empty === 0) return false;
     if (this._structure === "normal") {
-      if (student.squad === "striker") return stats.striker < 4;
-      else return stats.special < 2;
+      if (student.squad === "striker") return this.stats.striker < 4;
+      else return this.stats.special < 2;
     } else {
-      if (student.squad === "striker") return stats.striker < 6;
-      else return stats.special < 4;
+      if (student.squad === "striker") return this.stats.striker < 6;
+      else return this.stats.special < 4;
     }
-  }
-
-  addMember(student: Student) {
-    if (!this.checkStruture(student)) return;
-    let offset: number = 0;
-    if (student.squad === "special") {
-      offset = this._structure === "normal" ? 4 : 6;
-    }
-
-    const nextIndex = this._members.slice(offset).findIndex(it => it === null);
-    const realIndex = offset + nextIndex;
-    this.membersMap.set(student.id, realIndex);
-    this._members[realIndex] = student;
   }
 
   toogleMember(student: Student) {
@@ -135,10 +76,27 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
     else this.addMember(student);
   }
 
+  addMember(student: Student) {
+    if (!this.checkStruture(student)) return;
+    this.stats[student.squad]++;
+    const bound = this._structure === "normal" ? 4 : 6;
+    let i = student.squad === "striker" ? 0 : bound;
+    const max = student.squad === "striker" ? bound : this._members.length;
+    for (; i < max; i++) {
+      if (this._members[i] !== undefined) continue;
+      this.membersMap.set(student.id, i);
+      this._members[i] = student.id;
+      break;
+    }
+  }
+
   removeMember(studentId: StudentId) {
     const index = this.membersMap.get(studentId);
     if (index === undefined) return;
-    this._members[index] = null;
+    this.stats["empty"]++;
+    if (this._structure === "normal") this.stats[index < 4 ? "striker" : "special"]--;
+    else this.stats[index < 6 ? "striker" : "special"]--;
+    this._members[index] = undefined;
     this.membersMap.delete(studentId);
   }
 
@@ -155,12 +113,13 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
   // ACTION   := STUDENT[(COMMENT)]
   // STUDENT  := [^\s]
   // COMMENT  := [^()]
-  parse() {
+  parse(studentMap: Record<StudentId, Student>) {
     if (!this.text) return;
     const stageTexts = this.text.split(/\n+/).filter(it => it.trim().length).flatMap(line => line.split(" → "));
     const searchStudentByNameMap = new Map(
       this._members
         .filter(member => !isNil(member))
+        .map(member => studentMap[member])
         .flatMap(student => [...student.aliases, student.name].map(key => [key, student])),
     );
     const aggregateStage = new Array<Stage>();
@@ -171,7 +130,7 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
         const match = action.match(Pattern.Action);
         if (match?.groups) {
           const { student1, comment } = match.groups;
-          const action: Action = { actor: searchStudentByNameMap.get(student1)?.id ?? null };
+          const action: Action = { actor: searchStudentByNameMap.get(student1)?.id };
           actions.push(action);
           if (comment) comments.push(comment);
         } else {
@@ -228,14 +187,15 @@ export class Team implements Serializable<z.infer<typeof Team.schema>> {
   toObject() {
     return {
       text: this.text,
-      members: this.members.map(it => it?.id ?? null),
+      members: this._members,
       stages: this._stages,
     };
   }
 
-  get description() {
-    return this.members.map((member) => {
-      if (!member) return "空格";
+  generateDescription(studentMap: Record<StudentId, Student>) {
+    return this.members.map((id) => {
+      if (!id) return "空格";
+      const member = studentMap[id];
       const releases = [member.release_hp ?? 0, member.release_atk ?? 0, member.release_heal ?? 0];
       return compact([
         member.name.replace("（", "(").replace("）", ")"),
