@@ -122,6 +122,7 @@ export class Team {
         .map(member => studentMap[member])
         .flatMap(student => [...student.aliases, student.name].map(key => [key, student])),
     );
+
     const aggregateStage = new Array<Stage>();
     stageTexts.forEach((stageText) => {
       const actions = new Array<Action>();
@@ -130,8 +131,9 @@ export class Team {
         const match = action.match(Pattern.Action);
         if (match?.groups) {
           const { student1, comment } = match.groups;
-          const action: Action = { actor: searchStudentByNameMap.get(student1)?.id };
-          actions.push(action);
+          const actor = searchStudentByNameMap.get(student1)?.id;
+          if (actor) actions.push({ actor });
+          else comments.push(student1);
           if (comment) comments.push(comment);
         } else {
           comments.push(action);
