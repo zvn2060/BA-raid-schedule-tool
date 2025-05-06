@@ -1,5 +1,5 @@
 import { XMLBuilder, XMLParser } from "fast-xml-parser";
-import JSZip from "JSZip";
+import JSZip from "jszip";
 import Konva from "konva";
 import { keyBy, mapValues, range, uniq } from "lodash-es";
 import workerpool from "workerpool";
