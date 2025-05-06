@@ -53,17 +53,17 @@ export async function createProject(battle: BattleObject, teams: TeamObject[]) {
   // #region 影片封面
   {
     const config = generateVideoCover(battle, teams, avatarMap);
-    outputImages.VideoCover = await exportToBlob(1280, 720, config, videoCoverImage);
+    outputImages.VideoCover = await exportToBlob({ width: 1920, height: 1080 }, { width: 1280, height: 720 }, config, videoCoverImage);
   }
   // #endregion
 
   // #region 網站隊伍
-  outputImages.Teams = await Promise.all(teams.map(team => exportToBlob(1000, 200, generateTeam(battle.mode, team, avatarMap))));
+  outputImages.Teams = await Promise.all(teams.map(team => exportToBlob({ width: 1000, height: 200 }, { width: 1000, height: 200 }, generateTeam(battle.mode, team, avatarMap))));
   // #endregion
 
   // #region 圖片軸
   const pages = calculateStagePages(teams, { col: 80, row: 20 });
-  outputImages.ImageFlow = await Promise.all(pages.map(page => exportToBlob(1920, 1080, generatePage(page, avatarMap), imageFlowImage)));
+  outputImages.ImageFlow = await Promise.all(pages.map(page => exportToBlob({ width: 1920, height: 1080 }, { width: 1920, height: 1080 }, generatePage(page, avatarMap), imageFlowImage)));
   // #endregion
 
   const xmlContent = await generateFinalCutXml(pages.length);
@@ -86,17 +86,18 @@ export async function createProject(battle: BattleObject, teams: TeamObject[]) {
   return zip.generateAsync({ type: "blob" });
 }
 
-function exportToBlob(width: number, height: number, config: object, bgImage?: ImageBitmap) {
-  const stage = new Konva.Stage({ width: 1920, height: 1080 });
-  const canvas = new OffscreenCanvas(width, height);
+type Dimension = { width: number; height: number };
+
+function exportToBlob(source: Dimension, exportTo: Dimension, config: object, bgImage?: ImageBitmap) {
+  const stage = new Konva.Stage(source);
+  const canvas = new OffscreenCanvas(exportTo.width, exportTo.height);
   // @ts-expect-error config always have children
-  if ("children" in config && bgImage) config.children = [{ className: "Image", attrs: { width: 1920, height: 1080, image: bgImage } }, ...config.children ?? []];
+  if ("children" in config && bgImage) config.children = [{ className: "Image", attrs: { ...source, image: bgImage } }, ...config.children ?? []];
   const layer = Konva.Node.create(config);
   stage.add(layer);
-  stage.scale({ x: 0.5, y: 0.5 });
   const ctx = canvas.getContext("2d")!;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(layer.getCanvas()._canvas, 0, 0, 1920, 1080, 0, 0, width, height);
+  ctx.drawImage(layer.getCanvas()._canvas, 0, 0, source.width, source.height, 0, 0, exportTo.width, exportTo.height);
   return canvas.convertToBlob();
 }
 
