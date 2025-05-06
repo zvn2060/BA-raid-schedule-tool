@@ -36,6 +36,7 @@
     "pinia": "^3.0.1",
     "primeicons": "^7.0.0",
     "primevue": "^4.3.3",
+    "stream-browserify": "^3.0.0",
     "tailwindcss-primeui": "^0.6.1",
     "type-fest": "^4.38.0",
     "udsv": "^0.7.1",
