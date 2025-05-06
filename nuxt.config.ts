@@ -29,6 +29,8 @@ export default defineNuxtConfig({
       commonjsOptions: {
       // ignore built-in modules in Node.js
         ignore: ["os", "child_process", "worker_threads"],
+        dynamicRequireTargets: ["stream"],
+        ignoreDynamicRequires: true,
       },
     },
   },
