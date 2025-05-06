@@ -53,7 +53,7 @@ export async function createProject(battle: BattleObject, teams: TeamObject[]) {
   // #region 影片封面
   {
     const config = generateVideoCover(battle, teams, avatarMap);
-    outputImages.VideoCover = await exportToBlob(1920, 1080, config, videoCoverImage);
+    outputImages.VideoCover = await exportToBlob(1280, 720, config, videoCoverImage);
   }
   // #endregion
 
@@ -89,12 +89,14 @@ export async function createProject(battle: BattleObject, teams: TeamObject[]) {
 function exportToBlob(width: number, height: number, config: object, bgImage?: ImageBitmap) {
   const stage = new Konva.Stage({ width: 1920, height: 1080 });
   const canvas = new OffscreenCanvas(width, height);
+  // @ts-expect-error config always have children
+  if ("children" in config && bgImage) config.children = [{ className: "Image", attrs: { width: 1920, height: 1080, image: bgImage } }, ...config.children ?? []];
   const layer = Konva.Node.create(config);
   stage.add(layer);
+  stage.scale({ x: 0.5, y: 0.5 });
   const ctx = canvas.getContext("2d")!;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  if (bgImage) ctx.drawImage(bgImage, 0, 0);
-  ctx.drawImage(layer.getCanvas()._canvas, 0, 0);
+  ctx.drawImage(layer.getCanvas()._canvas, 0, 0, 1920, 1080, 0, 0, width, height);
   return canvas.convertToBlob();
 }
 
