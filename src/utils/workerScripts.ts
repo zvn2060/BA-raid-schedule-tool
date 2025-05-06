@@ -3,6 +3,9 @@ import JSZip from "jszip";
 import Konva from "konva";
 import { keyBy, mapValues, range, uniq } from "lodash-es";
 import workerpool from "workerpool";
+import { generatePage, generateTeam, generateVideoCover } from "@/utils/generateKonvaConfig";
+import { IndexDBClient } from "@/utils/clients";
+import { choiceVideoCoverBackground } from "@/utils/BackgroundImage";
 import template from "@/assets/template.xml?raw";
 
 export async function zipFiles(files: Array<{ blob: Blob; name: string }>) {
@@ -60,9 +63,7 @@ export async function createProject(battle: BattleObject, teams: TeamObject[]) {
 
   // #region 圖片軸
   const pages = calculateStagePages(teams, { col: 80, row: 20 });
-  outputImages.ImageFlow = await Promise.all(
-    pages.map(page => exportToBlob(1920, 1080, generatePage(page, avatarMap), imageFlowImage)),
-  );
+  outputImages.ImageFlow = await Promise.all(pages.map(page => exportToBlob(1920, 1080, generatePage(page, avatarMap), imageFlowImage)));
   // #endregion
 
   const xmlContent = await generateFinalCutXml(pages.length);

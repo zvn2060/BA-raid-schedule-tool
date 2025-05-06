@@ -3,7 +3,7 @@ import workerpool from "workerpool";
 // @ts-expect-error no-problem
 import WorkerScriptsURL from "./workerScripts?url&worker"; // Adjust the path to your worker script
 
-const pool = workerpool.pool(WorkerScriptsURL, { workerOpts: { type: import.meta.env.PROD ? undefined : "module" } });
+const pool = workerpool.pool(WorkerScriptsURL, { workerOpts: { type: "module" } });
 
 export function workerDownload(name: string, files: Array<{ blob: Blob; name: string }>) {
   pool

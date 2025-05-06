@@ -1,4 +1,5 @@
 import type { TextConfig } from "konva/lib/shapes/Text";
+import { measureTextSize } from "@/utils/measureTextSize";
 
 type AvatarMap = Record<number, ImageBitmap>;
 type MemberAvatarProps = {
@@ -60,7 +61,6 @@ export function generateVideoCover(battle: BattleObject, teams: TeamObject[], av
   };
 
   const strokeColor = strokeColorMap[battle.mode];
-  // const bgImage = await fetchToImageBitmap(choiceVideoCoverBackground(battle).href);
 
   const teamsGroups = [];
   if (teams.length === 1) {
@@ -143,16 +143,19 @@ export function generateVideoCover(battle: BattleObject, teams: TeamObject[], av
             className: "Rect",
           }),
           ...optionalElement(showScore, {
-            ...commonTextStyle,
-            x: isNormal ? 1020 : 1620,
-            align: "center",
-            verticalAlign: "middle",
-            stroke: strokeColor,
-            y: 910,
-            width: isNormal ? 840 : 240,
-            height: 160,
-            fontSize: scoreFontSize,
-            text: battle.score,
+            attrs: {
+              ...commonTextStyle,
+              x: isNormal ? 1020 : 1620,
+              align: "center",
+              verticalAlign: "middle",
+              stroke: strokeColor,
+              y: 910,
+              width: isNormal ? 840 : 240,
+              height: 160,
+              fontSize: scoreFontSize,
+              text: battle.score,
+            },
+            className: "Text",
           }),
           ...teamsGroups,
         ],
