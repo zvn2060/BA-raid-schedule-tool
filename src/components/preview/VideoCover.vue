@@ -11,12 +11,7 @@ const showComment = computed(() => teamCount.value <= 2);
 const showScore = computed(() => teamCount.value === 1);
 const isNormal = computed(() => battle.value.mode !== BattleMode.Unrestrict);
 
-const videoCover = computed(() =>
-  choiceVideoCoverBackground(
-    battle.value.mode,
-    teams.value.length,
-  ),
-);
+const videoCover = computed(() => getVideoCover(battle.value.mode, teams.value.length));
 
 const config = useLocalStorage(
   "設定.影片封面",

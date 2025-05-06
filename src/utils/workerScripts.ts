@@ -3,9 +3,9 @@ import JSZip from "jszip";
 import Konva from "konva";
 import { keyBy, mapValues, range, uniq } from "lodash-es";
 import workerpool from "workerpool";
+import { getVideoCover } from "@/utils/getVideoCover";
 import { generatePage, generateTeam, generateVideoCover } from "@/utils/generateKonvaConfig";
 import { IndexDBClient } from "@/utils/clients";
-import { choiceVideoCoverBackground } from "@/utils/BackgroundImage";
 import template from "@/assets/template.xml?raw";
 
 export async function zipFiles(files: Array<{ blob: Blob; name: string }>) {
@@ -44,7 +44,7 @@ export async function createProject(battle: BattleObject, teams: TeamObject[]) {
         return { memberId, bitmap: await createImageBitmap(image!) };
       }));
   const avatarMap = mapValues(keyBy(avatars, "memberId"), "bitmap");
-  const videoCoverImage = await fetchToImageBitmap(choiceVideoCoverBackground(battle.mode, teams.length).href);
+  const videoCoverImage = await fetchToImageBitmap(getVideoCover(battle.mode, teams.length).href);
   const imageFlowImage = await fetchToImageBitmap(BackgroundImage.圖片軸底圖1.href);
   // #endregion
 
