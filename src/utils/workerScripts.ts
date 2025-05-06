@@ -5,7 +5,6 @@ import { keyBy, mapValues, range, uniq } from "lodash-es";
 import workerpool from "workerpool";
 import { generatePage, generateTeam, generateVideoCover } from "@/utils/generateKonvaConfig";
 import { IndexDBClient } from "@/utils/clients";
-import { choiceVideoCoverBackground } from "@/utils/BackgroundImage";
 import template from "@/assets/template.xml?raw";
 
 export async function zipFiles(files: Array<{ blob: Blob; name: string }>) {
