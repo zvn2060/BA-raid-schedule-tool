@@ -3,6 +3,7 @@ import { defineNuxtConfig } from "nuxt/config";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+
   modules: [
     "@hebilicious/vue-query-nuxt",
     "@morev/vue-transitions/nuxt",
@@ -43,6 +44,15 @@ export default defineNuxtConfig({
     },
   },
   hooks: {
+    "vite:extendConfig"(viteInlineConfig, env) {
+      if (env.isClient) {
+        const importPlugin = viteInlineConfig.plugins?.find(p => p && "name" in p && p.name === "nuxt:imports-transform");
+        if (importPlugin) {
+          viteInlineConfig.worker ||= {};
+          viteInlineConfig.worker.plugins = () => [importPlugin];
+        }
+      }
+    },
     "prerender:routes"({ routes }) {
       routes.clear(); // Do not generate any routes (except the defaults)
     },
