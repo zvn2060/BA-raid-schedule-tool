@@ -25,6 +25,12 @@ export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   vite: {
     plugins: [tailwindcss()],
+    build: {
+      commonjsOptions: {
+      // ignore built-in modules in Node.js
+        ignore: ["os", "child_process", "worker_threads"],
+      },
+    },
   },
   postcss: {
     plugins: {
