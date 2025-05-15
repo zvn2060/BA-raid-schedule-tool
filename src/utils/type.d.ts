@@ -1,10 +1,12 @@
 export { };
 declare global {
-  export type Action = { actor: Member; target?: Member };
-  export type Stage = { actions: Action[]; comment?: string };
-  export type StudentId = number;
-  export type Member = StudentId | undefined;
-  export type Student = {
+  type Action = { actor: Member; target?: Member };
+  type Stage = { actions: Action[]; comment?: string };
+  type StudentId = number;
+  type StudentMap = Map<StudentId, Student>;
+  type Member = StudentId | undefined;
+  type Stat = { special: number; striker: number };
+  type Student = {
     readonly id: StudentId;
     readonly name: string;
     prefer_name?: string;
@@ -29,14 +31,15 @@ declare global {
     release_atk: number | null;
     release_heal: number | null;
   };
+
   /**
    * @description
    * normal       : 一般
    *
    * unrestrict   : 制約解除作戰
    */
-  export type TeamStructure = "normal" | "unrestrict";
-  export interface Serializable<T> {
+  type TeamStructure = "normal" | "unrestrict";
+  interface Serializable<T> {
     toObject(): T;
   }
 

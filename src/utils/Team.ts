@@ -1,55 +1,42 @@
-import { compact, isNil } from "lodash-es";
-import { z } from "zod";
-
-const Pattern = {
-  Action: /(?<student1>[^\s()]+)(\((?<comment>[^()]+)\))?/,
-};
+import { compact } from "lodash-es";
 
 function skillTranscript(level: number) {
   return level === 10 ? "M" : `${level}`;
 }
 
+type TeamProps = Partial<{ text: string | null; members: Member[] | null }>;
+
 export class Team {
-  private _stages: Stage[] = [];
   private _members: Member[];
   private membersMap: Map<StudentId, number> = new Map();
   private readonly _structure: TeamStructure;
-  private stats = { special: 0, striker: 0, empty: 0 };
+  private stat: Stat = { special: 0, striker: 0 };
 
+  stages: Stage[] = [];
   text: string = "";
 
-  static schema = z.object({
-    text: z.string().nullish(),
-    members: z.array(z.number().nullable().transform(it => it ?? undefined)).nullish(),
-    stages: z.object({
-      actions: z.object({
-        actor: z.number().nullish(),
-        target: z.number().nullish(),
-      }).array(),
-      comment: z.string().optional(),
-    }).array().nullish(),
-    skillTargetMap: z.tuple([z.number(), z.number()]).array().nullish(),
-  });
-
-  constructor(
-    structure: TeamStructure,
-    supporterCount: number = 0,
-    strikerCount: number = 0,
-    teamProps?: z.infer<typeof Team.schema>,
-  ) {
+  constructor(structure: TeamStructure, teamProps?: TeamProps) {
     this._structure = structure;
-    this.stats.special = supporterCount;
-    this.stats.striker = strikerCount;
-    this._members = teamProps?.members ?? new Array(structure === "normal" ? 6 : 10).fill(undefined);
-    this._members.forEach((member, index) => {
-      if (member) this.membersMap.set(member, index);
-      else this.stats.empty++;
-    });
     if (teamProps?.text) this.text = teamProps.text;
-  }
-
-  get stages(): Readonly<Stage[]> {
-    return this._stages;
+    if (teamProps?.members) {
+      const bound = this._structure === "normal" ? 4 : 6;
+      let i = 0;
+      for (; i < bound; i++) {
+        const studentId = teamProps.members[i];
+        if (studentId === undefined) continue;
+        this.membersMap.set(studentId, i);
+        this.stat.striker++;
+      }
+      for (; i < teamProps.members.length; i++) {
+        const studentId = teamProps.members[i];
+        if (studentId === undefined) continue;
+        this.membersMap.set(studentId, i);
+        this.stat.special++;
+      }
+      this._members = teamProps?.members;
+    } else {
+      this._members = new Array(structure === "normal" ? 6 : 10).fill(undefined);
+    }
   }
 
   get members(): Readonly<Member[]> {
@@ -61,13 +48,12 @@ export class Team {
   }
 
   private checkStruture(student: Student) {
-    if (this.stats.empty === 0) return false;
     if (this._structure === "normal") {
-      if (student.squad === "striker") return this.stats.striker < 4;
-      else return this.stats.special < 2;
+      if (student.squad === "striker") return this.stat.striker < 4;
+      else return this.stat.special < 2;
     } else {
-      if (student.squad === "striker") return this.stats.striker < 6;
-      else return this.stats.special < 4;
+      if (student.squad === "striker") return this.stat.striker < 6;
+      else return this.stat.special < 4;
     }
   }
 
@@ -78,7 +64,7 @@ export class Team {
 
   addMember(student: Student) {
     if (!this.checkStruture(student)) return;
-    this.stats[student.squad]++;
+    this.stat[student.squad]++;
     const bound = this._structure === "normal" ? 4 : 6;
     let i = student.squad === "striker" ? 0 : bound;
     const max = student.squad === "striker" ? bound : this._members.length;
@@ -92,10 +78,9 @@ export class Team {
 
   removeMember(studentId: StudentId) {
     const index = this.membersMap.get(studentId);
-    if (index === undefined) return;
-    this.stats["empty"]++;
-    if (this._structure === "normal") this.stats[index < 4 ? "striker" : "special"]--;
-    else this.stats[index < 6 ? "striker" : "special"]--;
+    if (index === undefined || this._members.length === this.membersMap.size) return;
+    if (this._structure === "normal") this.stat[index < 4 ? "striker" : "special"]--;
+    else this.stat[index < 6 ? "striker" : "special"]--;
     this._members[index] = undefined;
     this.membersMap.delete(studentId);
   }
@@ -104,93 +89,44 @@ export class Team {
     return this.membersMap.has(studentId);
   }
 
-  private static joinComment(commentA: string | undefined, commentB: string | undefined): string {
-    return [commentA, commentB].filter(it => Boolean(it)).join("，");
-  }
-
-  // FLOW     := STAGE [ → FLOW]
-  // STAGE    := ACTION [+STAGE] | COMMENT
-  // ACTION   := STUDENT[(COMMENT)]
-  // STUDENT  := [^\s]
-  // COMMENT  := [^()]
-  parse(studentMap: Record<StudentId, Student>) {
-    if (!this.text) return;
-    const stageTexts = this.text.split(/\n+/).filter(it => it.trim().length).flatMap(line => line.split(" → "));
-    const searchStudentByNameMap = new Map(
-      this._members
-        .filter(member => !isNil(member))
-        .map(member => studentMap[member])
-        .flatMap(student => [...student.aliases, student.name].map(key => [key, student])),
-    );
-
-    const aggregateStage = new Array<Stage>();
-    stageTexts.forEach((stageText) => {
-      const actions = new Array<Action>();
-      const comments = new Array<string>();
-      stageText.split("+").forEach((action) => {
-        const match = action.match(Pattern.Action);
-        if (match?.groups) {
-          const { student1, comment } = match.groups;
-          const actor = searchStudentByNameMap.get(student1)?.id;
-          if (actor) actions.push({ actor });
-          else comments.push(student1);
-          if (comment) comments.push(comment);
-        } else {
-          comments.push(action);
-        }
-      });
-
-      const stage = { actions, comment: comments.join(", ") };
-      const previous = aggregateStage.at(-1)!;
-      if (stage.comment || aggregateStage.length === 0) {
-        if (previous) previous.comment = previous.comment || "順著費用放";
-        aggregateStage.push(stage);
-      } else {
-        previous.comment = Team.joinComment(previous.comment, stage.comment);
-        previous.actions = [...previous.actions, ...stage.actions];
-      }
-    });
-    this._stages = aggregateStage;
-  }
-
   moveStage(index: number, pop: "front" | "back") {
-    if (index === 0 && this._stages[index].actions.length === 1 && pop === "front") return;
-    else if (index === this._stages.length - 1 && this._stages[index].actions.length === 1 && pop === "back") return;
-    const action = this._stages[index].actions[pop === "front" ? "shift" : "pop"]();
+    if (index === 0 && this.stages[index].actions.length === 1 && pop === "front") return;
+    else if (index === this.stages.length - 1 && this.stages[index].actions.length === 1 && pop === "back") return;
+    const action = this.stages[index].actions[pop === "front" ? "shift" : "pop"]();
     if (action === undefined) return;
-    const empted = this._stages[index].actions.length === 0;
+    const empted = this.stages[index].actions.length === 0;
     if (pop === "front") {
-      if (index === 0) this._stages.unshift({ actions: [action] });
-      else this._stages[index - 1].actions.push(action);
+      if (index === 0) this.stages.unshift({ actions: [action] });
+      else this.stages[index - 1].actions.push(action);
     } else {
-      if (index === this._stages.length - 1) this._stages.push({ actions: [action] });
-      else this._stages[index + 1].actions.unshift(action);
+      if (index === this.stages.length - 1) this.stages.push({ actions: [action] });
+      else this.stages[index + 1].actions.unshift(action);
     }
     if (empted) {
-      const [stage] = this._stages.splice(index, 1);
+      const [stage] = this.stages.splice(index, 1);
       if (pop === "front") {
-        const appendStage = this._stages.at(index - 1);
-        if (appendStage) appendStage.comment = Team.joinComment(appendStage.comment, stage?.comment);
+        const appendStage = this.stages.at(index - 1);
+        if (appendStage) appendStage.comment = joinComment(appendStage.comment, stage?.comment);
       } else {
-        const appendStage = this._stages.at(index);
-        if (appendStage) appendStage.comment = Team.joinComment(stage?.comment, appendStage.comment);
+        const appendStage = this.stages.at(index);
+        if (appendStage) appendStage.comment = joinComment(stage?.comment, appendStage.comment);
       }
     }
   }
 
   insertStage(index: number, direction: "front" | "back") {
-    this._stages.splice(direction === "front" ? index : index + 1, 0, { actions: [], comment: "新組" });
+    this.stages.splice(direction === "front" ? index : index + 1, 0, { actions: [], comment: "新組" });
   }
 
   deleteStage(index: number) {
-    this._stages.splice(index, 1);
+    this.stages.splice(index, 1);
   }
 
   toObject() {
     return {
       text: this.text,
       members: this._members,
-      stages: this._stages,
+      stages: this.stages,
     };
   }
 

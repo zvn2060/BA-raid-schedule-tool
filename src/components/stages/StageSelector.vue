@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { team } = defineProps<{ team: Team }>();
+const { team, studentMap } = defineProps<{ team: Team; studentMap: StudentMap }>();
 const emit = defineEmits<{
   "input:add": [];
   "input:arrow": [];
@@ -19,8 +19,6 @@ const keyNum = new Map([
   ["0", 9],
 ]);
 
-const memberData = useTeamMembers(() => team);
-
 onKeyStroke((e) => {
   if (!e.altKey) return;
   if (e.key === "q") return emit("input:add");
@@ -29,13 +27,13 @@ onKeyStroke((e) => {
   if (index === undefined || index >= team.members.length) return;
   const member = team.members[index];
   if (!member) return;
-  const student = memberData.value.data[member];
+  const student = studentMap.get(member);
   if (student) emit("input:student", student.prefer_name ?? student.name);
 });
 
 function onMemberClick(member: Member) {
   if (!member) return;
-  const student = memberData.value.data[member];
+  const student = studentMap.get(member);
   if (!student) return;
   emit("input:student", `${student.prefer_name ?? student.name}`);
 }

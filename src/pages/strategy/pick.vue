@@ -9,9 +9,9 @@ const onNameInput = useDebounceFn((val) => {
   filter.value.name = val;
 }, 600);
 
-const { students } = useStudents(filter);
+const { students } = useSearchStudents(filter);
 const battleStore = useBattleStore();
-const { teams } = storeToRefs(battleStore);
+const { teams, studentMap } = storeToRefs(battleStore);
 const studentsBySchool = computed(() => groupBy(students.value, "school"));
 const schoolStyles = computed(() =>
   mapValues(studentsBySchool.value, (_, school) => {
@@ -54,7 +54,7 @@ const homeItem: MenuItem = {
         </template>
         <template #content>
           <template v-if="currentTeam">
-            <MemberList :team="currentTeam" />
+            <MemberList :team="currentTeam" :student-map />
           </template>
           <template v-else>
             <TeamListItem

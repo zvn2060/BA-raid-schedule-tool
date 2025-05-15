@@ -3,11 +3,8 @@ import { debounceFilter, pausableFilter } from "@vueuse/core";
 import { split } from "lodash-es";
 
 const battleStore = useBattleStore();
-const { teams } = storeToRefs(battleStore);
+const { teams, currentTeam, currentTeamIndex, studentMap } = storeToRefs(battleStore);
 const textArea = useTemplateRef("textarea");
-const currentTeamIndex = ref(0);
-const currentTeam = computed(() => teams.value[currentTeamIndex.value]);
-const memberMap = useTeamMembers(currentTeam);
 const auto = ref(false);
 const pausableDebounceFilter = pausableFilter(debounceFilter(1000));
 
@@ -22,15 +19,12 @@ watch(
 
 watchWithFilter(
   () => currentTeam.value?.text,
-  () => {
-    triggerParse();
-  },
+  triggerParse,
   { eventFilter: pausableDebounceFilter.eventFilter },
 );
 
 function triggerParse() {
-  // @ts-expect-error memberMap student will not undefined
-  currentTeam.value?.parse(memberMap.value.data);
+  battleStore.parse();
 }
 
 let cursorPos = 0;
@@ -70,6 +64,10 @@ async function insertString(str: string, offset?: number) {
   textArea.value?.setSelectionRange(selectionEnd, selectionEnd);
   cursorPos = selectionEnd;
 }
+
+onMounted(() => {
+  battleStore.selectTeam(0);
+});
 </script>
 
 <template>
@@ -82,7 +80,7 @@ async function insertString(str: string, offset?: number) {
           :label="`${index + 1}`"
           class="w-10"
           :severity="currentTeamIndex === index ? undefined : 'secondary'"
-          @click="currentTeamIndex = index"
+          @click="battleStore.selectTeam(index)"
         />
         <div class="flex-1" />
         <Button
@@ -105,6 +103,7 @@ async function insertString(str: string, offset?: number) {
       />
       <StageSelector
         :team="currentTeam"
+        :student-map
         @input:arrow="insertArrow"
         @input:add="insertAdd"
         @input:student="insertStudentName"

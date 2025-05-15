@@ -21,7 +21,7 @@ const pagination = computed(() => ({
   first: debouncedFirst.value,
   itemPerPage: rows.value,
 }));
-const { students, total, update: updateProperty } = useStudents(filter, pagination);
+const { students, total, update: updateProperty } = useSearchStudents(filter, pagination);
 const { update } = updateStudentData();
 const { upload } = uploadStudentAvatars();
 const datatableConfig: DataTableProps = {
