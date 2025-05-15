@@ -1,6 +1,6 @@
 import download from "downloadjs";
-import { isNil, keyBy, partition } from "lodash-es";
-import { ZodError } from "zod";
+import { isNil, keyBy } from "lodash-es";
+import { z, ZodError } from "zod";
 
 const chineseNum = {
   1: "一",
@@ -19,10 +19,25 @@ function numberToChinese(index: number): string {
   return chineseNum[index + 1] ?? index;
 }
 
+const schema = z.object({
+  name: z.string().nullish(),
+  mode: z.nativeEnum(BattleMode).nullish(),
+  score: z.string().nullish(),
+  comment: z.string().nullish(),
+  title: z.string().nullish(),
+  teams: z.object({
+    text: z.string().nullish(),
+    members: z.array(z.number().nullable().transform(it => it ?? undefined)).nullish(),
+  }).array().nullish(),
+});
+
 export const useBattleStore = defineStore("battleStore", () => {
   const battle = ref(new Battle()) as Ref<Battle>;
   const teams = ref<Team[]>([]) as Ref<Team[]>;
-
+  const currentTeam = computed(() => currentTeamIndex.value === -1 ? undefined : teams.value[currentTeamIndex.value]);
+  const usedStudentIds = computed(() => teams.value?.flatMap(team => team.members).filter(it => it !== undefined) ?? []);
+  const studentMap = useStudents(usedStudentIds);
+  const currentTeamIndex = ref(-1);
   function addTeam() {
     teams.value.push(new Team(battle.value.teamStruture));
   }
@@ -31,22 +46,31 @@ export const useBattleStore = defineStore("battleStore", () => {
     teams.value.splice(index, 1);
   }
 
+  function selectTeam(index?: number) {
+    if (index === undefined) {
+      currentTeamIndex.value = -1;
+      return;
+    }
+    if (index >= teams.value.length) {
+      if (teams.value.length) currentTeamIndex.value = teams.value.length - 1;
+    } else {
+      currentTeamIndex.value = index;
+    }
+  }
+
+  function parse() {
+    if (!currentTeam.value) return;
+    const stages = parseTextToStages(currentTeam.value.text, studentMap.value);
+    currentTeam.value.stages = stages;
+  }
+
   async function loadFromJsonFile(content: string) {
     try {
-      const { teams: teamsData, ...battleData } = JSON.parse(content);
-      const parsedBattleData = Battle.schema.parse(battleData);
-      const parsedTeamsData = Team.schema.array().nullish().parse(teamsData);
-      const allStudents = parsedTeamsData?.flatMap(it => it.members ?? []).filter(member => !isNil(member));
-      const students = allStudents ? await IndexDBClient.students.where("id").anyOf(allStudents).toArray() : [];
-      const studentMap = keyBy(students, it => it.id);
-
+      const json = JSON.parse(content);
+      const { teams: parsedTeamsData, ...parsedBattleData } = schema.parse(json);
       battle.value = new Battle(parsedBattleData);
       const structure = battle.value.teamStruture;
-      if (!parsedTeamsData) return;
-      teams.value = parsedTeamsData.map((data) => {
-        const [strikers, special] = partition(data.members?.filter(Boolean).map(id => studentMap[id!]), it => it.squad === "striker");
-        return new Team(structure, special.length, strikers.length, data);
-      });
+      teams.value = parsedTeamsData?.map(data => new Team(structure, data)) ?? [];
     } catch (error) {
       if (error instanceof SyntaxError) throw Error(error.message);
       else if (error instanceof ZodError) throw Error(error.format()._errors.join("\n"));
@@ -85,11 +109,27 @@ export const useBattleStore = defineStore("battleStore", () => {
 
   async function exportProject(format: "xml" | "json") {
     if (format === "xml") workerCreateScene(battle.value.name, toRaw(battle.value), toRaw(teams.value).map(it => it.toObject()));
-    else download(JSON.stringify({
-      ...battle.value.toObject(),
-      teams: teams.value.map(it => it.toObject()),
-    }, null, 2), `${battle.value.name}.json`);
+    else download(
+      JSON.stringify({
+        ...battle.value.toObject(),
+        teams: teams.value.map(it => ({ text: it.text, members: it.members })),
+      }, null, 2),
+      `${battle.value.name}.json`,
+    );
   }
 
-  return { battle, teams, loadFromJsonFile, addTeam, deleteTeam, generateDescription, exportProject };
+  return {
+    battle,
+    teams,
+    currentTeam,
+    currentTeamIndex,
+    studentMap,
+    loadFromJsonFile,
+    addTeam,
+    deleteTeam,
+    generateDescription,
+    exportProject,
+    selectTeam,
+    parse,
+  };
 });

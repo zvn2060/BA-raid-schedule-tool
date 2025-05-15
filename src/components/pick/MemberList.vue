@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import TempVar from "vue-temp-var";
 
-const { team } = defineProps<{ team: Team }>();
-const memberData = useTeamMembers(() => team);
+const { team, studentMap } = defineProps<{ team: Team; studentMap: StudentMap }>();
 </script>
 
 <template>
@@ -13,7 +12,7 @@ const memberData = useTeamMembers(() => team);
     :class="getMemberBg(team.struture, member, index)"
   >
     <StudentAvatar :member="member" class="w-24 bg-surface-300" />
-    <TempVar v-if="member" v-slot="{ student }" :define="{ student: memberData.data[member]! }">
+    <TempVar v-if="member" v-slot="{ student }" :define="{ student: studentMap.get(member)! }">
       <div class="flex-1 grid px-1 py-2 gap-2 grid-rows-[min-content_1fr]">
         <div class="flex items-center gap-2">
           <span class="font-bold text-lg">{{ student.name }}</span>

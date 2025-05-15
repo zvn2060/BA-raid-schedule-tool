@@ -1,5 +1,3 @@
-import { z } from "zod";
-
 export enum BattleMode {
   Raid = "總力戰",
   Elimination = "大決戰",
@@ -9,22 +7,22 @@ export enum BattleMode {
 }
 
 export const BattleModeOptions = Object.values(BattleMode);
+type BattleProps = Partial<{
+  name: string | null;
+  title: string | null;
+  comment: string | null;
+  score: string | null;
+  mode: BattleMode | null;
+}>;
 
-export class Battle implements Serializable<z.infer<typeof Battle.schema>> {
+export class Battle {
   name: string = "總力軸";
   title: string = "";
   comment: string = "※註解";
   score: string = "0";
   mode: BattleMode = BattleMode.Raid;
-  static schema = z.object({
-    name: z.string().nullish(),
-    mode: z.nativeEnum(BattleMode).nullish(),
-    score: z.string().nullish(),
-    comment: z.string().nullish(),
-    title: z.string().nullish(),
-  });
 
-  constructor(battleProps?: z.infer<typeof Battle.schema>) {
+  constructor(battleProps?: BattleProps) {
     if (battleProps?.name) this.name = battleProps.name;
     if (battleProps?.comment) this.comment = battleProps.comment;
     if (battleProps?.score) this.score = battleProps.score;
