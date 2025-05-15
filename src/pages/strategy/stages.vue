@@ -110,7 +110,7 @@ onMounted(() => {
       />
     </SplitterPanel>
     <SplitterPanel>
-      <DataList class="h-full">
+      <DataList class="h-full" list-class="gap-2">
         <template #content>
           <Stage
             v-for="(_, index) in currentTeam.stages"

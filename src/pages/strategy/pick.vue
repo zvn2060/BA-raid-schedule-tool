@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { groupBy, mapValues } from "lodash-es";
+import { has, set } from "lodash-es";
 import type { MenuItem } from "primevue/menuitem";
-import uniqolor from "uniqolor";
 
 const filter = ref({ name: "" });
 const nameInput = ref("");
@@ -12,13 +11,15 @@ const onNameInput = useDebounceFn((val) => {
 const { students } = useSearchStudents(filter);
 const battleStore = useBattleStore();
 const { teams, studentMap } = storeToRefs(battleStore);
-const studentsBySchool = computed(() => groupBy(students.value, "school"));
-const schoolStyles = computed(() =>
-  mapValues(studentsBySchool.value, (_, school) => {
-    const { color, isLight } = uniqolor(school, { lightness: [90] });
-    return { backgroundColor: color, color: isLight ? "black" : "white" };
-  }),
-);
+const studentsBySchoolAndSquad = computed(() => {
+  const groups: Record<string, Record<Student["squad"], Student[]>> = {};
+  students.value?.forEach((student) => {
+    if (!has(groups, [student.school, student.squad]))
+      set(groups, [student.school, student.squad], []);
+    groups[student.school][student.squad].push(student);
+  });
+  return groups;
+});
 
 const currentTeamIndex = ref(-1);
 const currentTeam = computed(() => teams.value[currentTeamIndex.value] as Team);
@@ -40,7 +41,7 @@ const homeItem: MenuItem = {
   <!-- eslint-disable vue/require-v-for-key -->
   <Splitter>
     <SplitterPanel>
-      <DataList class="h-full" mirror-y>
+      <DataList class="h-full" mirror-y list-class="gap-2">
         <template #header>
           <Breadcrumb :home="homeItem" :model="breakcrumbItems" />
           <Button
@@ -79,13 +80,26 @@ const homeItem: MenuItem = {
           />
         </template>
         <template #content>
-          <div v-for="(students, school) in studentsBySchool">
-            <div :style="schoolStyles[school]" class="school-container">
-              <div class="col-span-full font-bold text-2xl">
-                {{ school }}
-              </div>
+          <div v-for="(studentsBySquad, school) in studentsBySchoolAndSquad" class="school-container bg-slate-600 border-b border-b-gray-400">
+            <div class="text-white row-span-2 font-bold text-2xl px-2 py-1" style="writing-mode: vertical-lr;">
+              <span class="sticky z-10 top-2">{{ school }}</span>
+            </div>
+            <div v-if="studentsBySquad['striker']" class="bg-striker border-b">
               <div
-                v-for="student in students"
+                v-for="student in studentsBySquad['striker']"
+                class="student-container "
+                :class="{ selected: currentTeam?.hasMember(student.id) }"
+                @click="currentTeam?.toogleMember(student)"
+              >
+                <StudentAvatar :member="student.id" class="icon" />
+                <span class="text-center font-bold py-1 select-none">
+                  {{ student.name }}
+                </span>
+              </div>
+            </div>
+            <div v-if="studentsBySquad['special']" class="bg-special col-start-2">
+              <div
+                v-for="student in studentsBySquad['special']"
                 class="student-container"
                 :class="{ selected: currentTeam?.hasMember(student.id) }"
                 @click="currentTeam?.toogleMember(student)"
@@ -108,7 +122,11 @@ const homeItem: MenuItem = {
 @reference "tailwindcss-primeui";
 
 .school-container {
-  @apply grid grid-cols-[repeat(auto-fit,minmax(105px,1fr))] gap-2 p-2 border-y border-black/20 ;
+  @apply grid grid-cols-[max-content_1fr];
+}
+
+.school-container > div:not(:first-child) {
+  @apply grid grid-cols-[repeat(auto-fill,minmax(105px,1fr))] gap-2 p-2;
 }
 
 .student-container {
