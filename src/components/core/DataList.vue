@@ -1,5 +1,5 @@
 <script setup lang="ts">
-defineProps<{ mirrorY?: boolean; blocked?: boolean }>();
+defineProps<{ mirrorY?: boolean; blocked?: boolean; listClass?: string }>();
 </script>
 
 <template>
@@ -7,14 +7,11 @@ defineProps<{ mirrorY?: boolean; blocked?: boolean }>();
     <div v-if="$slots['header']" class="text-2xl flex items-center font-bold px-4 h-16">
       <slot name="header" />
     </div>
-    <div
-      class="overflow-y-auto min-h-0 flex-1 mb-2"
-      :class="{ 'datalist-mirrow-y': mirrorY }"
-    >
-      <BlockUI class="flex flex-col gap-2" :blocked>
+    <BlockUI class="min-h-0 flex-1" :blocked>
+      <div class="overflow-y-auto mb-2 flex flex-col h-full" :class="[listClass, { 'datalist-mirrow-y': mirrorY }]">
         <slot name="content" />
-      </BlockUI>
-    </div>
+      </div>
+    </BlockUI>
   </div>
 </template>
 
