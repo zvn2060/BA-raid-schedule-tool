@@ -4,7 +4,7 @@ declare global {
   type Stage = { actions: Action[]; comment?: string };
   type StudentId = number;
   type StudentMap = Map<StudentId, Student>;
-  type Member = StudentId | undefined;
+  type Member = StudentId | null;
   type Stat = { special: number; striker: number };
   type Student = {
     readonly id: StudentId;

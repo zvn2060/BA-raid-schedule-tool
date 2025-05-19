@@ -27,7 +27,7 @@ const schema = z.object({
   title: z.string().nullish(),
   teams: z.object({
     text: z.string().nullish(),
-    members: z.array(z.number().nullable().transform(it => it ?? undefined)).nullish(),
+    members: z.number().nullable().array().nullish(),
   }).array().nullish(),
 });
 
@@ -35,7 +35,7 @@ export const useBattleStore = defineStore("battleStore", () => {
   const battle = ref(new Battle()) as Ref<Battle>;
   const teams = ref<Team[]>([]) as Ref<Team[]>;
   const currentTeam = computed(() => currentTeamIndex.value === -1 ? undefined : teams.value[currentTeamIndex.value]);
-  const usedStudentIds = computed(() => teams.value?.flatMap(team => team.members).filter(it => it !== undefined) ?? []);
+  const usedStudentIds = computed(() => teams.value?.flatMap(team => team.members).filter(it => it !== null) ?? []);
   const studentMap = useStudents(usedStudentIds);
   const currentTeamIndex = ref(-1);
   function addTeam() {
@@ -91,10 +91,15 @@ export const useBattleStore = defineStore("battleStore", () => {
     return [
       "<簡述>",
       "",
-      isMultipleTeams ? "<時間軸>\n" : null,
-      isMultipleTeams
-        ? teams.value.map((team, index) => `${numberToChinese(index)}隊：\n${team.generateDescription(studentMap)}`).join("\n\n")
-        : `隊伍：\n${teams.value[0].generateDescription(studentMap)}`,
+      ...(isMultipleTeams
+        ? [
+            "<時間軸>\n",
+            teams.value.map((team, index) => `${numberToChinese(index)}隊：\n${team.generateDescription(studentMap)}`).join("\n\n"),
+          ]
+        : [
+            "隊伍：\n",
+            `${teams.value[0].generateDescription(studentMap)}`,
+          ]),
       "",
       "文字敘述重要時間點：",
       "",
