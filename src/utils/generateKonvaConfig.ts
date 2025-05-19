@@ -19,7 +19,7 @@ function optionalElement(show: boolean, element: unknown) {
 }
 
 function createMemberAvatar(member: Member, props: MemberAvatarProps) {
-  if (member === undefined) return [];
+  if (member === null) return [];
   const { stroke, image, strokeWidth, side, ...commons } = props;
   return [
     { className: "Image", attrs: { ...commons, image, width: side, height: side } },

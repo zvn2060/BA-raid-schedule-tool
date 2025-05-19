@@ -23,13 +23,13 @@ export class Team {
       let i = 0;
       for (; i < bound; i++) {
         const studentId = teamProps.members[i];
-        if (studentId === undefined) continue;
+        if (studentId === null) continue;
         this.membersMap.set(studentId, i);
         this.stat.striker++;
       }
       for (; i < teamProps.members.length; i++) {
         const studentId = teamProps.members[i];
-        if (studentId === undefined) continue;
+        if (studentId === null) continue;
         this.membersMap.set(studentId, i);
         this.stat.special++;
       }
@@ -81,7 +81,7 @@ export class Team {
     if (index === undefined || this._members.length === this.membersMap.size) return;
     if (this._structure === "normal") this.stat[index < 4 ? "striker" : "special"]--;
     else this.stat[index < 6 ? "striker" : "special"]--;
-    this._members[index] = undefined;
+    this._members[index] = null;
     this.membersMap.delete(studentId);
   }
 
@@ -92,16 +92,18 @@ export class Team {
   moveStage(index: number, pop: "front" | "back") {
     if (index === 0 && this.stages[index].actions.length === 1 && pop === "front") return;
     else if (index === this.stages.length - 1 && this.stages[index].actions.length === 1 && pop === "back") return;
-    const action = this.stages[index].actions[pop === "front" ? "shift" : "pop"]();
-    if (action === undefined) return;
-    const empted = this.stages[index].actions.length === 0;
     if (pop === "front") {
+      const action = this.stages[index].actions.shift();
+      if (action === undefined) return;
       if (index === 0) this.stages.unshift({ actions: [action] });
       else this.stages[index - 1].actions.push(action);
     } else {
+      const action = this.stages[index].actions.pop();
+      if (action === undefined) return;
       if (index === this.stages.length - 1) this.stages.push({ actions: [action] });
       else this.stages[index + 1].actions.unshift(action);
     }
+    const empted = this.stages[index].actions.length === 0;
     if (empted) {
       const [stage] = this.stages.splice(index, 1);
       if (pop === "front") {
