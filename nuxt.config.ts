@@ -12,6 +12,7 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "@nuxt/icon",
     "@nuxt/eslint",
+    "@nuxt/test-utils/module",
   ],
   ssr: false,
   components: [

@@ -2,6 +2,7 @@ onlyBuiltDependencies:
   - '@hebilicious/vue-query-nuxt'
   - '@morev/vue-transitions'
   - '@parcel/watcher'
+  - '@tailwindcss/oxide'
   - canvas
   - esbuild
   - vue-demi
