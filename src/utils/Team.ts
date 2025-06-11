@@ -35,7 +35,7 @@ export class Team {
       }
       this._members = teamProps?.members;
     } else {
-      this._members = new Array(structure === "normal" ? 6 : 10).fill(undefined);
+      this._members = new Array(structure === "normal" ? 6 : 10).fill(null);
     }
   }
 
@@ -69,7 +69,7 @@ export class Team {
     let i = student.squad === "striker" ? 0 : bound;
     const max = student.squad === "striker" ? bound : this._members.length;
     for (; i < max; i++) {
-      if (this._members[i] !== undefined) continue;
+      if (this._members[i] !== null) continue;
       this.membersMap.set(student.id, i);
       this._members[i] = student.id;
       break;
@@ -78,7 +78,7 @@ export class Team {
 
   removeMember(studentId: StudentId) {
     const index = this.membersMap.get(studentId);
-    if (index === undefined || this._members.length === this.membersMap.size) return;
+    if (index === undefined) return;
     if (this._structure === "normal") this.stat[index < 4 ? "striker" : "special"]--;
     else this.stat[index < 6 ? "striker" : "special"]--;
     this._members[index] = null;
