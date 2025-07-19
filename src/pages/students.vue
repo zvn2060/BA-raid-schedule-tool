@@ -45,6 +45,7 @@ const starOptions = [
   "專 1",
   "專 2",
   "專 3",
+  "專 4",
 ];
 
 const rowsPerPageOptions = computed(() =>
@@ -109,9 +110,9 @@ const rawLevelColumnProps: Array<
   {
     field: "star",
     min: 1,
-    max: 8,
+    max: 9,
     header: "星等",
-    bodyClass: "max-w-15",
+    bodyClass: "max-w-30",
     options: starOptions,
     component: Stars,
   },
