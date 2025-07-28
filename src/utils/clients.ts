@@ -1,24 +1,18 @@
 import Dexie, { type EntityTable } from "dexie";
 import { uniq } from "lodash-es";
 
+type SchaleDbStudentDTO = {
+  Id: number;
+  School: string;
+  StarGrade: number;
+  Name: string;
+  SquadType: "Main" | "Support";
+  FavorAlts: number[];
+};
+
 export const IndexDBClient = new Dexie("ba-strategy-tool") as Dexie & {
   students: EntityTable<Student, "id">;
 };
-
-export function calculateKeywords(student: Student) {
-  const keywords = [student.name, ...student.aliases]
-    .flatMap((it) => {
-      const match = it.match(/(?<name>[^()（）]+)([(（](?<skin>[^()（）]+)[)）])?/);
-      if (!match || !match.groups) return [it];
-      const { name, skin } = match.groups;
-      const keywords = name === "白子＊恐怖"
-        ? ["白子", "恐怖", ..."白子", ..."恐怖"]
-        : [name, ...name];
-      if (skin) keywords.push(skin, ...skin);
-      return keywords;
-    });
-  return uniq(keywords);
-}
 
 IndexDBClient
   .version(1)
@@ -47,13 +41,32 @@ IndexDBClient
     }),
   );
 
-type StudentDTO = {
-  Id: number;
-  School: string;
-  StarGrade: number;
-  Name: string;
-  SquadType: "Main" | "Support";
-};
+IndexDBClient
+  .version(4)
+  .stores({ students: ["&id", "name", "*keywords", "*skin"].join(",") })
+  .upgrade(trans => trans
+    .table("students")
+    .toCollection()
+    .modify((student) => {
+      student.skin = [];
+    }),
+  );
+
+const HALF_DAY_IN_MS = 43200000;
+
+IndexDBClient.on("ready", async (_db) => {
+  const lastUpdate = localStorage.getItem("db.last-updated");
+  const now = new Date();
+  if (lastUpdate && now.getTime() - new Date(lastUpdate).getTime() <= HALF_DAY_IN_MS) return;
+  localStorage.setItem("db.last-updated", now.toISOString());
+  console.log("start update db");
+  const db = _db as typeof IndexDBClient;
+  const response = await fetch("https://schaledb.com/data/tw/students.min.json");
+  const data = await response.json() as Record<number, SchaleDbStudentDTO>;
+  await db.students.bulkPut(
+    Object.values(data).map(dto => DTOtoStudent(dto)),
+  );
+});
 
 const SchoolMap = {
   Gehenna: "格黑娜",
@@ -71,7 +84,7 @@ const SchoolMap = {
   Sakugawa: "其他",
 } as Record<string, string>;
 
-function DTOtoStudent({ Id, Name, SquadType, School, StarGrade }: StudentDTO): Student {
+function DTOtoStudent({ Id, Name, SquadType, School, StarGrade, FavorAlts }: SchaleDbStudentDTO): Student {
   const data: Student = {
     id: Id,
     name: Name,
@@ -79,6 +92,7 @@ function DTOtoStudent({ Id, Name, SquadType, School, StarGrade }: StudentDTO): S
     squad: SquadType === "Main" ? "striker" : "special",
     school: SchoolMap[School] ?? School,
     aliases: [],
+    skin: FavorAlts ?? [],
     star: StarGrade,
     kizuna: 1,
     level: 1,
@@ -92,15 +106,17 @@ function DTOtoStudent({ Id, Name, SquadType, School, StarGrade }: StudentDTO): S
   return data;
 }
 
-IndexDBClient.on("ready", async (_db) => {
-  const db = _db as typeof IndexDBClient;
-  const response = await fetch("https://schaledb.com/data/tw/students.min.json");
-  const data = await response.json() as Record<number, StudentDTO>;
-  const exists = await db.students.toArray();
-  const existIds = new Set(exists.map(it => it.id));
-  await db.students.bulkPut(
-    Object.values(data)
-      .filter(it => !existIds.has(it.Id))
-      .map(dto => DTOtoStudent(dto)),
-  );
-});
+export function calculateKeywords(student: Student) {
+  const keywords = [student.name, ...student.aliases]
+    .flatMap((it) => {
+      const match = it.match(/(?<name>[^()（）]+)([(（](?<skin>[^()（）]+)[)）])?/);
+      if (!match || !match.groups) return [it];
+      const { name, skin } = match.groups;
+      const keywords = name === "白子＊恐怖"
+        ? ["白子", "恐怖", ..."白子", ..."恐怖"]
+        : [name, ...name];
+      if (skin) keywords.push(skin, ...skin);
+      return keywords;
+    });
+  return uniq(keywords);
+}
