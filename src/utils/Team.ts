@@ -136,6 +136,7 @@ export class Team {
     return this.members.map((id) => {
       if (!id) return "空格";
       const member = studentMap[id];
+      const kizunas = member.skin.map(skinId => studentMap[skinId].kizuna);
       const releases = [member.release_hp ?? 0, member.release_atk ?? 0, member.release_heal ?? 0];
       return compact([
         member.name.replace("（", "(").replace("）", ")"),
@@ -145,6 +146,7 @@ export class Team {
         member.star > 5 ? `固有${member.star - 5}` : null,
         member.weapon_level,
         `T${member.gear_1}T${member.gear_2}T${member.gear_3}`,
+        `絆${[member.kizuna, ...kizunas].join("+")}`,
         member.gear_unique ? `愛用品T${member.gear_unique}` : null,
         releases.some(it => it) ? releases.join(" ") : null,
       ]).join(" ");
