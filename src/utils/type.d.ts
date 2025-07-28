@@ -13,6 +13,7 @@ declare global {
     image?: File;
     keywords: string[];
     aliases: string[];
+    skin: number[];
     squad: "striker" | "special";
     school: string;
     star: number;

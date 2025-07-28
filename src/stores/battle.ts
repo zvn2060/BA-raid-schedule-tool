@@ -85,7 +85,11 @@ export const useBattleStore = defineStore("battleStore", () => {
 
     const allStudents = teams.value?.flatMap(it => it.members ?? []).filter(member => !isNil(member));
     const students = allStudents ? await IndexDBClient.students.where("id").anyOf(allStudents).toArray() : [];
-    const studentMap = keyBy(students, it => it.id);
+    const relatedAltSkinStudentIds = students.flatMap(student => student.skin);
+    const relatedAltSkinStudents = relatedAltSkinStudentIds.length
+      ? await IndexDBClient.students.where("id").anyOf(relatedAltSkinStudentIds).toArray()
+      : [];
+    const studentMap = keyBy([...students, ...relatedAltSkinStudents], it => it.id);
 
     const isMultipleTeams = teamCount > 1;
     return [
