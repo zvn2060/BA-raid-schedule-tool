@@ -61,11 +61,12 @@ IndexDBClient.on("ready", async (_db) => {
   localStorage.setItem("db.last-updated", now.toISOString());
   console.log("start update db");
   const db = _db as typeof IndexDBClient;
+  const existIds = new Set((await db.students.toArray()).map(it => it.id));
   const response = await fetch("https://schaledb.com/data/tw/students.min.json");
   const data = await response.json() as Record<number, SchaleDbStudentDTO>;
-  await db.students.bulkPut(
-    Object.values(data).map(dto => DTOtoStudent(dto)),
-  );
+  const nonExistData = Object.values(data).filter(it => !existIds.has(it.Id));
+  console.log("新增：\n", nonExistData);
+  await db.students.bulkAdd(nonExistData.map(dto => DTOtoStudent(dto)));
 });
 
 const SchoolMap = {
