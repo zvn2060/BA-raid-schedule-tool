@@ -4,6 +4,7 @@ import { initParser } from "udsv";
 
 type StudentCsvDTO = {
   名稱: string;
+  偏好別名: string | null;
   別名: string | null;
   星等: number | null;
   等級: number | null;
@@ -33,6 +34,7 @@ const parser = initParser({
   trim: true,
   cols: [
     { name: "名稱", type: "s", repl },
+    { name: "偏好別名", type: "s", repl },
     { name: "別名", type: "s", repl },
     { name: "星等", type: "n", repl },
     { name: "等級", type: "n", repl },
@@ -57,6 +59,7 @@ const parser = initParser({
 const keyMap: Record<Exclude<keyof StudentCsvDTO, "名稱">, { key: keyof Student; fn?: (data: StudentCsvDTO) => any }> = {
   EX: { key: "skill_ex" },
   extra: { key: "star", fn: data => (data.星等 !== null && data.extra !== null) ? (data.星等 + data.extra) : null },
+  偏好別名: { key: "prefer_name" },
   別名: { key: "aliases", fn: data => data.別名?.split("|") ?? null },
   固有等級: { key: "weapon_level" },
   愛用品: { key: "gear_unique" },
