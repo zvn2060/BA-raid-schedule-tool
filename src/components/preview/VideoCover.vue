@@ -185,12 +185,9 @@ const imageName = computed(() => `${battle.value.title}-影片封面`);
           </KonvaGroup>
         </TempVar>
         <TempVar
-          v-else
+          v-else-if="battle.mode === BattleMode.Test"
           v-slot="{ offsetY, offsetX }"
-          :define="{
-            offsetY: teamCount === 3 ? 315 : 205,
-            offsetX: battle.mode === BattleMode.Test ? 1055 : 25,
-          }"
+          :define="{ offsetY: 315, offsetX: 1055 }"
         >
           <KonvaGroup
             v-for="(team, teamId) in teams"
@@ -216,6 +213,70 @@ const imageName = computed(() => `${battle.value.title}-影片封面`);
             </template>
           </KonvaGroup>
         </TempVar>
+        <template v-else>
+          <TempVar
+            v-slot="{ offsetY, offsetX }"
+            :define="{
+              offsetY: teamCount === 3 ? 315 : 205,
+              offsetX: 25,
+            }"
+          >
+            <KonvaGroup
+              v-for="(team, teamId) in teams.slice(0, 4)"
+              :x="offsetX"
+              :y="offsetY + teamId * 220"
+            >
+              <KonvaRect
+                :width="790"
+                :height="190"
+                stroke="#ffffff"
+                :strokeWidth="10"
+                fill="#000000"
+              />
+              <template v-for="(member, memberId) in team.members">
+                <KonvaAvatar
+                  v-if="member"
+                  :member="member"
+                  :x="35 + memberId * 120"
+                  :y="35"
+                  :side="120"
+                  stroke="#000000"
+                />
+              </template>
+            </KonvaGroup>
+          </TempVar>
+          <TempVar
+            v-slot="{ offsetY, offsetX }"
+            :define="{
+              offsetY: teamCount === 3 ? 315 : 205,
+              offsetX: 1105,
+            }"
+          >
+            <KonvaGroup
+              v-for="(team, teamId) in teams.slice(4)"
+              :x="offsetX"
+              :y="offsetY + teamId * 220"
+            >
+              <KonvaRect
+                :width="790"
+                :height="190"
+                stroke="#ffffff"
+                :strokeWidth="10"
+                fill="#000000"
+              />
+              <template v-for="(member, memberId) in team.members">
+                <KonvaAvatar
+                  v-if="member"
+                  :member="member"
+                  :x="35 + memberId * 120"
+                  :y="35"
+                  :side="120"
+                  stroke="#000000"
+                />
+              </template>
+            </KonvaGroup>
+          </TempVar>
+        </template>
       </KonvaGroup>
     </KonvaLayer>
   </ImageEditor>

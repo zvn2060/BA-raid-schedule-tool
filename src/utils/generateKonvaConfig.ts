@@ -81,9 +81,9 @@ export function generateVideoCover(battle: BattleObject, teams: TeamObject[], av
         children,
       });
     }
-  } else {
-    const offsetX = battle.mode === BattleMode.Test ? 1055 : 25;
-    const offsetY = teams.length === 3 ? 315 : 205;
+  } else if (battle.mode === BattleMode.Test) {
+    const offsetX = 1055;
+    const offsetY = 315;
     for (let teamId = 0; teamId < teams.length; teamId++) {
       const children: unknown[] = teams[teamId].members.flatMap((member, index) => createMemberAvatar(member, { x: 35 + index * 120, y: 35, side: 120, stroke: "#000000", image: avatarMap[member ?? 0] }));
       children.unshift({ className: "Rect", attrs: { width: 790, height: 190, fill: "#000000", stroke: "#FFFFFF", strokeWidth: 10 } });
@@ -92,6 +92,33 @@ export function generateVideoCover(battle: BattleObject, teams: TeamObject[], av
         className: "Group",
         children,
       });
+    }
+  } else {
+    {
+      const offsetX = 25;
+      const offsetY = teams.length === 3 ? 315 : 205;
+      for (let teamId = 0; teamId < teams.slice(0, 4).length; teamId++) {
+        const children: unknown[] = teams[teamId].members.flatMap((member, index) => createMemberAvatar(member, { x: 35 + index * 120, y: 35, side: 120, stroke: "#000000", image: avatarMap[member ?? 0] }));
+        children.unshift({ className: "Rect", attrs: { width: 790, height: 190, fill: "#000000", stroke: "#FFFFFF", strokeWidth: 10 } });
+        teamsGroups.push({
+          attrs: { x: offsetX, y: offsetY + teamId * 220 },
+          className: "Group",
+          children,
+        });
+      }
+    }
+    {
+      const offsetX = 1105;
+      const offsetY = 205;
+      for (let teamId = 0; teamId < teams.slice(4).length; teamId++) {
+        const children: unknown[] = teams[teamId].members.flatMap((member, index) => createMemberAvatar(member, { x: 35 + index * 120, y: 35, side: 120, stroke: "#000000", image: avatarMap[member ?? 0] }));
+        children.unshift({ className: "Rect", attrs: { width: 790, height: 190, fill: "#000000", stroke: "#FFFFFF", strokeWidth: 10 } });
+        teamsGroups.push({
+          attrs: { x: offsetX, y: offsetY + teamId * 220 },
+          className: "Group",
+          children,
+        });
+      }
     }
   }
   return {
