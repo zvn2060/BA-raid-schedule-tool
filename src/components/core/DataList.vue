@@ -8,8 +8,10 @@ defineProps<{ mirrorY?: boolean; blocked?: boolean; listClass?: string }>();
       <slot name="header" />
     </div>
     <BlockUI class="min-h-0 flex-1" :blocked>
-      <div class="overflow-y-auto mb-2 flex flex-col h-full" :class="[listClass, { 'datalist-mirrow-y': mirrorY }]">
-        <slot name="content" />
+      <div class="overflow-y-auto mb-2 h-full" :class="{ 'datalist-mirrow-y': mirrorY }">
+        <div class="flex flex-col h-fit" :class="listClass">
+          <slot name="content" />
+        </div>
       </div>
     </BlockUI>
   </div>
