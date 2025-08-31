@@ -52,6 +52,17 @@ IndexDBClient
     }),
   );
 
+IndexDBClient
+  .version(5)
+  .stores({ students: ["&id", "name", "*keywords", "*skin"].join(",") })
+  .upgrade(trans => trans
+    .table("students")
+    .toCollection()
+    .modify((student) => {
+      student.school = SchoolMap[student.school] ?? student.school;
+    }),
+  );
+
 const HALF_DAY_IN_MS = 43200000;
 
 IndexDBClient.on("ready", async (_db) => {
@@ -83,6 +94,8 @@ const SchoolMap = {
   Arius: "奧利斯",
   Tokiwadai: "其他",
   Sakugawa: "其他",
+  Highlander: "海蘭德",
+  WildHunt: "狂獵",
 } as Record<string, string>;
 
 function DTOtoStudent({ Id, Name, SquadType, School, StarGrade, FavorAlts }: SchaleDbStudentDTO): Student {
