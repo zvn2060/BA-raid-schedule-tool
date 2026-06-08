@@ -1,6 +1,6 @@
 export { };
 declare global {
-  type Action = { actor: Member; target?: Member };
+  type Action = { actor: Member; target?: Member ; borderColor?: string};
   type Stage = { actions: Action[]; comment?: string };
   type StudentId = number;
   type StudentMap = Map<StudentId, Student>;

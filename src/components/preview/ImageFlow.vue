@@ -66,8 +66,8 @@ const height = computed(() => stagePages.value.length * 1080);
                 <KonvaAvatar
                   :member="action.actor"
                   :side="148"
-                  stroke="black"
-                  :stroke-width="2"
+                  :stroke="action.borderColor ?? 'black'"
+                  :stroke-width="4"
                   :x="(index % 4) * 150 + 10 * (index % 4) + 1"
                   :y="Math.floor(index / 4) * 160 + 1"
                 />
