@@ -1,4 +1,4 @@
-const pattern = /(?<student1>[^\s()]+)(\((?<comment>[^()]+)\))?/;
+const pattern = /(?<student1>[^\s()@]+)(?:@(?<colorCode>[0-9a-fA-F]{6}|[a-zA-Z]+))?(?:\((?<comment>[^()]+)\))?/;
 
 export function joinComment(commentA: string | undefined, commentB: string | undefined): string {
   return [commentA, commentB].filter(Boolean).join("，");
@@ -24,9 +24,12 @@ export function parseTextToStages(text: string, studentMap: StudentMap): Array<S
     stageText.split("+").forEach((action) => {
       const match = action.match(pattern);
       if (match?.groups) {
-        const { student1, comment } = match.groups;
+        const { student1, colorCode, comment } = match.groups;
         const actor = searchStudentByNameMap.get(student1)?.id;
-        if (actor) actions.push({ actor });
+        const borderColor = colorCode
+          ? (/^[0-9a-fA-F]{6}$/.test(colorCode) ? `#${colorCode}` : colorCode)
+          : "#000000";
+        if (actor) actions.push({ actor, borderColor });
         else comments.push(student1);
         if (comment) comments.push(comment);
       } else {
