@@ -26,9 +26,10 @@ export function parseTextToStages(text: string, studentMap: StudentMap): Array<S
       if (match?.groups) {
         const { student1, colorCode, comment } = match.groups;
         const actor = searchStudentByNameMap.get(student1)?.id;
-        const borderColor = colorCode
-          ? (/^[0-9a-fA-F]{6}$/.test(colorCode) ? `#${colorCode}` : colorCode)
-          : "#000000";
+        const borderColor = (CSS.supports('color', colorCode)) ? colorCode
+            : (/^[0-9a-fA-F]{6}$/.test(colorCode)) ? `#${colorCode}`
+            : "#000000";
+
         if (actor) actions.push({ actor, borderColor });
         else comments.push(student1);
         if (comment) comments.push(comment);
