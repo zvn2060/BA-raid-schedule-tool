@@ -3,6 +3,7 @@ export type StageInfo = {
   commentWidth: number;
   actions: Array<{
     actor: Member;
+    target?: Member;
     borderColor?: string;
   }>;
   y: number;
@@ -43,7 +44,7 @@ export function calculateStagePages(teams: ReturnType<Team["toObject"]>[], gap: 
       const data = {
         comment: stage.comment,
         commentWidth: metrics.comment.width,
-        actions: stage.actions.map(({ actor, borderColor }) => ({ actor, borderColor })),
+        actions: stage.actions.map(({ actor, targetActor, borderColor }) => ({ actor, targetActor, borderColor })),
         y,
         avatarsY: metrics.comment.height + 20,
       };

@@ -37,7 +37,7 @@ const hover = useElementHover(container);
     </Inplace>
     <div class="stage-avatars-container">
       <template v-for="action in stage.actions">
-        <StudentAvatar :member="action.actor" class="border-4 w-[150px]" :style="{ borderColor: action.borderColor }" />
+        <StudentAvatar :member="action.actor" :targetActor="action.targetActor" class="border-4 w-[150px]" :style="{ borderColor: action.borderColor }" />
       </template>
     </div>
     <div class="stage-control" :class="[hover ? 'opacity-100' : 'opacity-0']">
