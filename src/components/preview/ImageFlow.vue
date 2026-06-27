@@ -65,6 +65,7 @@ const height = computed(() => stagePages.value.length * 1080);
               <template v-for="(action, index) in group.actions">
                 <KonvaAvatar
                   :member="action.actor"
+                  :targetActor="action.targetActor"
                   :side="148"
                   :stroke="action.borderColor ?? 'black'"
                   :stroke-width="4"

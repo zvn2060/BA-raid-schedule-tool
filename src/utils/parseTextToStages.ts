@@ -1,4 +1,5 @@
-const pattern = /(?<student1>[^\s()@]+)(?:@(?<colorCode>[0-9a-fA-F]{6}|[a-zA-Z]+))?(?:\((?<comment>[^()]+)\))?/;
+// <student1>@<targetInfo>_<colorCode>(<comment>)
+const pattern = /(?<student1>[^\s()@_]+)(?:@(?<targetInfo>[^\s()@_]+))?(?:_(?<colorCode>[0-9a-fA-F]{6}|[a-zA-Z]+))?(?:\((?<comment>[^()]+)\))?/;
 
 export function joinComment(commentA: string | undefined, commentB: string | undefined): string {
   return [commentA, commentB].filter(Boolean).join("，");
@@ -6,8 +7,10 @@ export function joinComment(commentA: string | undefined, commentB: string | und
 
 // FLOW     := STAGE [ → FLOW]
 // STAGE    := ACTION [+STAGE] | COMMENT
-// ACTION   := STUDENT[(COMMENT)]
+// ACTION   := STUDENT[@TARGETINFO][_COLORCODE][(COMMENT)]
 // STUDENT  := [^\s]
+// TARGETINFO := [^\s]
+// COLORCODE := [0-9a-fA-F]{6}|[a-zA-Z]+
 // COMMENT  := [^()]
 export function parseTextToStages(text: string, studentMap: StudentMap): Array<Stage> {
   if (!text) return [];
@@ -24,13 +27,24 @@ export function parseTextToStages(text: string, studentMap: StudentMap): Array<S
     stageText.split("+").forEach((action) => {
       const match = action.match(pattern);
       if (match?.groups) {
-        const { student1, colorCode, comment } = match.groups;
+        const { student1, targetInfo, colorCode, comment } = match.groups;
         const actor = searchStudentByNameMap.get(student1)?.id;
-        const borderColor = colorCode
-          ? (/^[0-9a-fA-F]{6}$/.test(colorCode) ? `#${colorCode}` : colorCode)
-          : "#000000";
-        if (actor) actions.push({ actor, borderColor });
-        else comments.push(student1);
+        
+        const targetActor = searchStudentByNameMap.get(targetInfo)?.id;
+        
+        const borderColor = (CSS.supports('color', colorCode)) ? colorCode
+            : (/^[0-9a-fA-F]{6}$/.test(colorCode)) ? `#${colorCode}`
+            : (CSS.supports('color', targetInfo)) ? targetInfo
+            : (/^[0-9a-fA-F]{6}$/.test(targetInfo)) ? `#${targetInfo}`
+            : "#000000";
+
+        if (actor && targetActor) {
+          actions.push({ actor, targetActor, borderColor });
+        } else if (actor) {
+          actions.push({ actor, borderColor });
+        } else {
+          comments.push(student1);
+        }
         if (comment) comments.push(comment);
       } else {
         comments.push(action);
